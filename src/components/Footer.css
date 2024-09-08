@@ -1,0 +1,28 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto; /* Центрируем футер */
+    padding: 0 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    font-size: 14px;
+    height: 70px;
+    box-sizing: border-box; /* Учитываем padding при вычислении ширины */
+}
+
+.footer-text {
+    color: #555;
+}
+
+.footer-links a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #0056b3;
+    font-weight: bold;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,124 @@
+/* Общие стили для страницы */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: linear-gradient(120deg, #e0f7fa, #f1f8e9); /* Обновлен фон на градиент */
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+#root {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Стили заголовков */
+.page-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: #34495e;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: fadeInDown 0.5s ease;
+}
+
+/* Анимация для заголовков */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Контейнеры для рядов */
+.flow-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Гибкие колонки */
+    gap: 40px; /* Увеличенный отступ между карточками */
+    margin-bottom: 50px; /* Увеличен отступ снизу для разделения блоков */
+    padding: 0 20px;
+}
+
+.full-width-row {
+    grid-column: 1 / -1;
+}
+
+/* Стиль для карточек */
+.rounded-container, .full-width-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    margin-bottom: 40px; /* Увеличенный отступ между карточками */
+}
+
+/* Эффекты при наведении */
+.rounded-container:hover, .full-width-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Адаптивный текст внутри карточек */
+.rounded-container > *, .full-width-container > * {
+    flex-grow: 1;
+    width: 100%;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+    .rounded-container, .full-width-container {
+        padding: 15px;
+    }
+}
+
+/* Стили для заголовков графиков */
+h2 {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: #2c3e50;
+    margin-bottom: 15px; /* Отступ заголовков внутри карточек */
+}
+
+/* Стили для кнопок */
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для Select */
+select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #d1d1d1;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+select:hover {
+    border-color: #007bff;
+}

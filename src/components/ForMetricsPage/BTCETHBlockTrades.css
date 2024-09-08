@@ -1,0 +1,63 @@
+.flow-container {
+    width: 100%;
+    height: 100%;
+}
+
+.flow-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.chart {
+    flex-grow: 1;
+    max-width: 300px;
+    max-height: 250px; /* Уменьшаем высоту диаграммы */
+    width: 100%;
+    height: 100%;
+    margin-bottom: 150px; /* Добавляем отступ снизу диаграммы */
+}
+
+.metrics {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.metric {
+    margin: 10px;
+}
+
+.asset-switcher {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Оставляем отступ сверху */
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.asset-switcher button {
+    margin: 10px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 10; /* Убедитесь, что кнопки видны */
+
+}
+
+.asset-switcher button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.asset-switcher button:hover {
+    background-color: #0056b3;
+    color: white;
+}
