@@ -10,7 +10,7 @@ const OptionVolumeChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:5003/api/metrics/popular-options/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/popular-options/${asset.toLowerCase()}`);
                 setTrades(response.data);
             } catch (error) {
                 console.error('Error fetching option volume data:', error);

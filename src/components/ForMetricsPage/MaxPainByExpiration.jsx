@@ -11,7 +11,7 @@ const MaxPainByExpiration = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:5003/api/max-pain-data?currency=${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/max-pain-data?currency=${asset.toLowerCase()}`);
                 if (response.data && response.data.max_pain) {
                     setData(response.data);
                 } else {

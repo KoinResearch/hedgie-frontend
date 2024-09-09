@@ -15,7 +15,7 @@ const KeyMetrics = () => {
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
-                const response = await axios.get(`http://localhost:5003/api/metrics/key-metrics/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/key-metrics/${asset.toLowerCase()}`);
                 const data = response.data;
 
                 setMetrics({

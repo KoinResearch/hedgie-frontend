@@ -18,7 +18,7 @@ const BTCETHBlockTrades = () => {
         const fetchMetrics = async () => {
             try {
                 console.log(`Fetching block trades data for ${asset}`);
-                const response = await axios.get(`http://localhost:5003/api/block-trades/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/${asset.toLowerCase()}`);
 
                 if (response.data) {
                     console.log('Data fetched:', response.data);

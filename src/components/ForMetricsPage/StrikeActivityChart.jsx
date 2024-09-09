@@ -14,7 +14,7 @@ const StrikeActivityChart = () => {
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
-                const response = await axios.get(`http://localhost:5003/api/expirations/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
                 setExpirations(['All Expirations', ...response.data]); // Добавляем "All Expirations" в начало списка
             } catch (err) {
                 console.error('Error fetching expirations:', err);
@@ -27,7 +27,7 @@ const StrikeActivityChart = () => {
         const fetchData = async () => {
             try {
                 console.log(`Fetching strike activity for ${asset} with expiration ${expiration}`);
-                const response = await axios.get(`http://localhost:5003/api/metrics/strike-activity/${asset.toLowerCase()}?expiration=${expiration}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/strike-activity/${asset.toLowerCase()}?expiration=${expiration}`);
                 console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);

@@ -14,7 +14,7 @@ const ExpirationActivityChart = () => {
     useEffect(() => {
         const fetchStrikes = async () => {
             try {
-                const response = await axios.get(`http://localhost:5003/api/strikes/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/strikes/${asset.toLowerCase()}`);
                 setStrikes(response.data);
             } catch (err) {
                 console.error('Error fetching strikes:', err);
@@ -28,7 +28,7 @@ const ExpirationActivityChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let url = `http://localhost:5003/api/metrics/expiration-activity/${asset.toLowerCase()}`;
+                let url = `${import.meta.env.VITE_API_URL}/api/metrics/expiration-activity/${asset.toLowerCase()}`;
                 if (strike) {
                     url += `/${strike}`;  // Добавляем страйк в запрос, если он выбран
                 }

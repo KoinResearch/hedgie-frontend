@@ -13,7 +13,7 @@ const FlowFilters = () => {
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
-                const response = await axios.get(`http://localhost:5003/api/expirations/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
                 setExpirations(response.data);
             } catch (error) {
                 console.error('Error fetching expiration dates:', error);
@@ -26,7 +26,7 @@ const FlowFilters = () => {
     useEffect(() => {
         const fetchTrades = async () => {
             try {
-                const response = await axios.get('http://localhost:5003/api/trades', {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
                     params: {
                         asset,
                         tradeType,
