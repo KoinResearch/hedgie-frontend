@@ -82,19 +82,83 @@ const OpenInterestByExpirationChart = () => {
             <div className="plot-container">
                 <Plot
                     data={[
-                        { x: expirationDates, y: putsOtm, type: 'bar', name: 'Puts OTM', marker: { color: '#ff3e3e' } },
-                        { x: expirationDates, y: putsItm, type: 'bar', name: 'Puts ITM', marker: { color: '#ff7f7f' } },
-                        { x: expirationDates, y: callsOtm, type: 'bar', name: 'Calls OTM', marker: { color: '#00cc96' } },
-                        { x: expirationDates, y: callsItm, type: 'bar', name: 'Calls ITM', marker: { color: '#66ff99' } },
-                        { x: expirationDates, y: putsMarketValue, type: 'scatter', mode: 'lines', name: 'Puts Market Value [$]', line: { color: '#ff3e3e', dash: 'dot' } },
-                        { x: expirationDates, y: callsMarketValue, type: 'scatter', mode: 'lines', name: 'Calls Market Value [$]', line: { color: '#00cc96', dash: 'dot' } },
-                        { x: expirationDates, y: notionalValue, type: 'scatter', mode: 'lines', name: 'Notional Value [$]', line: { color: '#333', dash: 'dash' } },
+                        {
+                            x: expirationDates,
+                            y: putsOtm,
+                            type: 'bar',
+                            name: 'Puts OTM',
+                            marker: { color: '#ff3e3e' },
+                            yaxis: 'y1' // Привязываем к первой оси Y
+                        },
+                        {
+                            x: expirationDates,
+                            y: putsItm,
+                            type: 'bar',
+                            name: 'Puts ITM',
+                            marker: { color: '#ff7f7f' },
+                            yaxis: 'y1' // Привязываем к первой оси Y
+                        },
+                        {
+                            x: expirationDates,
+                            y: callsOtm,
+                            type: 'bar',
+                            name: 'Calls OTM',
+                            marker: { color: '#00cc96' },
+                            yaxis: 'y1' // Привязываем к первой оси Y
+                        },
+                        {
+                            x: expirationDates,
+                            y: callsItm,
+                            type: 'bar',
+                            name: 'Calls ITM',
+                            marker: { color: '#66ff99' },
+                            yaxis: 'y1' // Привязываем к первой оси Y
+                        },
+                        {
+                            x: expirationDates,
+                            y: putsMarketValue,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Puts Market Value [$]',
+                            line: { color: '#ff3e3e', dash: 'dot' },
+                            yaxis: 'y2' // Привязываем ко второй оси Y
+                        },
+                        {
+                            x: expirationDates,
+                            y: callsMarketValue,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Calls Market Value [$]',
+                            line: { color: '#00cc96', dash: 'dot' },
+                            yaxis: 'y2' // Привязываем ко второй оси Y
+                        },
+                        {
+                            x: expirationDates,
+                            y: notionalValue,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Notional Value [$]',
+                            line: { color: '#333', dash: 'dash' },
+                            yaxis: 'y2' // Привязываем ко второй оси Y
+                        },
                     ]}
                     layout={{
                         autosize: true,
                         xaxis: { title: 'Expiration Date' },
-                        yaxis: { title: 'Contracts / Market Value' },
-                        barmode: 'stack',
+                        yaxis: {
+                            title: 'Contracts',
+                            side: 'left',
+                            showgrid: true,
+                            zeroline: false // Убираем нулевую линию
+                        },
+                        yaxis2: {
+                            title: 'Market Value [$]',
+                            overlaying: 'y',
+                            side: 'right',
+                            showgrid: false,
+                            zeroline: false // Убираем нулевую линию
+                        },
+                        barmode: 'group', // Группируем столбцы
                         showlegend: true,
                         margin: { l: 50, r: 50, b: 50, t: 30 },
                     }}

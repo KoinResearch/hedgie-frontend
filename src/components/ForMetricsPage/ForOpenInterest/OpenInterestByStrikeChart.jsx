@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import axios from 'axios';
-import './OpenInterestByStrikeChart.css'; // Подключение CSS
+import './OpenInterestByStrikeChart.css';
 
 const OpenInterestByStrikeChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -9,14 +9,13 @@ const OpenInterestByStrikeChart = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [expirations, setExpirations] = useState([]); // Для хранения доступных дат экспирации
+    const [expirations, setExpirations] = useState([]);
 
-    // Получение доступных дат экспирации при смене актива
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
-                setExpirations(['All Expirations', ...response.data]); // Добавляем "All Expirations" в начало списка
+                setExpirations(['All Expirations', ...response.data]);
             } catch (err) {
                 console.error('Error fetching expirations:', err);
             }
@@ -24,12 +23,9 @@ const OpenInterestByStrikeChart = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Получение данных об открытых интересах по страйку
-// Получение данных об открытых интересах по страйку
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Используем "all" вместо "All Expirations" для запроса на сервер
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
                 console.log(`Fetching open interest data for ${asset} with expiration ${expirationParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
@@ -54,14 +50,12 @@ const OpenInterestByStrikeChart = () => {
         return <div>Error: {error}</div>;
     }
 
-    // Преобразование данных для отображения
     const strikePrices = data.map(d => d.strike);
     const puts = data.map(d => d.puts);
     const calls = data.map(d => d.calls);
     const putsMarketValue = data.map(d => d.puts_market_value);
     const callsMarketValue = data.map(d => d.calls_market_value);
 
-    // Расчет общей информации о позициях
     const totalPuts = puts.reduce((a, b) => a + (parseFloat(b) || 0), 0);
     const totalCalls = calls.reduce((a, b) => a + (parseFloat(b) || 0), 0);
     const totalNotional = putsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) + callsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0);
@@ -88,15 +82,47 @@ const OpenInterestByStrikeChart = () => {
                     data={[
                         { x: strikePrices, y: puts, type: 'bar', name: 'Puts', marker: { color: '#ff3e3e' } },
                         { x: strikePrices, y: calls, type: 'bar', name: 'Calls', marker: { color: '#00cc96' } },
-                        { x: strikePrices, y: putsMarketValue, type: 'scatter', mode: 'lines', name: 'Puts Market Value [$]', line: { color: '#ff3e3e', dash: 'dot' } },
-                        { x: strikePrices, y: callsMarketValue, type: 'scatter', mode: 'lines', name: 'Calls Market Value [$]', line: { color: '#00cc96', dash: 'dot' } },
+                        {
+                            x: strikePrices,
+                            y: putsMarketValue,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Puts Market Value [$]',
+                            line: { color: '#ff3e3e', dash: 'dot' },
+                            yaxis: 'y2' // Ссылка на вторую ось
+                        },
+                        {
+                            x: strikePrices,
+                            y: callsMarketValue,
+                            type: 'scatter',
+                            mode: 'lines',
+                            name: 'Calls Market Value [$]',
+                            line: { color: '#00cc96', dash: 'dot' },
+                            yaxis: 'y2' // Ссылка на вторую ось
+                        },
                     ]}
                     layout={{
                         autosize: true,
-                        xaxis: { title: 'Strike Price' },
-                        yaxis: { title: 'Contracts / Market Value' },
+                        xaxis: {
+                            title: 'Strike Price',
+                            automargin: true,
+                            tickangle: -45,
+                            range: [10000, 140000],
+                        },
+                        yaxis: {
+                            title: 'Contracts',
+                            automargin: true,
+                        },
+                        yaxis2: {
+                            title: 'Market Value [$]',
+                            overlaying: 'y', // Совмещение с основной осью Y
+                            side: 'right',
+                            automargin: true,
+                        },
                         showlegend: true,
-                        margin: { l: 50, r: 50, b: 50, t: 30 },
+                        margin: { l: 80, r: 80, b: 120, t: 30 },
+                        bargap: 0.3,
+                        height: 600,
                     }}
                     useResizeHandler={true}
                     style={{ width: '100%', height: '100%' }}
