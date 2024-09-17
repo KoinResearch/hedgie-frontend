@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import axios from 'axios';
 
-const StrikeActivityChart = () => {
+const StrikeActivityChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
     const [expiration, setExpiration] = useState('All Expirations');
     const [data, setData] = useState([]);
@@ -27,7 +27,7 @@ const StrikeActivityChart = () => {
         const fetchData = async () => {
             try {
                 console.log(`Fetching strike activity for ${asset} with expiration ${expiration}`);
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/strike-activity/${asset.toLowerCase()}?expiration=${expiration}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/strike-activity/${asset.toLowerCase()}?expiration=${expiration}`);
                 console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);
@@ -63,7 +63,7 @@ const StrikeActivityChart = () => {
 
     return (
         <div style={{ width: '100%', height: '100%' }}> {/* Контейнер с адаптивными размерами */}
-            <h2>{asset} Option Volume - Past 24h</h2>
+            <h2>Volume By Strike Price - Past 24h</h2>
             <div>
                 <button onClick={() => setAsset('BTC')} className={asset === 'BTC' ? 'active' : ''}>BTC</button>
                 <button onClick={() => setAsset('ETH')} className={asset === 'ETH' ? 'active' : ''}>ETH</button>
@@ -77,7 +77,6 @@ const StrikeActivityChart = () => {
                     ))}
                 </select>
             </div>
-            <h3>Strike Price Activity - {asset}</h3>
             <div style={{ width: '100%', height: '400px' }}> {/* Контейнер для графика */}
                 <Plot
                     data={[
@@ -98,7 +97,6 @@ const StrikeActivityChart = () => {
                     ]}
                     layout={{
                         autosize: true, // Автоматическое изменение размера
-                        title: `Volume By Strike Price - ${asset}`,
                         xaxis: { title: 'Strike Price' },
                         yaxis: { title: 'Number of Trades' },
                         barmode: 'group',
@@ -111,4 +109,4 @@ const StrikeActivityChart = () => {
     );
 };
 
-export default StrikeActivityChart;
+export default StrikeActivityChartBlockTrades;

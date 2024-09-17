@@ -1,0 +1,41 @@
+.maxpain-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
+    text-align: center;
+}
+
+.maxpain-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.asset-switcher {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.asset-switcher button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.asset-switcher button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.asset-switcher button:hover {
+    background-color: #e0e0e0;
+}

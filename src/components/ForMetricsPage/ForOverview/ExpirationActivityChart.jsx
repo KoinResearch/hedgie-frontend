@@ -70,7 +70,7 @@ const ExpirationActivityChart = () => {
 
     return (
         <div>
-            <h2>{asset} Option Volume By Expiration - Past 24h</h2>
+            <h2>Volume By Expiration - Past 24h</h2>
             <div>
                 <button onClick={() => setAsset('BTC')} className={asset === 'BTC' ? 'active' : ''}>BTC</button>
                 <button onClick={() => setAsset('ETH')} className={asset === 'ETH' ? 'active' : ''}>ETH</button>
@@ -86,8 +86,6 @@ const ExpirationActivityChart = () => {
                     ))}
                 </select>
             </div>
-
-            <h3>Expiration Activity - {asset} {strike && ` - Strike: ${strike}`}</h3>
             <Plot
                 data={[
                     {
@@ -106,7 +104,6 @@ const ExpirationActivityChart = () => {
                     }
                 ]}
                 layout={{
-                    title: `Volume By Expiration - ${asset}`,
                     xaxis: { title: 'Expiration Date' },
                     yaxis: { title: 'Number of Trades' },
                     barmode: 'group'

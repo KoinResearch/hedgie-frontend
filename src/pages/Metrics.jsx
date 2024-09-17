@@ -1,54 +1,28 @@
+// src/pages/Metrics.jsx
 import React from 'react';
-import BTCETHOptionFlow from '../components/ForMetricsPage/BTCETHOptionFlow';
-import BTCETHBlockTrades from '../components/ForMetricsPage/BTCETHBlockTrades';
-import MaxPainByExpiration from '../components/ForMetricsPage/MaxPainByExpiration';
-import OptionVolumeChart from '../components/ForMetricsPage/OptionVolumeChart';
-import StrikeActivityChart from "../components/ForMetricsPage/StrikeActivityChart";
-import ExpirationActivityChart from "../components/ForMetricsPage/ExpirationActivityChart";
-import TimeDistributionChart from "../components/ForMetricsPage/TimeDistributionChart";
-import KeyMetrics from "../components/ForMetricsPage/KeyMetrics";
+import { Routes, Route } from 'react-router-dom';
+import Sidebar from '../components/ForMetricsPage/Sidebar';
+import Overview from '../subpages/Overview';
+import BlockTrades from '../subpages/BlockTrades';
+import OpenInterest from '../subpages/OpenInterest';
+import Volume from '../subpages/Volume';
 import './Metrics.css';
 
-const MetricsPage = () => {
+const Metrics = () => {
     return (
         <div className="metrics-page-container">
-            <h1 className="page-title">Key Metrics Dashboard</h1>
-            <div className="flow-row">
-                <div className="rounded-container">
-                    <BTCETHOptionFlow asset="BTC"/>
-                </div>
-                <div className="rounded-container">
-                    <BTCETHBlockTrades asset="ETH"/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="rounded-container">
-                    <MaxPainByExpiration/>
-                </div>
-                <div className="rounded-container">
-                    <OptionVolumeChart/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="rounded-container">
-                    <StrikeActivityChart/>
-                </div>
-                <div className="rounded-container">
-                    <ExpirationActivityChart/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="full-width-container">
-                    <TimeDistributionChart/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="full-width-container">
-                    <KeyMetrics/>
-                </div>
+            <Sidebar />
+            <div className="content">
+                <Routes>
+                    <Route path="/" element={<Overview />} />
+                    <Route path="overview" element={<Overview />} />
+                    <Route path="block-trades" element={<BlockTrades />} />
+                    <Route path="open-interest" element={<OpenInterest />} />
+                    <Route path="volume" element={<Volume />} />
+                </Routes>
             </div>
         </div>
     );
 };
 
-export default MetricsPage;
+export default Metrics;

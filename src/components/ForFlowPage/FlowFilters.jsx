@@ -8,7 +8,11 @@ const FlowFilters = () => {
     const [optionType, setOptionType] = useState('Call/Put');
     const [expiration, setExpiration] = useState('All Expirations');
     const [expirations, setExpirations] = useState([]);
-    const [trades, setTrades] = useState([]); // Для хранения полученных данных
+    const [trades, setTrades] = useState([]);
+
+    // Состояния для фильтров
+    const [sizeOrder, setSizeOrder] = useState('All Sizes');
+    const [premiumOrder, setPremiumOrder] = useState('All Premiums');
 
     useEffect(() => {
         const fetchExpirations = async () => {
@@ -32,6 +36,8 @@ const FlowFilters = () => {
                         tradeType,
                         optionType,
                         expiration,
+                        sizeOrder,  // Фильтр размера
+                        premiumOrder,  // Фильтр премии
                     },
                 });
                 setTrades(response.data);
@@ -41,11 +47,10 @@ const FlowFilters = () => {
         };
 
         fetchTrades();
-    }, [asset, tradeType, optionType, expiration]);
+    }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder]);
 
     return (
         <div className="flow-container">
-            {/* Фильтры */}
             <div className="flow-filters">
                 <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                     <option value="BTC">BTC</option>
@@ -67,25 +72,26 @@ const FlowFilters = () => {
                         <option key={exp} value={exp}>{exp}</option>
                     ))}
                 </select>
+
+                {/* Фильтр по размеру */}
+                <select value={sizeOrder} onChange={(e) => setSizeOrder(e.target.value)}>
+                    <option value="All Sizes">All Sizes</option>
+                    <option value="higher to lower">Higher to Lower</option>
+                    <option value="lesser to greater">Lesser to Greater</option>
+                    <option value="low">Low</option> {/* Новая опция */}
+                    <option value="high">High</option> {/* Новая опция */}
+                </select>
+
+                {/* Фильтр по премии */}
+                <select value={premiumOrder} onChange={(e) => setPremiumOrder(e.target.value)}>
+                    <option value="All Premiums">All Premiums</option>
+                    <option value="higher to lower">Higher to Lower</option>
+                    <option value="lesser to greater">Lesser to Greater</option>
+                    <option value="low">Low</option> {/* Новая опция */}
+                    <option value="high">High</option> {/* Новая опция */}
+                </select>
             </div>
 
-            {/*/!* Метрики *!/*/}
-            {/*<div className="flow-metrics">*/}
-            {/*    <div className="metric">*/}
-            {/*        <h3>Put to Call Ratio</h3>*/}
-            {/*        <p>1.70</p>*/}
-            {/*    </div>*/}
-            {/*    <div className="metric">*/}
-            {/*        <h3>Calls</h3>*/}
-            {/*        <p>2,984.50</p>*/}
-            {/*    </div>*/}
-            {/*    <div className="metric">*/}
-            {/*        <h3>Puts</h3>*/}
-            {/*        <p>5,061.50</p>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
-            {/* Таблица с данными */}
             <div className="flow-table">
                 <table>
                     <thead>
@@ -97,7 +103,6 @@ const FlowFilters = () => {
                         <th>Strike</th>
                         <th>Size</th>
                         <th>Price</th>
-                        {/*<th>Premium</th>*/}
                     </tr>
                     </thead>
                     <tbody>
@@ -110,7 +115,6 @@ const FlowFilters = () => {
                             <td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>
                             <td>{trade.amount}</td>
                             <td>{trade.price}</td>
-                            {/*<td>{trade.premium}</td>*/}
                         </tr>
                     ))}
                     </tbody>

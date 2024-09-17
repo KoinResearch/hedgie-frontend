@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './KeyMetrics.css';
+import './KeyMetricsBlockTrades.css';
 
-const KeyMetrics = () => {
+const KeyMetricsBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
     const [metrics, setMetrics] = useState({
         avg_price: 0,
-        total_volume: 0,
+        total_nominal_volume: 0, // Исправляем имя поля на корректное
         total_premium: 0,
     });
     const [loading, setLoading] = useState(true);
@@ -15,12 +15,12 @@ const KeyMetrics = () => {
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/key-metrics/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/key-metrics/${asset.toLowerCase()}`);
                 const data = response.data;
 
                 setMetrics({
                     avg_price: Number(data.avg_price) || 0,
-                    total_volume: Number(data.total_volume) || 0,
+                    total_nominal_volume: Number(data.total_nominal_volume) || 0, // Правильное имя
                     total_premium: Number(data.total_premium) || 0,
                 });
                 setLoading(false);
@@ -43,7 +43,7 @@ const KeyMetrics = () => {
 
     return (
         <div className="metrics-container">
-            <h2>{asset} Key Metrics - Past 24h</h2>
+            <h2>Key Metrics - Past 24h</h2>
             <div className="asset-buttons">
                 <button onClick={() => setAsset('BTC')} className={asset === 'BTC' ? 'active' : ''}>BTC</button>
                 <button onClick={() => setAsset('ETH')} className={asset === 'ETH' ? 'active' : ''}>ETH</button>
@@ -63,7 +63,7 @@ const KeyMetrics = () => {
                         <i className="fas fa-chart-bar"></i>
                     </div>
                     <div className="metric-content">
-                        <p className="metric-value">{metrics.total_volume.toFixed(2)}</p>
+                        <p className="metric-value">{metrics.total_nominal_volume.toFixed(2)}</p> {/* Исправлено */}
                         <p className="metric-label">Total Volume</p>
                     </div>
                 </div>
@@ -81,4 +81,4 @@ const KeyMetrics = () => {
     );
 };
 
-export default KeyMetrics;
+export default KeyMetricsBlockTrades;

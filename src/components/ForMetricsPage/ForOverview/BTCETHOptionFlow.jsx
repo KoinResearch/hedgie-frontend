@@ -29,7 +29,7 @@ const BTCETHOptionFlow = () => {
 
     return (
         <div className="flow-container">
-            <h2>{asset} Block Trades - Past 24h</h2>
+            <h2>Options - Past 24h</h2>
             <div className="flow-content">
                 <div className="metrics call-metrics">
                     <div className="metric call-buys">

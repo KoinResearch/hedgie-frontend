@@ -60,7 +60,7 @@ const TimeDistributionChart = () => {
 
     return (
         <div>
-            <h2>{asset} Time Distribution of Trades - Past 24h</h2>
+            <h2>Historical Volume - Past 24h</h2>
             <div>
                 <button onClick={() => setAsset('BTC')} className={asset === 'BTC' ? 'active' : ''}>BTC</button>
                 <button onClick={() => setAsset('ETH')} className={asset === 'ETH' ? 'active' : ''}>ETH</button>
@@ -91,7 +91,6 @@ const TimeDistributionChart = () => {
                     }
                 ]}
                 layout={{
-                    title: `Time Distribution of Trades - ${asset}`,
                     xaxis: { title: 'Time (HH:MM)' }, // Обновленное название оси
                     yaxis: { title: 'Number of Trades' },
                     yaxis2: {
