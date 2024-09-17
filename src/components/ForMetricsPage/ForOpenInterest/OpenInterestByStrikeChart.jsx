@@ -61,6 +61,12 @@ const OpenInterestByStrikeChart = () => {
     const totalNotional = putsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) + callsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0);
     const putCallRatio = totalCalls !== 0 ? (totalPuts / totalCalls) : 0;
 
+    // Определяем минимальные и максимальные значения для осей Y
+    const minYValue = Math.min(...puts, ...calls, 0);
+    const maxYValue = Math.max(...puts, ...calls);
+    const minY2Value = Math.min(...putsMarketValue, ...callsMarketValue, 0);
+    const maxY2Value = Math.max(...putsMarketValue, ...callsMarketValue);
+
     return (
         <div className="chart-container">
             <h2 className="chart-title">Open Interest By Strike Price - Past 24h</h2>
@@ -89,7 +95,7 @@ const OpenInterestByStrikeChart = () => {
                             mode: 'lines',
                             name: 'Puts Market Value [$]',
                             line: { color: '#ff3e3e', dash: 'dot' },
-                            yaxis: 'y2' // Ссылка на вторую ось
+                            yaxis: 'y2'
                         },
                         {
                             x: strikePrices,
@@ -98,7 +104,7 @@ const OpenInterestByStrikeChart = () => {
                             mode: 'lines',
                             name: 'Calls Market Value [$]',
                             line: { color: '#00cc96', dash: 'dot' },
-                            yaxis: 'y2' // Ссылка на вторую ось
+                            yaxis: 'y2'
                         },
                     ]}
                     layout={{
@@ -112,12 +118,14 @@ const OpenInterestByStrikeChart = () => {
                         yaxis: {
                             title: 'Contracts',
                             automargin: true,
+                            range: [minYValue, maxYValue],
                         },
                         yaxis2: {
                             title: 'Market Value [$]',
-                            overlaying: 'y', // Совмещение с основной осью Y
+                            overlaying: 'y',
                             side: 'right',
                             automargin: true,
+                            range: [minY2Value, maxY2Value],
                         },
                         showlegend: true,
                         margin: { l: 80, r: 80, b: 120, t: 30 },
