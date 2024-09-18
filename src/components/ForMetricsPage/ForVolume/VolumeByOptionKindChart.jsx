@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import axios from 'axios';
-import './OpenInterestChart.css'; // Импортируем CSS-файл для стилей
+import './VolumeByOptionKindChart.css'; // Импортируем CSS-файл для стилей
 
-const OpenInterestChart = () => {
+const VolumeByOptionKindChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [expiration, setExpiration] = useState('All Expirations');
     const [data, setData] = useState({ Calls: 0, Puts: 0 });
@@ -24,19 +24,19 @@ const OpenInterestChart = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Fetch open interest data
+    // Fetch volume data
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Используем "all" вместо "All Expirations" для запроса на сервер
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                console.log(`Fetching open interest data for ${asset} with expiration ${expirationParam}`);
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest/${asset.toLowerCase()}/${expirationParam}`);
+                console.log(`Fetching volume data for ${asset} with expiration ${expirationParam}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest/${asset.toLowerCase()}/${expirationParam}`);
                 console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching open interest data:', err);
+                console.error('Error fetching volume data:', err);
                 setError(err.message);
                 setLoading(false);
             }
@@ -55,7 +55,7 @@ const OpenInterestChart = () => {
 
     return (
         <div className="chart-container"> {/* Главный контейнер с закругленными краями */}
-            <h2 className="chart-title">Open Interest By Option Kind</h2>
+            <h2 className="chart-title">Volume By Option Kind</h2>
             <div className="chart-controls">
                 <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>BTC</button>
                 <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>ETH</button>
@@ -78,12 +78,12 @@ const OpenInterestChart = () => {
                             type: 'bar',
                             orientation: 'h', // Горизонтальные столбцы
                             marker: { color: ['#00cc96', '#ff3e3e'] }, // Цвета
-                            name: 'Open Interest',
+                            name: 'Volume',
                         },
                     ]}
                     layout={{
                         autosize: true, // Автоматическое изменение размера
-                        xaxis: { title: 'Number of Contracts', showgrid: false },
+                        xaxis: { title: 'Volume', showgrid: false },
                         yaxis: { title: '' },
                         margin: { l: 100, r: 50, b: 50, t: 50 }, // Отступы
                         showlegend: false, // Убираем легенду
@@ -94,10 +94,10 @@ const OpenInterestChart = () => {
             </div>
             <div className="chart-description"> {/* Блок для описания */}
                 <h3>Description</h3>
-                <p>The amount of option contracts held in active positions by type.</p>
+                <p>The amount of option contracts traded in the last 24 hours by option type.</p>
             </div>
         </div>
     );
 };
 
-export default OpenInterestChart;
+export default VolumeByOptionKindChart;

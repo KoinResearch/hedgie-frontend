@@ -69,7 +69,7 @@ const OpenInterestByStrikeChart = () => {
 
     return (
         <div className="chart-container">
-            <h2 className="chart-title">Open Interest By Strike Price - Past 24h</h2>
+            <h2 className="chart-title">Open Interest By Strike Price</h2>
             <div className="chart-controls">
                 <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>BTC</button>
                 <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>ETH</button>

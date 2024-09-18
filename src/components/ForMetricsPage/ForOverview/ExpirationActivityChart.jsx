@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const ExpirationActivityChart = () => {
     const [asset, setAsset] = useState('BTC');
-    const [strike, setStrike] = useState(null);  // Добавляем состояние для выбранного страйка
+    const [strike, setStrike] = useState('all');  // Устанавливаем начальное значение как 'all'
     const [data, setData] = useState({ calls: [], puts: [] });
     const [strikes, setStrikes] = useState([]);  // Список доступных страйков
     const [loading, setLoading] = useState(true);
@@ -28,8 +28,9 @@ const ExpirationActivityChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Если выбран 'all', не добавляем страйк в URL
                 let url = `${import.meta.env.VITE_API_URL}/api/metrics/expiration-activity/${asset.toLowerCase()}`;
-                if (strike) {
+                if (strike && strike !== 'all') {
                     url += `/${strike}`;  // Добавляем страйк в запрос, если он выбран
                 }
 
@@ -79,8 +80,8 @@ const ExpirationActivityChart = () => {
             {/* Выпадающий список для выбора страйка */}
             <div>
                 <label>Select Strike: </label>
-                <select value={strike || ''} onChange={(e) => setStrike(e.target.value || null)}>
-                    <option value="">All Strikes</option>
+                <select value={strike} onChange={(e) => setStrike(e.target.value || 'all')}>
+                    <option value="all">All Strikes</option> {/* Устанавливаем 'all' для всех страйков */}
                     {strikes.map((s) => (
                         <option key={s} value={s}>{s}</option>
                     ))}
