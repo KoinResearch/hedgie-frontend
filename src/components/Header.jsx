@@ -19,6 +19,11 @@ const Header = () => {
                     className={({ isActive }) => isActive ? "nav-link active" : "nav-link new-item"}>
                     Flow
                 </NavLink>
+                <NavLink
+                    to="/datalab"
+                    className={({ isActive }) => isActive ? "nav-link active" : "nav-link new-item"}>
+                    DataLab
+                </NavLink>
             </nav>
             <div className="auth-links">
                 <NavLink
