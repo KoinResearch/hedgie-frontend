@@ -4,10 +4,13 @@ import VolumeByOptionKindChart from '../components/ForMetricsPage/ForVolume/Volu
 import VolumeByExpirationChart from "../components/ForMetricsPage/ForVolume/VolumeByExpirationChart.jsx";
 import VolumeByStrikePriceChart from "../components/ForMetricsPage/ForVolume/VolumeByStrikePriceChart.jsx";
 import TopTradedOptionsChart from "../components/ForMetricsPage/ForVolume/TopTradedOptionsChart.jsx";
+import "./Volume.css"
+import '../components/ForMetricsPage/StandartStyle.css';
+
+
 const Volume = () => {
     return (
         <div>
-            <h1 className="page-title">Volume</h1>
             <div>
                 <VolumeByOptionKindChart/>
             </div>

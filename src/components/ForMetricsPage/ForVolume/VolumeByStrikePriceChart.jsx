@@ -62,37 +62,101 @@ const VolumeByStrikePriceChart = () => {
     const putCallRatio = totalCalls !== 0 ? (totalPuts / totalCalls) : 0;
 
     return (
-        <div className="chart-container">
-            <h2 className="chart-title">Volume By Strike Price</h2>
-            <div className="chart-controls">
-                <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>BTC</button>
-                <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>ETH</button>
-            </div>
-            <div className="chart-select">
-                <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
-                    {expirations.map(exp => (
-                        <option key={exp} value={exp}>
-                            {exp}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div className="plot-container">
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        Volume By Strike Price
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
+                            {expirations.map(exp => (
+                                <option key={exp} value={exp}>
+                                    {exp}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
+            <div>
                 <Plot
                     data={[
-                        { x: strikePrices, y: puts, type: 'bar', name: 'Puts', marker: { color: '#ff3e3e' } },
-                        { x: strikePrices, y: calls, type: 'bar', name: 'Calls', marker: { color: '#00cc96' } },
+                        {
+                            x: strikePrices,
+                            y: puts,
+                            type: 'bar',
+                            name: 'Puts',
+                            marker: {
+                                color: '#ff3e3e', // Красный для Puts
+                            },
+                        },
+                        {
+                            x: strikePrices,
+                            y: calls,
+                            type: 'bar',
+                            name: 'Calls',
+                            marker: {
+                                color: '#00cc96', // Зелёный для Calls
+                            },
+                        },
                     ]}
                     layout={{
                         autosize: true,
-                        xaxis: { title: 'Strike Price' },
-                        yaxis: { title: 'Volume' },
-                        showlegend: true,
-                        margin: { l: 50, r: 50, b: 50, t: 30 },
-                        bargap: 0.3,
+                        xaxis: {
+                            title: 'Strike Price',
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF', // Белые подписи оси X
+                            },
+                        },
+                        yaxis: {
+                            title: 'Volume',
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF', // Белые подписи оси Y
+                            },
+                            gridcolor: '#393E47', // Цвет сетки
+                        },
+                        legend: {
+                            x: 0.01,
+                            y: 1.1,
+                            orientation: 'h', // Горизонтальная легенда
+                            font: {
+                                size: 12,
+                                color: '#FFFFFF', // Цвет текста легенды
+                            },
+                        },
+                        margin: {
+                            l: 50,
+                            r: 50,
+                            b: 50,
+                            t: 30,
+                        },
+                        bargap: 0.3, // Расстояние между столбцами
+                        paper_bgcolor: '#151518', // Тёмный фон графика
+                        plot_bgcolor: '#151518', // Тёмный фон области графика
                     }}
                     useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                 />
             </div>
             <div className="chart-info">
@@ -105,6 +169,7 @@ const VolumeByStrikePriceChart = () => {
                 <h3>Description</h3>
                 <p>The amount of option contracts traded in the last 24h sorted by strike price.</p>
             </div>
+        </div>
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx'; // Импортируем библиотеку для работы с Excel
+import "./DataLabComponent.css"
 
 const DataLabComponent = () => {
     const [dataType, setDataType] = useState('All BTC Trades');
@@ -63,35 +64,39 @@ const DataLabComponent = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <h1>DataLab</h1>
-            <p>Select the type of data and time range to download:</p>
-            <div style={styles.filters}>
-                <label style={styles.label}>
-                    Data Type:
-                    <select style={styles.select} value={dataType} onChange={(e) => setDataType(e.target.value)}>
-                        <option value="All BTC Trades">All BTC Trades</option>
-                        <option value="All ETH Trades">All ETH Trades</option>
-                        <option value="BTC Block Trades">BTC Block Trades</option>
-                        <option value="ETH Block Trades">ETH Block Trades</option>
-                    </select>
-                </label>
-                <label style={styles.label}>
-                    Time Range:
-                    <select style={styles.select} value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
-                        <option value="1d">1 Day</option>
-                        <option value="2d">2 Days</option>
-                        <option value="3d">3 Days</option>
-                        <option value="4d">4 Days</option>
-                        <option value="5d">5 Days</option>
-                        <option value="10d">10 Days</option>
-                        <option value="1m">1 Month</option>
-                        <option value="1y">1 Year</option>
-                    </select>
-                </label>
+        <div className="dataLabComponent">
+            <h1 className="dataLab-title">DataLab</h1>
+            <p className="dataLab-p">Select the type of data and time range to download:</p>
+            <div className="dataLab-buttons">
+                <div className="select-group">
+                    <label>
+                        Data Type
+                        <select value={dataType} onChange={(e) => setDataType(e.target.value)}>
+                            <option value="All BTC Trades">All BTC Trades</option>
+                            <option value="All ETH Trades">All ETH Trades</option>
+                            <option value="BTC Block Trades">BTC Block Trades</option>
+                            <option value="ETH Block Trades">ETH Block Trades</option>
+                        </select>
+                    </label>
+                </div>
+                <div className="select-group">
+                    <label>
+                        Time Range
+                        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+                            <option value="1d">1 Day</option>
+                            <option value="2d">2 Days</option>
+                            <option value="3d">3 Days</option>
+                            <option value="4d">4 Days</option>
+                            <option value="5d">5 Days</option>
+                            <option value="10d">10 Days</option>
+                            <option value="1m">1 Month</option>
+                            <option value="1y">1 Year</option>
+                        </select>
+                    </label>
+                </div>
             </div>
             <button
-                style={styles.downloadButton}
+                className="download-button"
                 onClick={handleDownload}
                 disabled={isLoading}
             >
@@ -101,40 +106,5 @@ const DataLabComponent = () => {
     );
 };
 
-const styles = {
-    container: {
-        padding: '20px',
-        maxWidth: '600px',
-        margin: '0 auto',
-        textAlign: 'center',
-    },
-    filters: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-        marginBottom: '20px',
-    },
-    label: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        fontSize: '16px',
-    },
-    select: {
-        padding: '10px',
-        fontSize: '16px',
-        borderRadius: '5px',
-        border: '1px solid #ccc',
-    },
-    downloadButton: {
-        padding: '10px 20px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontSize: '16px',
-    },
-};
 
 export default DataLabComponent;

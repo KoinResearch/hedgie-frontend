@@ -53,62 +53,69 @@ const MaxPainByExpirationChart = () => {
     const notionalValues = expirationDates.map(exp => data[exp].intrinsicValues.notionalValue);
 
     return (
-        <div className="chart-container">
-            <h2 className="chart-title">Max Pain Price By Expiration</h2>
-            <div className="chart-controls">
-                <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>
-                    BTC
-                </button>
-                <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>
-                    ETH
-                </button>
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        Max Pain Price By Expiration
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
             </div>
-            <div className="plot-container">
+            <div className="max-pain-graph">
                 <Plot
                     data={[
-                        {
-                            x: expirationDates,
-                            y: notionalValues,
-                            type: 'bar',
-                            name: 'Notional Value',
-                            marker: { color: '#7f7f7f' },
-                            yaxis: 'y2',
-                        },
                         {
                             x: expirationDates,
                             y: maxPainValues,
                             type: 'scatter',
                             mode: 'lines+markers',
-                            name: 'Max Pain Price [$]',
-                            marker: { color: '#e74c3c' },
-                            line: { shape: 'spline', width: 2 },
+                            marker: {color: '#FF4136'}, // Красный цвет линии
+                            line: {shape: 'spline', width: 2} // Сглаживание линии
                         },
                     ]}
                     layout={{
-                        xaxis: { title: 'Expiration Date', tickfont: { size: 12, color: '#333' } },
-                        yaxis: { title: 'Max Pain Price [$]', side: 'left', tickfont: { size: 12, color: '#333' } },
-                        yaxis2: {
-                            title: 'Notional Value',
-                            overlaying: 'y',
-                            side: 'right',
-                            tickfont: { size: 12, color: '#333' }
+                        paper_bgcolor: '#151518',
+                        plot_bgcolor: '#151518',
+                        font: {
+                            family: 'Arial, sans-serif',
+                            size: 14,
+                            color: '#FFFFFF'
                         },
-                        legend: {
-                            x: 0.1,
-                            y: 1.1,
-                            orientation: 'h'
+                        xaxis: {
+                            title: 'Expiration Dates',
+                            gridcolor: '#393E47',
+                            tickfont: {color: '#FFFFFF'},
+                        },
+                        yaxis: {
+                            title: 'Max Pain Price [$]',
+                            gridcolor: '#393E47',
+                            tickfont: {color: '#FFFFFF'},
                         },
                         autosize: true,
-                        showlegend: true,
-                        margin: { l: 50, r: 50, b: 50, t: 30 },
+                        margin: {
+                            l: 40,
+                            r: 10,
+                            b: 40,
+                            t: 40,
+                            pad: 4
+                        },
                     }}
                     useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{width: '100%', height: '100%'}}
                 />
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The max pain price across all expiration dates.</p>
             </div>
         </div>
     );

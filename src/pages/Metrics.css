@@ -1,90 +1,54 @@
-/* Общие стили для страницы */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: linear-gradient(120deg, #e0f7fa, #f1f8e9); /* Обновлен фон на градиент */
-    font-family: 'Poppins', sans-serif;
-    box-sizing: border-box;
-}
-
-#root {
-    min-height: 100%;
+.metrics-page-container {
     display: flex;
-    flex-direction: column;
+    height: 100vh; /* Контейнер растянут по всей высоте окна */
 }
 
-/* Стили заголовков */
-.page-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: #34495e;
-    text-align: center;
-    margin-bottom: 40px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: fadeInDown 0.5s ease;
+.sidebar {
+    width: 256px;
+    background-color: black;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    position: fixed;
+    top: 0; /* Ставим top: 0, чтобы сайдбар начинался с самого верха */
 }
 
-/* Анимация для заголовков */
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Контейнеры для рядов */
-.flow-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Гибкие колонки */
-    gap: 40px; /* Увеличенный отступ между карточками */
-    margin-bottom: 50px; /* Увеличен отступ снизу для разделения блоков */
-    padding: 0 20px;
-}
-
-.full-width-row {
-    grid-column: 1 / -1;
-}
-
-/* Стиль для карточек */
-.rounded-container, .full-width-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #ffffff;
-    border-radius: 20px;
+.content {
+    margin-left: 250px; /* This margin should match the width of the sidebar */
+    width: calc(100% - 250px); /* Ensure the content takes the rest of the space */
     padding: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    height: 100%;
-    margin-bottom: 40px; /* Увеличенный отступ между карточками */
 }
 
-/* Эффекты при наведении */
-.rounded-container:hover, .full-width-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+.divider {
+    width: 2px;
+    background-color: #393E47;
+    height: 100vh; /* Высота на всю страницу */
+    position: fixed; /* Разделитель будет фиксирован вместе с сайдбаром */
+    left: 236px; /* Размещаем его справа от сайдбара */
+    top: 0; /* Убедимся, что разделитель начинается от верха страницы */
+    z-index: 1; /* Разделитель будет поверх остальных элементов */
 }
+
+
+
+/*!* Эффекты при наведении *!*/
+/*.rounded-container:hover, .full-width-container:hover {*/
+/*    transform: translateY(-5px);*/
+/*    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);*/
+/*}*/
 
 /* Адаптивный текст внутри карточек */
-.rounded-container > *, .full-width-container > * {
-    flex-grow: 1;
-    width: 100%;
-    font-size: clamp(1rem, 2vw, 1.5rem);
-}
+/*.rounded-container > *, .full-width-container > * {*/
+/*    flex-grow: 1;*/
+/*    width: 100%;*/
+/*    font-size: clamp(1rem, 2vw, 1.5rem);*/
+/*}*/
 
-/* Адаптивные стили для мобильных устройств */
-@media (max-width: 768px) {
-    .rounded-container, .full-width-container {
-        padding: 15px;
-    }
-}
+/*!* Адаптивные стили для мобильных устройств *!*/
+/*@media (max-width: 768px) {*/
+/*    .rounded-container, .full-width-container {*/
+/*        padding: 15px;*/
+/*    }*/
+/*}*/
 
 /* Стили для заголовков графиков */
 h2 {
@@ -129,23 +93,23 @@ select:hover {
 }
 
 .content {
-    margin-left: 220px; /* Adjust this value to match the width of the sidebar */
     padding: 20px;
     width: 100%;
 }
 
-.flow-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
+/*.full-width-container {*/
+/*    background-color: black;*/
+/*    padding: 20px;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+/*    flex: 1;*/
+/*    margin: 10px;*/
+/*}*/
 
-.rounded-container,
-.full-width-container {
-    background-color: #fff;
-    padding: 20px;
+.rounded-container {
+    background-color: black;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     flex: 1;
-    margin: 10px;
 }
+

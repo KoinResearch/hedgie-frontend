@@ -12,17 +12,20 @@ import ExpirationActivityChartBlockTrades
 import TimeDistributionChartBlockTrades
     from "../components/ForMetricsPage/ForForBlockTrades/TimeDistributionChartBlockTrades.jsx";
 import KeyMetricsBlockTrades from "../components/ForMetricsPage/ForForBlockTrades/KeyMetricsBlockTrades.jsx";
+import '../components/ForMetricsPage/StandartStyle.css';
+import KeyMetrics from "../components/ForMetricsPage/ForOverview/KeyMetrics.jsx";
 
 const BlockTrades = () => {
     return (
         <div>
-            <h1 className="page-title">Block Trades Metrics Dashboard</h1>
+            <h1 className="page-title">Block Trades Key Metrics Dashboard</h1>
+            <div className="full-width-container">
+                <KeyMetricsBlockTrades/>
+            </div>
             <div className="flow-row">
                 <div className="rounded-container">
                     <BTCETHBlockTrades asset="BTC"/>
                 </div>
-            </div>
-            <div className="flow-row">
                 <div className="rounded-container">
                     <MaxPainByExpirationBlockTrades/>
                 </div>
@@ -41,11 +44,6 @@ const BlockTrades = () => {
             <div className="flow-row">
                 <div className="full-width-container">
                     <TimeDistributionChartBlockTrades/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="full-width-container">
-                    <KeyMetricsBlockTrades/>
                 </div>
             </div>
         </div>

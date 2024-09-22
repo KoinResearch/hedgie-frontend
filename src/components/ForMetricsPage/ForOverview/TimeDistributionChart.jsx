@@ -59,48 +59,133 @@ const TimeDistributionChart = () => {
     });
 
     return (
-        <div>
-            <h2>Historical Volume - Past 24h</h2>
-            <div>
-                <button onClick={() => setAsset('BTC')} className={asset === 'BTC' ? 'active' : ''}>BTC</button>
-                <button onClick={() => setAsset('ETH')} className={asset === 'ETH' ? 'active' : ''}>ETH</button>
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        📦
+                        Historical Volume - Past 24h
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
             </div>
-            <Plot
-                data={[
-                    {
-                        x: formattedHours, // Форматированные часы
-                        y: callCounts,
-                        type: 'bar',
-                        name: 'Calls',
-                        marker: { color: 'green' }
-                    },
-                    {
-                        x: formattedHours, // Форматированные часы
-                        y: putCounts,
-                        type: 'bar',
-                        name: 'Puts',
-                        marker: { color: 'red' }
-                    },
-                    {
-                        x: formattedHours, // Форматированные часы
-                        y: avgIndexPrices,
-                        type: 'line',
-                        name: 'Index Price',
-                        yaxis: 'y2',
-                        marker: { color: 'black' }
-                    }
-                ]}
-                layout={{
-                    xaxis: { title: 'Time (HH:MM)' }, // Обновленное название оси
-                    yaxis: { title: 'Number of Trades' },
-                    yaxis2: {
-                        title: 'Index Price',
-                        overlaying: 'y',
-                        side: 'right',
-                    },
-                    barmode: 'group',
-                }}
-            />
+            <div>
+                <Plot
+                    data={[
+                        {
+                            x: formattedHours,
+                            y: callCounts,
+                            type: 'bar',
+                            name: 'Calls',
+                            marker: {
+                                color: 'rgba(39,174,96,0.8)', // Зеленый для Calls
+                            },
+                        },
+                        {
+                            x: formattedHours,
+                            y: putCounts,
+                            type: 'bar',
+                            name: 'Puts',
+                            marker: {
+                                color: 'rgba(231,76,60,0.8)', // Красный для Puts
+                            },
+                        },
+                        {
+                            x: formattedHours,
+                            y: avgIndexPrices,
+                            type: 'line',
+                            name: 'Index Price',
+                            yaxis: 'y2',
+                            line: {
+                                color: 'rgba(255,255,255,0.8)', // Белый для линии
+                                width: 2,
+                            },
+                        },
+                    ]}
+                    layout={{
+                        paper_bgcolor: '#151518',
+                        plot_bgcolor: '#151518',
+                        font: {
+                            family: 'Arial, sans-serif',
+                            size: 14,
+                            color: '#FFFFFF',
+                        },
+                        xaxis: {
+                            title: {
+                                text: 'Time (HH:MM)',
+                                font: {
+                                    size: 14,
+                                    color: '#FFFFFF',
+                                },
+                            },
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF',
+                            },
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Number of Trades',
+                                font: {
+                                    size: 14,
+                                    color: '#FFFFFF',
+                                },
+                            },
+                            gridcolor: '#393E47',
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF',
+                            },
+                        },
+                        yaxis2: {
+                            title: {
+                                text: 'Index Price',
+                                font: {
+                                    size: 14,
+                                    color: '#FFFFFF',
+                                },
+                            },
+                            overlaying: 'y',
+                            side: 'right',
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF',
+                            },
+                        },
+                        barmode: 'group', // Группировка столбцов
+                        legend: {
+                            x: 0.01,
+                            y: 1.1,
+                            orientation: 'h',
+                            font: {
+                                size: 12,
+                                color: '#FFFFFF',
+                            },
+                        },
+                        margin: {
+                            l: 50,
+                            r: 50, // Увеличиваем отступ для правой оси
+                            b: 100,
+                            t: 20,
+                            pad: 4,
+                        },
+                    }}
+                    useResizeHandler={true}
+                    style={{ width: '100%', height: '100%' }}
+                />
+            </div>
         </div>
     );
 };

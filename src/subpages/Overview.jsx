@@ -9,41 +9,35 @@ import ExpirationActivityChart from "../components/ForMetricsPage/ForOverview/Ex
 import TimeDistributionChart from "../components/ForMetricsPage/ForOverview/TimeDistributionChart.jsx";
 import KeyMetrics from "../components/ForMetricsPage/ForOverview/KeyMetrics.jsx";
 import './Overview.css';
+import '../components/ForMetricsPage/StandartStyle.css';
+
 
 const Overview = () => {
     return (
         <div>
-            <h1 className="page-title">Overview Metrics Dashboard</h1>
+            <h1 className="page-title">Key Metrics Dashboard</h1>
+            <div className="full-width-container">
+                <KeyMetrics/>
+            </div>
             <div className="flow-row">
                 <div className="rounded-container">
                     <BTCETHOptionFlow asset="BTC"/>
                 </div>
-            </div>
-            <div className="flow-row">
-                <div className="rounded-container">
-                    <MaxPainByExpiration/>
-                </div>
-                <div className="rounded-container">
-                    <OptionVolumeChart/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="rounded-container">
-                    <StrikeActivityChart/>
-                </div>
-                <div className="rounded-container">
-                    <ExpirationActivityChart/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="full-width-container">
-                    <TimeDistributionChart/>
-                </div>
-            </div>
-            <div className="flow-row">
-                <div className="full-width-container">
-                    <KeyMetrics/>
-                </div>
+                    <div className="rounded-container">
+                        <MaxPainByExpiration/>
+                    </div>
+                    <div className="rounded-container">
+                        <OptionVolumeChart/>
+                    </div>
+                    <div className="rounded-container">
+                        <StrikeActivityChart/>
+                    </div>
+                    <div className="rounded-container">
+                        <ExpirationActivityChart/>
+                    </div>
+                    <div className="full-width-container">
+                        <TimeDistributionChart/>
+                    </div>
             </div>
         </div>
     );

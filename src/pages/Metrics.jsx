@@ -13,6 +13,7 @@ const Metrics = () => {
         <div className="metrics-page-container">
             <Sidebar />
             <div className="content">
+                <div className="divider"></div> {/* Разделитель */}
                 <Routes>
                     <Route path="/" element={<Overview />} />
                     <Route path="overview" element={<Overview />} />

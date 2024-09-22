@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import './App.css';
 import DataLab from "./pages/DataLab.jsx";
 
+
 function App() {
     return (
         <Router>

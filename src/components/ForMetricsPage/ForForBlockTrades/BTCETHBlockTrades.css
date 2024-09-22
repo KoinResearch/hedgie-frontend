@@ -1,63 +1,83 @@
-.flow-container {
-    width: 100%;
-    height: 100%;
-}
+/*Работа над диаграммой и метриками выпадающими*/
 
-.flow-content {
+/* Контейнер всего контента */
+.flow-option-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
     width: 100%;
+    padding: 20px;
 }
 
-.chart {
-    flex-grow: 1;
-    max-width: 300px;
-    max-height: 250px; /* Уменьшаем высоту диаграммы */
-    width: 100%;
-    height: 100%;
-    margin-bottom: 150px; /* Добавляем отступ снизу диаграммы */
-}
-
-.metrics {
+/* Блоки с метриками */
+.metrics-option {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    gap: 20px;
+    flex: 1;
+}
+
+/* Общие стили для каждого блока метрик */
+.metric-option {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    padding: 15px;
 }
 
-.metric {
-    margin: 10px;
+.metric-option-label {
+    color: #F2F2F2; /* Цвет текста */
+    display: flex; /* Для выравнивания по горизонтали */
+    align-items: center; /* Выравнивание по вертикали */
+    font-family: 'Paloseco', sans-serif; /* Шрифт Paloseco, резервный sans-serif */
+    font-size: 14px; /* Размер текста */
 }
 
-.asset-switcher {
+
+.metric-option-label::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Цветовые индикаторы для каждого типа метрик */
+.call-buys .metric-option-label::before {
+    background-color: #28a745; /* Зеленый для Call Buys */
+}
+
+.call-sells .metric-option-label::before {
+    background-color: #007bff; /* Синий для Call Sells */
+}
+
+.put-buys .metric-option-label::before {
+    background-color: #6f42c1; /* Фиолетовый для Put Buys */
+}
+
+.put-sells .metric-option-label::before {
+    background-color: #dc3545; /* Красный для Put Sells */
+}
+
+.metric-option-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    font-family: 'JetBrains Mono', monospace;
+    color: #28a745; /* Зеленый текст для значения */
+    background-color: #212529;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Стиль для диаграммы */
+.chart-option {
+    flex: 2;
     display: flex;
     justify-content: center;
-    margin-top: 20px; /* Оставляем отступ сверху */
-    padding: 0;
+    align-items: center;
+    height: 100%;
     background-color: transparent;
-    border-radius: 0;
-    box-shadow: none;
 }
 
-.asset-switcher button {
-    margin: 10px;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 8px;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    font-size: 18px;
-    z-index: 10; /* Убедитесь, что кнопки видны */
-
-}
-
-.asset-switcher button.active {
-    background-color: #007bff;
-    color: white;
-}
-
-.asset-switcher button:hover {
-    background-color: #0056b3;
-    color: white;
-}

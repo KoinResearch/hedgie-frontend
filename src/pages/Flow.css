@@ -1,0 +1,151 @@
+.flow-container {
+    padding: 20px;
+    background-color: black; /* Темный фон страницы */
+    color: #F2F2F2; /* Белый цвет текста */
+    font-family: 'Paloseco', sans-serif;
+}
+
+.flow-container h1 {
+    padding-left: 20px;
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: #F2F2F2;
+}
+
+.flow-container p {
+    padding-left: 20px;
+    font-size: 16px;
+    color: #ABAFB8;
+    margin-bottom: 20px;
+}
+
+.flow-filters {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.flow-filters select {
+    padding: 10px;
+    background-color: #0E0E11;
+    color: #ABAFB8;
+    border: 1px solid #393E47;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', sans-serif;
+}
+
+.metrics-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px; /* Увеличенный зазор между элементами для лучшей читаемости */
+    padding: 20px;
+    background-color: #151518; /* Темный фон для контраста с диаграммами */
+    border-radius: 12px;
+    border: 1px solid #393E47;
+    color: white;
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+.metric {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+    padding: 20px; /* Отступы внутри для более "воздушного" вида */
+    border-radius: 12px; /* Закругляем углы */
+    text-align: center;
+    transition: transform 0.3s ease; /* Добавляем эффект при наведении */
+}
+
+.metric canvas {
+    width: 70px !important; /* Устанавливаем фиксированные размеры для canvas */
+    height: 70px !important; /* Устанавливаем фиксированные размеры для canvas */
+}
+
+.metric-data{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.metric-value {
+    font-size: 24px; /* Увеличенный размер для большей заметности */
+    font-weight: bold;
+    color: white;
+    font-family: 'JetBrains Mono', sans-serif;
+    margin-bottom: 10px;
+}
+
+.metric-label {
+    font-size: 16px;
+    font-family: 'Paloseco', sans-serif;
+    color: #C2C2C2;
+    font-weight: 500; /* Немного увеличим жирность текста */
+}
+
+.dedicate-metric {
+    width: 1px; /* Увеличиваем ширину для более заметного разделителя */
+    height: 80px;
+    background-color: #494949;
+    border-radius: 4px; /* Немного закругляем края разделителя */
+}
+
+
+
+.flow-table {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #393E47;
+}
+
+.flow-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.flow-table th, .flow-table td {
+    font-family: 'Paloseco', sans-serif;
+    padding: 12px 15px;
+    text-align: left;
+    color: white;
+    border-bottom: 1px solid #393E47;
+}
+
+.flow-table th {
+    background-color: #151518;
+    /*color: #9CA3AF;*/
+    font-size: 12px;
+    color: #F2F2F2;
+}
+
+.flow-table tbody tr:nth-child(even) {
+    background-color: #151518;
+}
+
+.flow-table tbody tr:nth-child(odd) {
+    background-color: #1E1E25;
+}
+
+.show-all-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.show-all-btn {
+    padding: 10px 20px;
+    background-color: #2E86DE;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.show-all-btn:hover {
+    background-color: #2457b5;
+}

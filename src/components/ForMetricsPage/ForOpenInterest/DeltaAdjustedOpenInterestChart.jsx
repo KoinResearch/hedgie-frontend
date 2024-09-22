@@ -64,45 +64,113 @@ const DeltaAdjustedOpenInterestChart = () => {
         : null;
 
     return (
-        <div className="chart-container">
-            <h2 className="chart-title">Delta Adjusted Open Interest By Strike</h2>
-            <div className="chart-controls">
-                <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>BTC</button>
-                <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>ETH</button>
-            </div>
-            <div className="chart-select">
-                <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
-                    {expirations.map(exp => (
-                        <option key={exp} value={exp}>
-                            {exp}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div className="plot-container">
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        Delta Adjusted Open Interest By Strike
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
+                            {expirations.map(exp => (
+                                <option key={exp} value={exp}>
+                                    {exp}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
+            <div>
                 <Plot
                     data={[
-                        { x: strikePrices, y: deltaAdjustedPuts, type: 'bar', name: 'Puts', marker: { color: '#ff3e3e' } },
-                        { x: strikePrices, y: deltaAdjustedCalls, type: 'bar', name: 'Calls', marker: { color: '#00cc96' } }
+                        {
+                            x: strikePrices,
+                            y: deltaAdjustedPuts,
+                            type: 'bar',
+                            name: 'Puts',
+                            marker: {
+                                color: '#ff3e3e', // Красный для Puts
+                            },
+                        },
+                        {
+                            x: strikePrices,
+                            y: deltaAdjustedCalls,
+                            type: 'bar',
+                            name: 'Calls',
+                            marker: {
+                                color: '#00cc96', // Зеленый для Calls
+                            },
+                        },
                     ]}
                     layout={{
                         autosize: true,
                         xaxis: {
                             title: 'Strike Price',
-                            range: defaultXRange, // Устанавливаем начальный диапазон для приближения
+                            range: defaultXRange, // Начальный диапазон для оси X
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF', // Белый цвет подписей
+                            },
                         },
-                        yaxis: { title: 'Delta Adjusted Open Interest' },
-                        showlegend: true,
-                        margin: { l: 50, r: 50, b: 50, t: 30 },
+                        yaxis: {
+                            title: 'Delta Adjusted Open Interest',
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF', // Белый цвет подписей
+                            },
+                            gridcolor: '#393E47',
+                            zeroline: false, // Убираем нулевую линию
+                        },
+                        legend: {
+                            x: 0.01,
+                            y: 1.1,
+                            orientation: 'h', // Горизонтальная легенда
+                            font: {
+                                size: 12,
+                                color: '#FFFFFF',
+                            },
+                        },
+                        margin: {
+                            l: 50,
+                            r: 50,
+                            b: 50,
+                            t: 30,
+                        },
+                        bargap: 0.3, // Промежуток между столбцами
+                        height: 600, // Высота графика
+                        paper_bgcolor: '#151518', // Фон графика
+                        plot_bgcolor: '#151518', // Фон области построения
                     }}
                     useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                 />
             </div>
             <div className="chart-description">
                 <h3>Description</h3>
-                <p>The amount of option contracts in active positions multiplied by their delta value. Delta-adjusted open interest can tell us the amount of the underlying asset option writers need to buy or sell in order to remain delta neutral.</p>
+                <p>The amount of option contracts in active positions multiplied by their delta value. Delta-adjusted
+                    open interest can tell us the amount of the underlying asset option writers need to buy or sell in
+                    order to remain delta neutral.</p>
             </div>
+        </div>
         </div>
     );
 };

@@ -77,35 +77,69 @@ const MaxPainByExpirationBlockTrades = () => {
     const maxPainValues = expirationDates.map(exp => data[exp].maxPain);
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <h2>Max Pain по датам экспирации для {asset}</h2>
-            <div>
-                <button onClick={() => setAsset('BTC')} className={asset === 'BTC' ? 'active' : ''}>
-                    BTC
-                </button>
-                <button onClick={() => setAsset('ETH')} className={asset === 'ETH' ? 'active' : ''}>
-                    ETH
-                </button>
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        😡
+                        Max pain by expiration
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
             </div>
-            <div style={{ width: '100%', height: '500px' }}>
+            <div className="max-pain-graph">
                 <Plot
                     data={[
                         {
-                            x: expirationDates, // Отсортированные даты экспирации на оси X
-                            y: maxPainValues,   // Значения Max Pain на оси Y
+                            x: expirationDates,
+                            y: maxPainValues,
                             type: 'scatter',
                             mode: 'lines+markers',
-                            marker: { color: 'red' },
+                            marker: {color: '#FF4136'}, // Красный цвет линии
+                            line: {shape: 'spline', width: 2} // Сглаживание линии
                         },
                     ]}
                     layout={{
-                        title: `Max Pain для ${asset}`,
-                        xaxis: { title: 'Даты экспирации' }, // Подпись оси X
-                        yaxis: { title: 'Max Pain' }, // Подпись оси Y
-                        autosize: true, // Автоматическая настройка размера
+                        paper_bgcolor: '#151518',
+                        plot_bgcolor: '#151518',
+                        font: {
+                            family: 'Arial, sans-serif',
+                            size: 14,
+                            color: '#FFFFFF'
+                        },
+                        xaxis: {
+                            title: 'Expiration Dates',
+                            gridcolor: '#393E47',
+                            tickfont: {color: '#FFFFFF'},
+                        },
+                        yaxis: {
+                            title: 'Max Pain Price [$]',
+                            gridcolor: '#393E47',
+                            tickfont: {color: '#FFFFFF'},
+                        },
+                        autosize: true,
+                        margin: {
+                            l: 40,
+                            r: 10,
+                            b: 40,
+                            t: 40,
+                            pad: 4
+                        },
                     }}
-                    useResizeHandler={true} // Автоматическое изменение размеров
-                    style={{ width: '100%', height: '100%' }} // Задаем стиль графика
+                    useResizeHandler={true}
+                    style={{width: '100%', height: '100%'}}
                 />
             </div>
         </div>

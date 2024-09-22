@@ -50,76 +50,126 @@ const HistoricalOpenInterestChart = () => {
     const totalContracts = data.map(entry => entry.total_contracts);
     const avgIndexPrices = data.map(entry => entry.avg_index_price);
 
+
     return (
-        <div className="chart-container">
-            <h2 className="chart-title">Historical Open Interest</h2>
-            <div className="chart-controls">
-                <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>
-                    BTC
-                </button>
-                <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>
-                    ETH
-                </button>
-                <select onChange={e => setPeriod(e.target.value)} value={period} className="chart-select">
-                    <option value="1d">1d</option>
-                    <option value="7d">7d</option>
-                    <option value="1m">1m</option>
-                    <option value="all">All</option>
-                </select>
-            </div>
-            <div className="plot-container">
-                <Plot
-                    data={[
-                        {
-                            x: timestamps,
-                            y: totalContracts,
-                            type: 'scatter',
-                            mode: 'lines',
-                            fill: 'tozeroy',
-                            name: 'Total',
-                            line: { color: '#e74c3c' },
-                            yaxis: 'y1', // Привязываем к левой оси Y
-                        },
-                        {
-                            x: timestamps,
-                            y: avgIndexPrices,
-                            type: 'scatter',
-                            mode: 'lines',
-                            name: 'Index Price',
-                            line: { color: '#7f7f7f' },
-                            yaxis: 'y2', // Привязываем к правой оси Y
-                        },
-                    ]}
-                    layout={{
-                        xaxis: { title: 'Time', tickfont: { size: 12, color: '#333' } },
-                        yaxis: {
-                            title: 'Total Contracts',
-                            side: 'left',
-                            tickfont: { size: 12, color: '#e74c3c' },
-                            showgrid: false,
-                        },
-                        yaxis2: {
-                            title: 'Index Price',
-                            overlaying: 'y', // Накладываем на первую ось
-                            side: 'right',
-                            tickfont: { size: 12, color: '#7f7f7f' }
-                        },
-                        legend: {
-                            x: 0.1,
-                            y: 1.1,
-                            orientation: 'h'
-                        },
-                        autosize: true,
-                        showlegend: true,
-                        margin: { l: 50, r: 50, b: 50, t: 30 },
-                    }}
-                    useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
-                />
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The amount of option contracts in active positions over time.</p>
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        Historical Open Interest Chart
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select onChange={e => setPeriod(e.target.value)} value={period} className="chart-select">
+                            <option value="1d">1d</option>
+                            <option value="7d">7d</option>
+                            <option value="1m">1m</option>
+                            <option value="all">All</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
+                <div>
+                    <Plot
+                        data={[
+                            {
+                                x: timestamps,
+                                y: totalContracts,
+                                type: 'scatter',
+                                mode: 'lines',
+                                fill: 'tozeroy', // Заливка области под линией
+                                name: 'Total Contracts',
+                                line: {
+                                    color: '#e74c3c', // Красный для контрактов
+                                    width: 2,
+                                },
+                                yaxis: 'y1', // Привязка к левой оси Y
+                            },
+                            {
+                                x: timestamps,
+                                y: avgIndexPrices,
+                                type: 'scatter',
+                                mode: 'lines',
+                                name: 'Index Price',
+                                line: {
+                                    color: '#7f7f7f', // Серый для индекса
+                                    width: 2,
+                                },
+                                yaxis: 'y2', // Привязка к правой оси Y
+                            },
+                        ]}
+                        layout={{
+                            autosize: true,
+                            xaxis: {
+                                title: 'Time',
+                                tickfont: {
+                                    size: 12,
+                                    color: '#FFFFFF',
+                                },
+                                showgrid: false,
+                            },
+                            yaxis: {
+                                title: 'Total Contracts',
+                                side: 'left',
+                                tickfont: {
+                                    size: 12,
+                                    color: '#e74c3c', // Красный цвет оси для контрактов
+                                },
+                                showgrid: false,
+                            },
+                            yaxis2: {
+                                title: 'Index Price',
+                                overlaying: 'y', // Накладываем на первую ось
+                                side: 'right',
+                                tickfont: {
+                                    size: 12,
+                                    color: '#7f7f7f', // Серый цвет оси для индекса
+                                },
+                            },
+                            legend: {
+                                x: 0.1,
+                                y: 1.1,
+                                orientation: 'h', // Горизонтальная легенда
+                                font: {
+                                    size: 12,
+                                    color: '#FFFFFF',
+                                },
+                            },
+                            margin: {
+                                l: 50,
+                                r: 50,
+                                b: 50,
+                                t: 30,
+                            },
+                            paper_bgcolor: '#151518', // Тёмный фон
+                            plot_bgcolor: '#151518', // Тёмный фон области графика
+                            showlegend: true,
+                        }}
+                        useResizeHandler={true}
+                        style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
+                    />
+                </div>
+                <div className="chart-description">
+                    <h3>Description</h3>
+                    <p>The amount of option contracts in active positions over time.</p>
+                </div>
             </div>
         </div>
     );

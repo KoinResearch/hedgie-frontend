@@ -4,25 +4,29 @@
     align-items: center;
     width: 100%;
     margin: 0 auto; /* Центрируем футер */
-    padding: 0 20px;
     background-color: #ffffff;
     border-top: 1px solid #e0e0e0;
     font-size: 14px;
-    height: 70px;
+    height: 68px;
     box-sizing: border-box; /* Учитываем padding при вычислении ширины */
 }
 
 .footer-text {
-    color: #555;
+    color: #A9A9A9;
 }
 
 .footer-links a {
+    font-weight: bold; /* Жирный шрифт */
+    font-family: 'YourFontFamily', sans-serif; /* Используйте свой шрифт, если нужно */
     margin: 0 10px;
     text-decoration: none;
-    color: #0056b3;
-    font-weight: bold;
+    color: #A9A9A9;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .footer-links a:hover {
-    text-decoration: underline;
+    background-color: white; /* Фон становится белым при наведении */
+    color: black; /* Текст становится чёрным при наведении */
 }

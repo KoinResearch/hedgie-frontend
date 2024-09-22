@@ -1,33 +1,63 @@
-.header {
+.header-navigation {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Выровняем все элементы по левому краю */
     align-items: center;
-    padding: 10px 20px;
-    background-color: white;
-    border-bottom: 1px solid #ddd;
+    width: 100%;
+    max-width: 1440px;
+    height: 72px;
+    padding: 0 20px;
+    background-color: #151518;
+    border-bottom: 1px solid #393E47;
+    box-sizing: border-box;
+    position: fixed;
+    left: 0;
+    z-index: 1000;
+    top: 0;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 1280px;
+    height: 72px;
 }
 
 .logo {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-weight: bold; /* Жирный шрифт */
+    font-size: 16px;
+    font-family: 'YourFontFamily', sans-serif; /* Используйте свой шрифт, если нужно */
+    color: #F2F2F2;
+    width: 103px;
+    height: 20px;
+    align-items: center;
 }
+
 
 .navigation {
     display: flex;
+    width: 143px;
+    height: 40px;
     gap: 20px;
+    align-items: center;
 }
 
 .nav-link {
     text-decoration: none;
-    color: black;
+    color: #A9A9A9;
     padding: 5px 10px;
     border-radius: 4px;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .nav-link.active {
-    background-color: #007BFF; /* Синий фон для активного элемента */
-    color: white; /* Белый текст для активного элемента */
+    background-color: #2A2A30;
+    color: white;
+}
+
+.nav-link:hover {
+    background-color: white; /* Фон становится белым при наведении */
+    color: black; /* Текст становится чёрным при наведении */
 }
 
 .new-item {
@@ -39,11 +69,11 @@
     position: absolute;
     top: -5px;
     right: -25px;
-    background-color: #007BFF;
-    color: white;
+    background-color: #5090FF;
+    color: #ffffff;
     font-size: 10px;
     padding: 2px 5px;
-    border-radius: 3px;
+    border-radius: 9px;
 }
 
 .user-actions {

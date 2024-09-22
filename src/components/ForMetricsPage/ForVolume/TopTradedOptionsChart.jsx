@@ -41,42 +41,89 @@ const TopTradedOptionsChart = () => {
     const tradeCounts = trades.map(trade => trade.trade_count);
 
     return (
-        <div className="chart-container">
-            <h2 className="chart-title">Top Traded Options</h2>
-            <div className="chart-controls">
-                <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>BTC</button>
-                <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>ETH</button>
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        Top Traded Options
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
             </div>
-            <div className="plot-container">
-                <Plot
-                    data={[
-                        {
-                            x: instrumentNames,
-                            y: tradeCounts,
-                            type: 'bar',
-                            marker: { color: '#636E72' },
+            <Plot
+                data={[
+                    {
+                        x: instrumentNames,
+                        y: tradeCounts,
+                        type: 'bar',
+                        marker: {
+                            color: 'rgba(0,119,255,0.8)',
+                            line: {
+                                color: 'rgba(0,119,255,1)',
+                                width: 2,
+                            },
+                            gradient: {
+                                type: 'vertical',
+                                colorscale: [
+                                    [0, 'rgba(0,119,255,0.5)'],
+                                    [1, 'rgba(0,119,255,1)'],
+                                ],
+                            },
                         },
-                    ]}
-                    layout={{
-                        autosize: true,
-                        xaxis: {
-                            title: '',
-                            tickangle: -45,
+                    },
+                ]}
+                layout={{
+                    paper_bgcolor: '#151518',
+                    plot_bgcolor: '#151518',
+                    font: {
+                        family: 'Arial, sans-serif',
+                        size: 14,
+                        color: '#FFFFFF',
+                    },
+                    xaxis: {
+                        tickangle: -45,
+                        tickfont: {
+                            size: 12,
+                            color: '#FFFFFF',
                         },
-                        yaxis: {
-                            title: 'Number of Trades',
+                    },
+                    yaxis: {
+                        title: {
+                            text: 'Trade Counts',
+                            font: {
+                                size: 14,
+                                color: '#FFFFFF',
+                            },
                         },
-                        showlegend: false,
-                        margin: { l: 50, r: 50, b: 120, t: 30 },
-                    }}
-                    useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
-                />
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The top traded options in the last 24h.</p>
-            </div>
+                        gridcolor: '#393E47',
+                        tickfont: {
+                            color: '#FFFFFF',
+                        },
+                    },
+                    autosize: true,
+                    margin: {
+                        l: 50,
+                        r: 20,
+                        b: 100,
+                        t: 20,
+                        pad: 4,
+                    },
+                }}
+                useResizeHandler={true}
+                style={{width: '100%', height: '100%'}}
+            />
         </div>
     );
 };

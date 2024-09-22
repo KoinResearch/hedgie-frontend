@@ -8,27 +8,28 @@ import DeltaAdjustedOpenInterestChart
     from "../components/ForMetricsPage/ForOpenInterest/DeltaAdjustedOpenInterestChart.jsx";
 import MaxPainByExpirationChart from "../components/ForMetricsPage/ForOpenInterest/MaxPainByExpirationChart.jsx";
 import HistoricalOpenInterestChart from "../components/ForMetricsPage/ForOpenInterest/HistoricalOpenInterestChart.jsx";
+import '../components/ForMetricsPage/StandartStyle.css';
+import './OpenInterest.css';
 
 const OpenInterest = () => {
     return (
         <div>
-            <h1 className="page-title">Open Interest</h1>
-            <div>
+            <div className="rounded-container">
                 <OpenInterestChart/>
             </div>
-            <div>
+            <div className="rounded-container">
                 <OpenInterestByExpirationChart/>
             </div>
-            <div>
+            <div className="rounded-container">
                 <OpenInterestByStrikeChart/>
             </div>
-            <div>
+            <div className="rounded-container">
                 <DeltaAdjustedOpenInterestChart/>
             </div>
-            <div>
+            <div className="rounded-container">
                 <MaxPainByExpirationChart/>
             </div>
-            <div>
+            <div className="rounded-container">
                 <HistoricalOpenInterestChart/>
             </div>
         </div>

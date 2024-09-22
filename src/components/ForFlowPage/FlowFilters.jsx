@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Plot from 'react-plotly.js';
 import './FlowFilters.css';
+import { Doughnut } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+
+// Регистрация компонентов Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const FlowFilters = () => {
     const [asset, setAsset] = useState('BTC');
@@ -10,21 +19,18 @@ const FlowFilters = () => {
     const [expiration, setExpiration] = useState('All Expirations');
     const [expirations, setExpirations] = useState([]);
     const [trades, setTrades] = useState([]);
-    const [limitedTrades, setLimitedTrades] = useState([]); // Limited initial trades
-    const [showAll, setShowAll] = useState(false); // State to track if showing all trades
+    const [limitedTrades, setLimitedTrades] = useState([]);
+    const [showAll, setShowAll] = useState(false);
 
-    // State for displaying Put/Call Ratio and counts
     const [putCallRatio, setPutCallRatio] = useState(0);
     const [totalPuts, setTotalPuts] = useState(0);
     const [totalCalls, setTotalCalls] = useState(0);
     const [putsPercentage, setPutsPercentage] = useState(0);
     const [callsPercentage, setCallsPercentage] = useState(0);
 
-    // State for filters
     const [sizeOrder, setSizeOrder] = useState('All Sizes');
     const [premiumOrder, setPremiumOrder] = useState('All Premiums');
 
-    // Fetch expirations based on asset change
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
@@ -38,7 +44,6 @@ const FlowFilters = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Fetch limited trades on initial load and when filters change
     useEffect(() => {
         const fetchLimitedTrades = async () => {
             try {
@@ -50,7 +55,7 @@ const FlowFilters = () => {
                         expiration,
                         sizeOrder,
                         premiumOrder,
-                        limit: 50, // Fetch only the latest 50 trades
+                        limit: 50,
                     },
                 });
 
@@ -61,7 +66,7 @@ const FlowFilters = () => {
                 setTotalCalls(totalCalls);
                 setPutsPercentage(putsPercentage);
                 setCallsPercentage(callsPercentage);
-                setShowAll(false); // Reset to not showing all on initial load
+                setShowAll(false);
             } catch (error) {
                 console.error('Error fetching trades:', error);
             }
@@ -70,7 +75,6 @@ const FlowFilters = () => {
         fetchLimitedTrades();
     }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder]);
 
-    // Fetch all trades when "Show All" is clicked
     const fetchAllTrades = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
@@ -90,6 +94,52 @@ const FlowFilters = () => {
         } catch (error) {
             console.error('Error fetching all trades:', error);
         }
+    };
+
+    // Данные для графиков
+    const putCallData = {
+        labels: ['Put', 'Call'],
+        datasets: [
+            {
+                data: [putCallRatio, 1 - putCallRatio],
+                backgroundColor: ['#ff3e3e', '#00cc96'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const totalCallsData = {
+        labels: ['Calls %', ''],
+        datasets: [
+            {
+                data: [callsPercentage, 100 - callsPercentage],
+                backgroundColor: ['#00cc96', '#333'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const totalPutsData = {
+        labels: ['Puts %', ''],
+        datasets: [
+            {
+                data: [putsPercentage, 100 - putsPercentage],
+                backgroundColor: ['#ff3e3e', '#333'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const options = {
+        cutout: '70%',
+        plugins: {
+            tooltip: {
+                enabled: false,
+            },
+            legend: {
+                display: false,
+            },
+        },
     };
 
     return (
@@ -134,21 +184,36 @@ const FlowFilters = () => {
             {/* Display metrics in a row */}
             <div className="metrics-row">
                 <div className="metric">
-                    <span className="metric-value">{putCallRatio.toFixed(2)} </span>
+                    <div className="metric-data">
                     <span className="metric-label">Put to Call Ratio</span>
+                    <span className="metric-value">{putCallRatio.toFixed(2)}</span>
+                    </div>
+                    <Doughnut data={putCallData} options={options}/>
                 </div>
+
+                <div className="dedicate-metric"></div>
+
                 <div className="metric">
-                    <span className="metric-value">{totalCalls.toFixed(2)} </span>
+                    <div className="metric-data">
                     <span className="metric-label">Total Calls</span>
+                    <span className="metric-value">{totalCalls.toFixed(2)}</span>
+                    </div>
+                    <Doughnut data={totalCallsData} options={options}/>
                 </div>
+
+                <div className="dedicate-metric"></div>
+
                 <div className="metric">
-                    <span className="metric-value">{totalPuts.toFixed(2)} </span>
+                    <div className="metric-data">
                     <span className="metric-label">Total Puts</span>
+                    <span className="metric-value">{totalPuts.toFixed(2)}</span>
+                    </div>
+                    <Doughnut data={totalPutsData} options={options}/>
                 </div>
             </div>
 
             <div className="flow-table">
-                <table>
+            <table>
                     <thead>
                     <tr>
                         <th>Market</th>

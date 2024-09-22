@@ -61,21 +61,41 @@ const VolumeByExpirationChart = () => {
     const callsItm = data.map(d => d.calls_itm);
 
     return (
-        <div className="chart-container">
-            <h2 className="chart-title">Volume By Expiration</h2>
-            <div className="chart-controls">
-                <button onClick={() => setAsset('BTC')} className={`asset-button ${asset === 'BTC' ? 'active' : ''}`}>BTC</button>
-                <button onClick={() => setAsset('ETH')} className={`asset-button ${asset === 'ETH' ? 'active' : ''}`}>ETH</button>
-            </div>
-            <div className="chart-select">
-                <select onChange={(e) => setStrike(e.target.value)} value={strike}>
-                    {strikes.map(s => (
-                        <option key={s} value={s}>
-                            {s}
-                        </option>
-                    ))}
-                </select>
-            </div>
+        <div className="flow-option-container">
+            <div className="flow-option-header-menu">
+                <div className="flow-option-header-container">
+                    <h2>
+                        Volume By Expiration
+                    </h2>
+                    <div className="asset-option-buttons">
+                        <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={strike} onChange={(e) => setStrike(e.target.value || 'all')}>
+                            <option value="all">All Strikes</option>
+                            {/* Устанавливаем 'all' для всех страйков */}
+                            {strikes.map((s) => (
+                                <option key={s} value={s}>{s}</option>
+                            ))}
+                        </select>
+                        <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+    </span>
+                    </div>
+                </div>
+                <div className="flow-option-dedicated"></div>
             <div className="plot-container">
                 <Plot
                     data={[
@@ -84,45 +104,79 @@ const VolumeByExpirationChart = () => {
                             y: putsOtm,
                             type: 'bar',
                             name: 'Puts OTM',
-                            marker: { color: '#ff3e3e' }
+                            marker: {
+                                color: '#ff3e3e', // Красный для Puts OTM
+                            },
                         },
                         {
                             x: expirationDates,
                             y: putsItm,
                             type: 'bar',
                             name: 'Puts ITM',
-                            marker: { color: '#ff7f7f' }
+                            marker: {
+                                color: '#ff7f7f', // Светло-красный для Puts ITM
+                            },
                         },
                         {
                             x: expirationDates,
                             y: callsOtm,
                             type: 'bar',
                             name: 'Calls OTM',
-                            marker: { color: '#00cc96' }
+                            marker: {
+                                color: '#00cc96', // Зелёный для Calls OTM
+                            },
                         },
                         {
                             x: expirationDates,
                             y: callsItm,
                             type: 'bar',
                             name: 'Calls ITM',
-                            marker: { color: '#66ff99' }
+                            marker: {
+                                color: '#66ff99', // Светло-зелёный для Calls ITM
+                            },
                         },
                     ]}
                     layout={{
                         autosize: true,
-                        xaxis: { title: 'Expiration Date' },
+                        xaxis: {
+                            title: 'Expiration Date',
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF', // Белый цвет подписей оси X
+                            },
+                        },
                         yaxis: {
                             title: 'Volume',
                             side: 'left',
-                            showgrid: true,
-                            zeroline: false // Убираем нулевую линию
+                            tickfont: {
+                                size: 12,
+                                color: '#FFFFFF', // Белый цвет подписей оси Y
+                            },
+                            showgrid: true, // Включаем сетку
+                            gridcolor: '#393E47', // Цвет сетки
+                            zeroline: false, // Убираем нулевую линию
                         },
                         barmode: 'group', // Группируем столбцы
-                        showlegend: true,
-                        margin: { l: 50, r: 50, b: 50, t: 30 },
+                        legend: {
+                            x: 0.01,
+                            y: 1.1,
+                            orientation: 'h', // Горизонтальная легенда
+                            font: {
+                                size: 12,
+                                color: '#FFFFFF', // Цвет текста в легенде
+                            },
+                        },
+                        margin: {
+                            l: 50,
+                            r: 50,
+                            b: 50,
+                            t: 30,
+                        },
+                        paper_bgcolor: '#151518', // Тёмный фон графика
+                        plot_bgcolor: '#151518', // Тёмный фон области построения
                     }}
                     useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                 />
             </div>
             <div className="chart-description">
@@ -130,6 +184,8 @@ const VolumeByExpirationChart = () => {
                 <p>The amount of option contracts traded in the last 24h sorted by expiration date.</p>
             </div>
         </div>
+        </div>
+
     );
 };
 
