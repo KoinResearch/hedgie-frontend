@@ -42,3 +42,23 @@
     background-color: white; /* Фон становится белым при наведении */
     color: black; /* Текст становится чёрным при наведении */
 }
+
+.sidebar a svg path {
+    stroke: white; /* Иконка белая по умолчанию */
+}
+
+/* Активный элемент */
+.sidebar a.active svg path {
+    stroke: currentColor; /* Иконка меняет цвет на цвет текста, который белый */
+}
+
+/* Элемент при наведении */
+.sidebar a:hover {
+    background-color: white; /* Фон становится белым при наведении */
+    color: black; /* Текст становится чёрным при наведении */
+}
+
+/* Иконка при наведении */
+.sidebar a:hover svg path {
+    stroke: black; /* Иконка становится чёрной при наведении */
+}

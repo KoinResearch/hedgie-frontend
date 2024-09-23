@@ -84,8 +84,6 @@ const OpenInterestByExpirationChart = () => {
                     </div>
                     <div className="asset-option-buttons">
                         <select value={strike} onChange={(e) => setStrike(e.target.value || 'all')}>
-                            <option value="all">All Strikes</option>
-                            {/* Устанавливаем 'all' для всех страйков */}
                             {strikes.map((s) => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
@@ -99,7 +97,7 @@ const OpenInterestByExpirationChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-                <div>
+                <div className="graph">
                     <Plot
                         data={[
                             {
@@ -234,11 +232,6 @@ const OpenInterestByExpirationChart = () => {
                         useResizeHandler={true}
                         style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                     />
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The amount of option contracts and their dollar equivalent held in active positions sorted by
-                    expiration date.</p>
             </div>
         </div>
         </div>

@@ -103,7 +103,7 @@ const OpenInterestByStrikeChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-            <div>
+            <div className="graph">
                 <Plot
                     data={[
                         {
@@ -220,12 +220,6 @@ const OpenInterestByStrikeChart = () => {
                 <p>Total: {(totalPuts + totalCalls).toFixed(2)} (Notional: ${totalNotional.toFixed(2)}, Market:
                     ${(totalNotional * 1).toFixed(2)})</p>
                 <p>Put/Call Ratio: {putCallRatio.toFixed(2)}</p>
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The amount of option contracts and their dollar equivalent held in active positions sorted by strike
-                    price. The max pain price represents the strike price where most options will expire worthless. More
-                    info on this can be found.</p>
             </div>
         </div>
 </div>

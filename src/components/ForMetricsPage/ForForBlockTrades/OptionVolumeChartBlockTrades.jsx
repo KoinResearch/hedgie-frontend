@@ -55,6 +55,7 @@ const OptionVolumeChartBlockTrades = () => {
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
+            <div className="graph">
             <Plot
                 data={[
                     {
@@ -117,6 +118,7 @@ const OptionVolumeChartBlockTrades = () => {
                 useResizeHandler={true}
                 style={{width: '100%', height: '100%'}}
             />
+                </div>
         </div>
     );
 };

@@ -25,7 +25,7 @@ const BTCETHOptionFlow = () => {
         fetchMetrics();
     }, [asset]);
 
-    const assetSymbol = asset === 'BTC' ? '₿' : 'Ξ';
+    const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
 
     return (
         <div className="flow-option-container">
@@ -58,14 +58,14 @@ const BTCETHOptionFlow = () => {
                 <div className="metrics-option call-metrics">
                     <div className="metric-option call-buys">
                         <p className="metric-option-label">Call Buys</p>
-                        <p className="metric-option-value">{assetSymbol}{metrics.Call_Buys}</p>
+                        <p className="metric-option-value">{assetSymbol} {metrics.Call_Buys}</p>
                     </div>
                     <div className="metric-option call-sells">
                         <p className="metric-option-label">Call Sells</p>
-                        <p className="metric-option-value">{assetSymbol}{metrics.Call_Sells}</p>
+                        <p className="metric-option-value">{assetSymbol} {metrics.Call_Sells}</p>
                     </div>
                 </div>
-                <div className="chart-option">
+                <div className="graph">
                     <Plot
                         data={[
                             {
@@ -107,11 +107,11 @@ const BTCETHOptionFlow = () => {
                 <div className="metrics-option put-metrics">
                     <div className="metric-option put-buys">
                         <p className="metric-option-label">Put Buys</p>
-                        <p className="metric-option-value">{assetSymbol}{metrics.Put_Buys}</p>
+                        <p className="metric-option-value">{assetSymbol} {metrics.Put_Buys}</p>
                     </div>
                     <div className="metric-option put-sells">
                         <p className="metric-option-label">Put Sells</p>
-                        <p className="metric-option-value">{assetSymbol}{metrics.Put_Sells}</p>
+                        <p className="metric-option-value">{assetSymbol} {metrics.Put_Sells}</p>
                     </div>
                 </div>
             </div>

@@ -99,7 +99,7 @@ const StrikeActivityChartBlockTrades = () => {
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
-            <div> {/* Контейнер для графика */}
+            <div className="graph"> {/* Контейнер для графика */}
                 <Plot
                     data={[
                         {

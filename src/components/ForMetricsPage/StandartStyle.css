@@ -10,15 +10,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 /* Верхний блок с заголовком и переключателем */
 .flow-option-header-container {
     display: flex;
-    justify-content: space-between; /* Распределение между заголовком и переключателем */
+    justify-content: space-between; /* Распределение заголовка и переключателя */
     align-items: center; /* Выравнивание по вертикали */
     padding-top: 7px;
+    width: 100%; /* Ширина контейнера по всей странице */
+}
+
+.graph{
+    /*padding-bottom: 40px;*/
 }
 
 /* Стили для заголовка */
@@ -29,20 +33,25 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-grow: 1; /* Занимает оставшееся пространство */
 }
 
-/* Контейнер для выпадающего списка */
+/* Контейнер для двух выпадающих списков */
 .asset-option-buttons {
     position: relative;
     width: 160px;
     height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 20px;
 }
 
 /* Стили для выпадающего списка */
 .asset-option-buttons select {
     width: 100%;
     height: 100%;
-    padding: 0 36px 0 15px;
+    padding: 0 36px 0 15px; /* Увеличьте правый padding для места под стрелку */
     background-color: #151518;
     color: #9CA3AF;
     border: 1px solid #393E47;
@@ -57,8 +66,8 @@
 /* Стили для стрелки */
 .custom-arrow {
     position: absolute;
+    right: 12px; /* Расположим стрелку справа */
     top: 50%;
-    right: 12px;
     transform: translateY(-50%);
     pointer-events: none;
 }
@@ -73,7 +82,6 @@
     stroke-linejoin: round;
 }
 
-/* Разделительная линия под заголовком и переключателем */
 /* Разделительная линия под заголовком и переключателем */
 .flow-option-dedicated {
     width: 1042px; /* Установите ширину разделителя на половину контейнера */

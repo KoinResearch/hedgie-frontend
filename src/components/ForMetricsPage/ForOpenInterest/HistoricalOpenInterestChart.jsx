@@ -71,7 +71,7 @@ const HistoricalOpenInterestChart = () => {
     </span>
                     </div>
                     <div className="asset-option-buttons">
-                        <select onChange={e => setPeriod(e.target.value)} value={period} className="chart-select">
+                        <select onChange={e => setPeriod(e.target.value)} value={period}>
                             <option value="1d">1d</option>
                             <option value="7d">7d</option>
                             <option value="1m">1m</option>
@@ -86,7 +86,7 @@ const HistoricalOpenInterestChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-                <div>
+                <div className="graph">
                     <Plot
                         data={[
                             {
@@ -165,10 +165,6 @@ const HistoricalOpenInterestChart = () => {
                         useResizeHandler={true}
                         style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                     />
-                </div>
-                <div className="chart-description">
-                    <h3>Description</h3>
-                    <p>The amount of option contracts in active positions over time.</p>
                 </div>
             </div>
         </div>

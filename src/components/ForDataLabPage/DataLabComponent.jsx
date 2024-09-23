@@ -88,6 +88,8 @@ const DataLabComponent = () => {
                             <option value="3d">3 Days</option>
                             <option value="4d">4 Days</option>
                             <option value="5d">5 Days</option>
+                            <option value="6d">6 Days</option>
+                            <option value="7d">7 Days</option>
                             <option value="10d">10 Days</option>
                             <option value="1m">1 Month</option>
                             <option value="1y">1 Year</option>

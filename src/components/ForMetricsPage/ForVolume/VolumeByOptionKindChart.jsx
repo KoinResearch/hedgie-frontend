@@ -89,7 +89,7 @@ const VolumeByOptionKindChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-                <div> {/* Контейнер для графика */}
+                <div className="graph"> {/* Контейнер для графика */}
                     <Plot
                         data={[
                             {
@@ -138,10 +138,6 @@ const VolumeByOptionKindChart = () => {
                         useResizeHandler={true} // Адаптация к изменениям размера контейнера
                         style={{width: '100%', height: '100%'}} // График будет занимать весь контейнер
                     />
-                </div>
-                <div className="chart-description"> {/* Блок для описания */}
-                    <h3>Description</h3>
-                    <p>The amount of option contracts held in active positions by type.</p>
                 </div>
             </div>
         </div>

@@ -96,7 +96,7 @@ const VolumeByExpirationChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-            <div className="plot-container">
+            <div className="graph">
                 <Plot
                     data={[
                         {
@@ -178,10 +178,6 @@ const VolumeByExpirationChart = () => {
                     useResizeHandler={true}
                     style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                 />
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The amount of option contracts traded in the last 24h sorted by expiration date.</p>
             </div>
         </div>
         </div>

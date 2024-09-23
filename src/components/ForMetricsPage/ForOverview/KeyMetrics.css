@@ -114,3 +114,14 @@ p.metric-value {
     font-family: 'JetBrains Mono', monospace; /* Применяем шрифт JetBrains Mono */
     margin-top: auto; /* Значение перемещается вниз */
 }
+
+.metric-label-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #162C49;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+
+}

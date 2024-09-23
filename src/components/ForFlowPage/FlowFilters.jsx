@@ -213,7 +213,7 @@ const FlowFilters = () => {
             </div>
 
             <div className="flow-table">
-            <table>
+                <table>
                     <thead>
                     <tr>
                         <th>Market</th>
@@ -229,15 +229,25 @@ const FlowFilters = () => {
                     {(showAll ? trades : limitedTrades).map((trade, index) => (
                         <tr key={index}>
                             <td>{asset}</td>
-                            <td>{trade.direction.toUpperCase()}</td>
-                            <td>{trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}</td>
-                            <td>{trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}</td>
+                            {/* Столбец "Side" с цветовой логикой */}
+                            <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
+                                {trade.direction.toUpperCase()}
+                            </td>
+                            {/* Столбец "Type" с цветовой логикой */}
+                            <td style={{color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548'}}>
+                                {trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}
+                            </td>
+                            {/* Столбец "Expiry" с цветовой логикой */}
+                            <td style={{color: '#4B88E1'}}>
+                                {trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}
+                            </td>
                             <td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>
                             <td>{trade.amount}</td>
                             <td>{trade.price}</td>
                         </tr>
                     ))}
                     </tbody>
+
                 </table>
                 {!showAll && (
                     <div className="show-all-container">

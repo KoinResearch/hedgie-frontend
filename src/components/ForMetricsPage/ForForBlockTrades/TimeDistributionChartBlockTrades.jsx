@@ -81,7 +81,7 @@ const TimeDistributionChartBlockTrades = () => {
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
-            <div>
+            <div className="graph">
                 <Plot
                     data={[
                         {

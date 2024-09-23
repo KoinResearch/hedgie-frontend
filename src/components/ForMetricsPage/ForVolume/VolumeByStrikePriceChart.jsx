@@ -97,7 +97,7 @@ const VolumeByStrikePriceChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-            <div>
+            <div className="graph">
                 <Plot
                     data={[
                         {
@@ -164,10 +164,6 @@ const VolumeByStrikePriceChart = () => {
                 <p>Puts: {totalPuts.toFixed(2)}</p>
                 <p>Total: {(totalPuts + totalCalls).toFixed(2)}</p>
                 <p>Put/Call Ratio: {putCallRatio.toFixed(2)}</p>
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The amount of option contracts traded in the last 24h sorted by strike price.</p>
             </div>
         </div>
         </div>

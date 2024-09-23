@@ -91,7 +91,7 @@ const BTCETHBlockTrades = () => {
                         <p className="metric-option-value">{assetSymbol}{metrics.Call_Sells}</p>
                     </div>
                 </div>
-                <div className="chart-option">
+                <div className="graph">
                     <Plot
                         data={[
                             {

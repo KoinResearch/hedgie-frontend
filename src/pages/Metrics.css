@@ -16,6 +16,8 @@
     margin-left: 250px; /* This margin should match the width of the sidebar */
     width: calc(100% - 250px); /* Ensure the content takes the rest of the space */
     padding: 20px;
+    overflow: auto; /* Включаем прокрутку */
+
 }
 
 .divider {

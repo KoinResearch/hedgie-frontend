@@ -99,7 +99,7 @@ const DeltaAdjustedOpenInterestChart = () => {
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-            <div>
+            <div className="graph">
                 <Plot
                     data={[
                         {
@@ -163,12 +163,6 @@ const DeltaAdjustedOpenInterestChart = () => {
                     useResizeHandler={true}
                     style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
                 />
-            </div>
-            <div className="chart-description">
-                <h3>Description</h3>
-                <p>The amount of option contracts in active positions multiplied by their delta value. Delta-adjusted
-                    open interest can tell us the amount of the underlying asset option writers need to buy or sell in
-                    order to remain delta neutral.</p>
             </div>
         </div>
         </div>

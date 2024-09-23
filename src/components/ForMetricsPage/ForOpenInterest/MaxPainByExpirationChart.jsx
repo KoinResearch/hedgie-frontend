@@ -74,7 +74,7 @@ const MaxPainByExpirationChart = () => {
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
-            <div className="max-pain-graph">
+            <div className="graph">
                 <Plot
                     data={[
                         {
