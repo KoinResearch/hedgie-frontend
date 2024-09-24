@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Plot from 'react-plotly.js';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import * as echarts from 'echarts';
 import './VolumeByOptionKindChart.css'; // Импортируем CSS-файл для стилей
 
 const VolumeByOptionKindChart = () => {
@@ -10,6 +10,7 @@ const VolumeByOptionKindChart = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]); // Для хранения доступных дат экспирации
+    const chartRef = useRef(null); // Ref для диаграммы ECharts
 
     // Fetch available expirations when the asset changes
     useEffect(() => {
@@ -24,19 +25,18 @@ const VolumeByOptionKindChart = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Fetch volume data
+    // Fetch open interest data
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Используем "all" вместо "All Expirations" для запроса на сервер
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                console.log(`Fetching volume data for ${asset} with expiration ${expirationParam}`);
+                console.log(`Fetching open interest data for ${asset} with expiration ${expirationParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest/${asset.toLowerCase()}/${expirationParam}`);
-                console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching volume data:', err);
+                console.error('Error fetching open interest data:', err);
                 setError(err.message);
                 setLoading(false);
             }
@@ -44,6 +44,72 @@ const VolumeByOptionKindChart = () => {
 
         fetchData();
     }, [asset, expiration]);
+
+    useEffect(() => {
+        if (!loading && chartRef.current) {
+            const chartInstance = echarts.init(chartRef.current);
+
+            const option = {
+                backgroundColor: '#151518',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    textStyle: { color: '#000' },
+                },
+                xAxis: {
+                    type: 'value',
+                    name: 'Number of Contracts',
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: { color: '#7E838D' },
+                    splitLine: { lineStyle: { color: '#393E47' } },
+                },
+                yAxis: {
+                    type: 'category',
+                    data: ['Calls', 'Puts'],
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: { color: '#7E838D' },
+                },
+                series: [
+                    {
+                        name: 'Open Interest',
+                        type: 'bar',
+                        data: [data.Calls, data.Puts],
+                        itemStyle: {
+                            color: function (params) {
+                                return params.dataIndex === 0 ? '#00cc96' : '#ff3e3e'; // Зеленый для Calls, Красный для Puts
+                            },
+                            borderColor: function (params) {
+                                return params.dataIndex === 0 ? '#00b383' : '#e60000'; // Цвет границ
+                            },
+                            borderWidth: 2,
+                        },
+                        barWidth: '40%',
+                    },
+                ],
+                grid: {
+                    left: '10%',
+                    right: '10%',
+                    bottom: '10%',
+                    top: '10%',
+                    containLabel: true,
+                },
+            };
+
+            chartInstance.setOption(option);
+
+            const handleResize = () => {
+                chartInstance.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                chartInstance.dispose();
+            };
+        }
+    }, [data, loading]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -58,19 +124,13 @@ const VolumeByOptionKindChart = () => {
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>
-                        Volume By Option Kind
+                        🦾 Open Interest By Option Kind
                     </h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
@@ -80,68 +140,18 @@ const VolumeByOptionKindChart = () => {
                                 </option>
                             ))}
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-                <div className="graph"> {/* Контейнер для графика */}
-                    <Plot
-                        data={[
-                            {
-                                x: [data.Calls, data.Puts], // Значения для Calls и Puts
-                                y: ['Calls', 'Puts'], // Метки для оси Y
-                                type: 'bar',
-                                orientation: 'h', // Горизонтальная ориентация столбцов
-                                marker: {
-                                    color: ['#00cc96', '#ff3e3e'], // Зеленый для Calls, Красный для Puts
-                                    line: {
-                                        width: 2,
-                                        color: ['#00b383', '#e60000'], // Цвет границ столбцов
-                                    },
-                                },
-                                name: 'Open Interest',
-                            },
-                        ]}
-                        layout={{
-                            autosize: true, // Автоматическое изменение размера
-                            xaxis: {
-                                title: 'Number of Contracts',
-                                showgrid: false, // Убираем сетку
-                                zeroline: false, // Убираем ось нуля
-                                tickfont: {
-                                    size: 12,
-                                    color: '#FFFFFF', // Белый цвет текста
-                                },
-                            },
-                            yaxis: {
-                                title: '',
-                                tickfont: {
-                                    size: 14,
-                                    color: '#FFFFFF', // Белый цвет меток на оси Y
-                                },
-                            },
-                            margin: {
-                                l: 100,
-                                r: 50,
-                                b: 50,
-                                t: 50, // Отступы
-                            },
-                            paper_bgcolor: '#151518', // Тёмный фон
-                            plot_bgcolor: '#151518', // Тёмный фон для графика
-                            showlegend: false, // Убираем легенду
-                        }}
-                        useResizeHandler={true} // Адаптация к изменениям размера контейнера
-                        style={{width: '100%', height: '100%'}} // График будет занимать весь контейнер
-                    />
-                </div>
+            </div>
+            <div className="graph">
+                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
             </div>
         </div>
     );
 };
 
 export default VolumeByOptionKindChart;
+
+
+

@@ -65,9 +65,11 @@ const KeyMetricsBlockTrades = () => {
                             <div className="metric-label-image">🤑</div>
                             Average Price
                         </p>
-                        <p className="metric-value">{metrics.avg_price.toFixed(2)} $</p>
+                        <p className="metric-value">{Number(metrics.avg_price).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })} $</p>
                     </div>
-
                 </div>
                 <div className="metric-key-block">
                     <div className="icon-container">
@@ -78,7 +80,10 @@ const KeyMetricsBlockTrades = () => {
                             <div className="metric-label-image">📊</div>
                             Total Volume
                         </p>
-                        <p className="metric-value">{metrics.total_nominal_volume.toFixed(2)}</p> {/* Исправлено */}
+                        <p className="metric-value">{Number(metrics.total_nominal_volume).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}</p>
                     </div>
                 </div>
                 <div className="metric-key-block">
@@ -90,7 +95,10 @@ const KeyMetricsBlockTrades = () => {
                             <div className="metric-label-image">📈</div>
                             Total Premium
                         </p>
-                        <p className="metric-value">{metrics.total_premium.toFixed(2)} $</p>
+                        <p className="metric-value">{Number(metrics.total_premium).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })} $</p>
                     </div>
                 </div>
             </div>

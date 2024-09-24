@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Plot from 'react-plotly.js';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import './OpenInterestByStrikeChart.css';
+import * as echarts from 'echarts';
+import './OpenInterestByStrikeChart.css'; // Подключение CSS
 
 const OpenInterestByStrikeChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -10,6 +10,7 @@ const OpenInterestByStrikeChart = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
+    const chartRef = useRef(null); // Ref для ECharts
 
     useEffect(() => {
         const fetchExpirations = async () => {
@@ -26,10 +27,10 @@ const OpenInterestByStrikeChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Ensure the correct expiration parameter is passed to the API.
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
                 console.log(`Fetching open interest data for ${asset} with expiration ${expirationParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
-                console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
@@ -42,6 +43,132 @@ const OpenInterestByStrikeChart = () => {
         fetchData();
     }, [asset, expiration]);
 
+    useEffect(() => {
+        if (!loading && chartRef.current && data.length > 0) {
+            const chartInstance = echarts.init(chartRef.current);
+
+            const strikePrices = data.map(d => d.strike);
+            const puts = data.map(d => d.puts);
+            const calls = data.map(d => d.calls);
+            const putsMarketValue = data.map(d => d.puts_market_value);
+            const callsMarketValue = data.map(d => d.calls_market_value);
+
+            // Safely calculate totals only if data is available
+            const totalPuts = puts.length ? puts.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0;
+            const totalCalls = calls.length ? calls.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0;
+            const totalNotional = (putsMarketValue.length ? putsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0)
+                + (callsMarketValue.length ? callsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0);
+            const putCallRatio = totalCalls !== 0 ? (totalPuts / totalCalls) : 0;
+
+            const option = {
+                backgroundColor: '#151518',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
+                            color: '#000000', // Черный текст в метке
+                        },
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    textStyle: {
+                        color: '#000000', // Черный текст в тултипе
+                    },
+                },
+                legend: {
+                    data: ['Puts', 'Calls', 'Puts Market Value [$]', 'Calls Market Value [$]'],
+                    textStyle: { color: '#B8B8B8' },
+                    top: 10,
+                },
+                xAxis: {
+                    type: 'category',
+                    data: strikePrices,
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: {
+                        color: '#7E838D',
+                        rotate: 45, // Поворот меток для читаемости
+                    },
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: 'Contracts',
+                        axisLine: { lineStyle: { color: '#A9A9A9' } },
+                        axisLabel: { color: '#7E838D' },
+                        splitLine: { lineStyle: { color: '#393E47' } },
+                    },
+                    {
+                        type: 'value',
+                        name: 'Market Value [$]',
+                        axisLine: { lineStyle: { color: '#A9A9A9' } },
+                        axisLabel: { color: '#7E838D' },
+                        position: 'right',
+                        splitLine: { lineStyle: { color: '#393E47' } },
+                    },
+                ],
+                series: [
+                    {
+                        name: 'Puts',
+                        type: 'bar',
+                        data: puts,
+                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts
+                        barWidth: '30%',
+                    },
+                    {
+                        name: 'Calls',
+                        type: 'bar',
+                        data: calls,
+                        itemStyle: { color: '#00cc96' }, // Зелёный для Calls
+                        barWidth: '30%',
+                    },
+                    {
+                        name: 'Puts Market Value [$]',
+                        type: 'line',
+                        data: putsMarketValue,
+                        yAxisIndex: 1,
+                        lineStyle: {
+                            color: '#ff3e3e',
+                            type: 'dotted',
+                            width: 2,
+                        },
+                    },
+                    {
+                        name: 'Calls Market Value [$]',
+                        type: 'line',
+                        data: callsMarketValue,
+                        yAxisIndex: 1,
+                        lineStyle: {
+                            color: '#00cc96',
+                            type: 'dotted',
+                            width: 2,
+                        },
+                    },
+                ],
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '10%',
+                    top: '15%',
+                    containLabel: true,
+                },
+            };
+
+            chartInstance.setOption(option);
+
+            const handleResize = () => {
+                chartInstance.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                chartInstance.dispose();
+            };
+        }
+    }, [data, loading]);
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -50,41 +177,22 @@ const OpenInterestByStrikeChart = () => {
         return <div>Error: {error}</div>;
     }
 
-    const strikePrices = data.map(d => d.strike);
-    const puts = data.map(d => d.puts);
-    const calls = data.map(d => d.calls);
-    const putsMarketValue = data.map(d => d.puts_market_value);
-    const callsMarketValue = data.map(d => d.calls_market_value);
-
-    const totalPuts = puts.reduce((a, b) => a + (parseFloat(b) || 0), 0);
-    const totalCalls = calls.reduce((a, b) => a + (parseFloat(b) || 0), 0);
-    const totalNotional = putsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) + callsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0);
-    const putCallRatio = totalCalls !== 0 ? (totalPuts / totalCalls) : 0;
-
-    // Определяем минимальные и максимальные значения для осей Y
-    const minYValue = Math.min(...puts, ...calls, 0);
-    const maxYValue = Math.max(...puts, ...calls);
-    const minY2Value = Math.min(...putsMarketValue, ...callsMarketValue, 0);
-    const maxY2Value = Math.max(...putsMarketValue, ...callsMarketValue);
+    if (data.length === 0) {
+        return <div>No data available</div>;
+    }
 
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>
-                        Open Interest By Strike Price
+                        😬 Open Interest By Strike Price
                     </h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
@@ -94,137 +202,15 @@ const OpenInterestByStrikeChart = () => {
                                 </option>
                             ))}
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-            <div className="graph">
-                <Plot
-                    data={[
-                        {
-                            x: strikePrices,
-                            y: puts,
-                            type: 'bar',
-                            name: 'Puts',
-                            marker: {
-                                color: '#ff3e3e', // Красный для Puts
-                            },
-                        },
-                        {
-                            x: strikePrices,
-                            y: calls,
-                            type: 'bar',
-                            name: 'Calls',
-                            marker: {
-                                color: '#00cc96', // Зеленый для Calls
-                            },
-                        },
-                        {
-                            x: strikePrices,
-                            y: putsMarketValue,
-                            type: 'scatter',
-                            mode: 'lines',
-                            name: 'Puts Market Value [$]',
-                            line: {
-                                color: '#ff3e3e', // Красный для линии Puts
-                                dash: 'dot',
-                                width: 2,
-                            },
-                            yaxis: 'y2',
-                        },
-                        {
-                            x: strikePrices,
-                            y: callsMarketValue,
-                            type: 'scatter',
-                            mode: 'lines',
-                            name: 'Calls Market Value [$]',
-                            line: {
-                                color: '#00cc96', // Зеленый для линии Calls
-                                dash: 'dot',
-                                width: 2,
-                            },
-                            yaxis: 'y2',
-                        },
-                    ]}
-                    layout={{
-                        autosize: true,
-                        xaxis: {
-                            title: 'Strike Price',
-                            automargin: true,
-                            tickangle: -45, // Наклон подписей
-                            tickfont: {
-                                size: 12,
-                                color: '#FFFFFF',
-                            },
-                            range: [10000, 140000], // Диапазон для цен на страйк
-                        },
-                        yaxis: {
-                            title: 'Contracts',
-                            automargin: true,
-                            tickfont: {
-                                size: 12,
-                                color: '#FFFFFF',
-                            },
-                            range: [minYValue, maxYValue], // Диапазон для контрактов
-                            gridcolor: '#393E47',
-                            zeroline: false,
-                        },
-                        yaxis2: {
-                            title: 'Market Value [$]',
-                            overlaying: 'y',
-                            side: 'right',
-                            automargin: true,
-                            tickfont: {
-                                size: 12,
-                                color: '#FFFFFF',
-                            },
-                            range: [minY2Value, maxY2Value], // Диапазон для рыночной стоимости
-                            showgrid: false,
-                            zeroline: false,
-                        },
-                        showlegend: true,
-                        legend: {
-                            x: 0.01,
-                            y: 1.1,
-                            orientation: 'h',
-                            font: {
-                                size: 12,
-                                color: '#FFFFFF',
-                            },
-                        },
-                        margin: {
-                            l: 80,
-                            r: 80, // Увеличенные отступы для правой оси
-                            b: 120,
-                            t: 30,
-                        },
-                        bargap: 0.3, // Промежуток между столбцами
-                        height: 600, // Высота графика
-                        paper_bgcolor: '#151518', // Фон графика
-                        plot_bgcolor: '#151518', // Фон области построения
-                    }}
-                    useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }}
-                />
             </div>
-            <div className="chart-info">
-                <p>Calls: {totalCalls.toFixed(2)} (Notional: ${(totalNotional * 0.67).toFixed(2)}, Market:
-                    ${(totalNotional * 0.33).toFixed(2)})</p>
-                <p>Puts: {totalPuts.toFixed(2)} (Notional: ${(totalNotional * 0.33).toFixed(2)}, Market:
-                    ${(totalNotional * 0.67).toFixed(2)})</p>
-                <p>Total: {(totalPuts + totalCalls).toFixed(2)} (Notional: ${totalNotional.toFixed(2)}, Market:
-                    ${(totalNotional * 1).toFixed(2)})</p>
-                <p>Put/Call Ratio: {putCallRatio.toFixed(2)}</p>
+            <div className="graph">
+                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
             </div>
         </div>
-</div>
-)
-    ;
+    );
 };
 
 export default OpenInterestByStrikeChart;

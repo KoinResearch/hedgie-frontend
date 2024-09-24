@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import Plot from 'react-plotly.js';
+import * as echarts from 'echarts';
 
-// Функция для преобразования строки даты в объект Date
 const convertToISODate = (dateStr) => {
-    const year = `20${dateStr.slice(-2)}`; // Извлекаем последние две цифры года и добавляем "20" для полного года
-    const monthStr = dateStr.slice(-5, -2).toUpperCase(); // Извлекаем три символа месяца
-    let day = dateStr.slice(0, dateStr.length - 5); // Извлекаем оставшиеся символы как день
+    const year = `20${dateStr.slice(-2)}`;
+    const monthStr = dateStr.slice(-5, -2).toUpperCase();
+    let day = dateStr.slice(0, dateStr.length - 5);
 
     const monthMap = {
         JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06',
@@ -16,30 +15,32 @@ const convertToISODate = (dateStr) => {
     const month = monthMap[monthStr];
     if (!month) {
         console.error(`Ошибка: не удалось найти месяц для строки: ${dateStr}`);
-        return null; // Возвращаем null, если месяц не найден
+        return null;
     }
 
-    // Добавляем ведущий ноль для дней, если день состоит из одной цифры
     if (day.length === 1) {
         day = `0${day}`;
     }
 
     const isoDate = `${year}-${month}-${day}`;
-    return new Date(isoDate); // Преобразуем строку в объект Date
+    return new Date(isoDate);
+};
+
+const calculateNotionalValue = (intrinsicValues) => {
+    return Object.values(intrinsicValues).reduce((acc, val) => acc + val, 0);
 };
 
 const MaxPainByExpirationBlockTrades = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [asset, setAsset] = useState('BTC'); // Валюта по умолчанию
+    const [asset, setAsset] = useState('BTC');
+    const chartRef = useRef(null); // Ref для диаграммы ECharts
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/max-pain-data?currency=${asset.toLowerCase()}`);
-
-                // Проверяем, что данные содержат необходимые поля
                 if (response.data && response.data.maxPainByExpiration) {
                     setData(response.data.maxPainByExpiration);
                 } else {
@@ -57,24 +58,144 @@ const MaxPainByExpirationBlockTrades = () => {
         fetchData();
     }, [asset]);
 
+    useEffect(() => {
+        if (data && chartRef.current) {
+            const chartInstance = echarts.init(chartRef.current);
+
+            let expirationDates = Object.keys(data);
+            expirationDates = expirationDates.sort((a, b) => convertToISODate(a) - convertToISODate(b));
+
+            const maxPainValues = expirationDates.map(exp => parseFloat(data[exp].maxPain));
+            const notionalValues = expirationDates.map(exp => calculateNotionalValue(data[exp].intrinsicValues));
+
+            // Конфигурация ECharts
+            const option = {
+                backgroundColor: '#151518',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
+                            color: '#000000', // Черный текст в метке
+                        },
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    textStyle: {
+                        color: '#000000', // Черный текст в тултипе
+                    },
+                },
+                legend: {
+                    data: ['Max Pain Price [$]', 'Notional Value'],
+                    textStyle: { color: '#B8B8B8' },
+                    top: 10,
+                },
+                xAxis: {
+                    type: 'category',
+                    data: expirationDates,
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: {
+                        color: '#7E838D',
+                        rotate: 45, // Поворот меток для читаемости
+                        interval: 0, // Показывать все метки
+                    },
+                    splitLine: { show: false },
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: 'Max Pain Price [$]',
+                        position: 'left',
+                        axisLine: { lineStyle: { color: '#B8B8B8' } },
+                        axisLabel: {
+                            color: '#7E838D',
+                            formatter: value => value.toLocaleString(),
+                        },
+                        splitLine: { lineStyle: { color: '#393E47' } },
+                    },
+                    {
+                        type: 'value',
+                        name: 'Notional Value',
+                        position: 'right',
+                        axisLine: { lineStyle: { color: '#B8B8B8' } },
+                        axisLabel: {
+                            color: '#A9A9A9',
+                            formatter: value => value.toLocaleString(),
+                        },
+                        splitLine: { show: false },
+                    },
+                ],
+                series: [
+                    {
+                        name: 'Max Pain Price [$]',
+                        type: 'line',
+                        data: maxPainValues,
+                        smooth: true,
+                        lineStyle: {
+                            color: '#882A35',
+                            width: 2,
+                        },
+                        itemStyle: {
+                            color: '#882A35',
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(255, 148, 160, 0.9)' },
+                                { offset: 1, color: 'rgba(255, 148, 160, 0)' },
+                            ]),
+                        },
+                        yAxisIndex: 0,
+                    },
+                    {
+                        name: 'Notional Value',
+                        type: 'bar',
+                        data: notionalValues,
+                        barWidth: '30%',
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#889FCD' },
+                                { offset: 1, color: '#445067' },
+                            ]),
+                        },
+                        yAxisIndex: 1,
+                    },
+                ],
+                grid: {
+                    left: '5%',    // Уменьшаем отступы
+                    right: '5%',
+                    bottom: '5%',
+                    top: '10%',
+                    containLabel: true, // Чтобы оси и метки не обрезались
+                },
+            };
+
+            chartInstance.setOption(option);
+
+            // Обработка ресайза
+            const handleResize = () => {
+                chartInstance.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                chartInstance.dispose();
+            };
+        }
+    }, [data]);
+
     if (loading) {
-        return <div>Загрузка...</div>;
+        return <div>Loading...</div>;
     }
 
     if (error) {
-        return <div>Ошибка: {error}</div>;
+        return <div>Error: {error}</div>;
     }
 
     if (!data) {
-        return <div>Нет данных</div>;
+        return <div>No data</div>;
     }
-
-    // Извлекаем и сортируем даты экспирации
-    let expirationDates = Object.keys(data);
-    expirationDates = expirationDates.sort((a, b) => convertToISODate(a) - convertToISODate(b));
-
-    // Извлекаем значения Max Pain
-    const maxPainValues = expirationDates.map(exp => data[exp].maxPain);
 
     return (
         <div className="flow-option-container">
@@ -90,57 +211,16 @@ const MaxPainByExpirationBlockTrades = () => {
                             <option value="ETH">Ethereum</option>
                         </select>
                         <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <Plot
-                    data={[
-                        {
-                            x: expirationDates,
-                            y: maxPainValues,
-                            type: 'scatter',
-                            mode: 'lines+markers',
-                            marker: {color: '#FF4136'}, // Красный цвет линии
-                            line: {shape: 'spline', width: 2} // Сглаживание линии
-                        },
-                    ]}
-                    layout={{
-                        paper_bgcolor: '#151518',
-                        plot_bgcolor: '#151518',
-                        font: {
-                            family: 'Arial, sans-serif',
-                            size: 14,
-                            color: '#FFFFFF'
-                        },
-                        xaxis: {
-                            title: 'Expiration Dates',
-                            gridcolor: '#393E47',
-                            tickfont: {color: '#FFFFFF'},
-                        },
-                        yaxis: {
-                            title: 'Max Pain Price [$]',
-                            gridcolor: '#393E47',
-                            tickfont: {color: '#FFFFFF'},
-                        },
-                        autosize: true,
-                        margin: {
-                            l: 40,
-                            r: 10,
-                            b: 40,
-                            t: 40,
-                            pad: 4
-                        },
-                    }}
-                    useResizeHandler={true}
-                    style={{width: '100%', height: '100%'}}
-                />
+                <div ref={chartRef} style={{width: '100%', height: '490px'}}></div>
             </div>
         </div>
     );

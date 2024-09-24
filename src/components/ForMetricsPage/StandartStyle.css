@@ -1,6 +1,7 @@
 /* Контейнер всего компонента */
 .flow-option-container {
     width: 100%;
+    height: auto; /* Автоматическая высота */
     background-color: #151518;
     border-radius: 12px;
     border: 1px solid #393E47;
@@ -10,7 +11,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
+.flow-option-header-menu{
+    width: 95%;
+}
+
 
 /* Верхний блок с заголовком и переключателем */
 .flow-option-header-container {
@@ -84,11 +90,21 @@
 
 /* Разделительная линия под заголовком и переключателем */
 .flow-option-dedicated {
-    width: 1042px; /* Установите ширину разделителя на половину контейнера */
+    width: 100%; /* Установите ширину на 50% от ширины родительского контейнера */
     background-color: #393E47;
     margin: 10px auto; /* Центрирует линию относительно контейнера */
     border: none;
     border-top: 1px solid #393E47;
 }
+
+.graph {
+    width: 100%; /* Занять всю доступную ширину */
+    height: 500px; /* Установить высоту графика */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
 
 

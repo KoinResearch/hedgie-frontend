@@ -46,19 +46,19 @@
 
 /* Цветовые индикаторы для каждого типа метрик */
 .call-buys .metric-option-label::before {
-    background-color: #28a745; /* Зеленый для Call Buys */
+    background-image: linear-gradient(to right, #9D78F1, #362D4B); /* Зеленый градиент для Call Buys */
 }
 
 .call-sells .metric-option-label::before {
-    background-color: #007bff; /* Синий для Call Sells */
+    background-image: linear-gradient(to right, #0D866C, #5DDC86); /* Зеленый градиент для Call Buys */
 }
 
 .put-buys .metric-option-label::before {
-    background-color: #6f42c1; /* Фиолетовый для Put Buys */
+    background-image: linear-gradient(to right, #7A59C4, #9B21A2); /* Зеленый градиент для Call Buys */
 }
 
 .put-sells .metric-option-label::before {
-    background-color: #dc3545; /* Красный для Put Sells */
+    background-image: linear-gradient(to right, #DE495A, #881C72); /* Зеленый градиент для Call Buys */
 }
 
 .metric-option-value {

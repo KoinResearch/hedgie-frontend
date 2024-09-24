@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Plot from 'react-plotly.js';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import * as echarts from 'echarts';
 import './OpenInterestByStrikeChart.css'; // Подключение CSS
 
 const DeltaAdjustedOpenInterestChart = () => {
@@ -9,7 +9,8 @@ const DeltaAdjustedOpenInterestChart = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [expirations, setExpirations] = useState([]); // Для хранения доступных дат экспирации
+    const [expirations, setExpirations] = useState([]);
+    const chartRef = useRef(null); // Ref для ECharts
 
     // Получение доступных дат экспирации при смене актива
     useEffect(() => {
@@ -28,11 +29,8 @@ const DeltaAdjustedOpenInterestChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Используем "all" вместо "All Expirations" для запроса на сервер
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                console.log(`Fetching delta adjusted open interest data for ${asset} with expiration ${expirationParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/delta-adjusted-open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
-                console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
@@ -45,6 +43,94 @@ const DeltaAdjustedOpenInterestChart = () => {
         fetchData();
     }, [asset, expiration]);
 
+    useEffect(() => {
+        if (data.length > 0 && chartRef.current) {
+            const chartInstance = echarts.init(chartRef.current);
+
+            // Преобразование данных для отображения
+            const strikePrices = data.map(d => d.strike);
+            const deltaAdjustedPuts = data.map(d => -Math.abs(d.puts_delta_adjusted)); // Отрицательные значения для Puts
+            const deltaAdjustedCalls = data.map(d => Math.abs(d.calls_delta_adjusted)); // Положительные значения для Calls
+
+            const option = {
+                backgroundColor: '#151518',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: function (params) {
+                        const tooltipDate = params[0].axisValue;
+                        let result = `<b>${tooltipDate}</b><br/>`;
+                        params.forEach((item) => {
+                            result += `<span style="color:${item.color};">●</span> ${item.seriesName}: ${item.value}<br/>`;
+                        });
+                        return result;
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    textStyle: { color: '#000' },
+                },
+                legend: {
+                    data: ['Puts', 'Calls'],
+                    textStyle: { color: '#FFFFFF' },
+                    top: 10,
+                },
+                xAxis: {
+                    type: 'category',
+                    data: strikePrices,
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: {
+                        color: '#7E838D',
+                        rotate: 45, // Поворот для читаемости
+                    },
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Delta Adjusted Open Interest',
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: { color: '#7E838D' },
+                    splitLine: { lineStyle: { color: '#393E47' } },
+                },
+                series: [
+                    {
+                        name: 'Puts',
+                        type: 'bar',
+                        data: deltaAdjustedPuts,
+                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts
+                        barWidth: '30%',
+                    },
+                    {
+                        name: 'Calls',
+                        type: 'bar',
+                        data: deltaAdjustedCalls,
+                        itemStyle: { color: '#00cc96' }, // Зеленый для Calls
+                        barWidth: '30%',
+                    }
+                ],
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '10%',
+                    top: '15%',
+                    containLabel: true,
+                },
+            };
+
+            chartInstance.setOption(option);
+
+            const handleResize = () => {
+                chartInstance.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                chartInstance.dispose();
+            };
+        }
+    }, [data]);
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -53,118 +139,35 @@ const DeltaAdjustedOpenInterestChart = () => {
         return <div>Error: {error}</div>;
     }
 
-    // Преобразование данных для отображения
-    const strikePrices = data.map(d => d.strike);
-    const deltaAdjustedPuts = data.map(d => -Math.abs(d.puts_delta_adjusted)); // Отрицательные значения для Puts
-    const deltaAdjustedCalls = data.map(d => Math.abs(d.calls_delta_adjusted)); // Положительные значения для Calls
-
-    // Определение начального диапазона для 'All Expirations'
-    const defaultXRange = expiration === 'All Expirations' && strikePrices.length > 0
-        ? [Math.min(...strikePrices), Math.min(...strikePrices) + (Math.max(...strikePrices) - Math.min(...strikePrices)) * 0.2]
-        : null;
+    if (data.length === 0) {
+        return <div>No data available</div>;
+    }
 
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        Delta Adjusted Open Interest By Strike
-                    </h2>
+                    <h2>👻 Delta Adjusted Open Interest By Strike</h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                     <div className="asset-option-buttons">
-                        <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
-                            {expirations.map(exp => (
+                        <select value={expiration} onChange={(e) => setExpiration(e.target.value)}>
+                            {expirations.map((exp) => (
                                 <option key={exp} value={exp}>
                                     {exp}
                                 </option>
                             ))}
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                 </div>
-                <div className="flow-option-dedicated"></div>
-            <div className="graph">
-                <Plot
-                    data={[
-                        {
-                            x: strikePrices,
-                            y: deltaAdjustedPuts,
-                            type: 'bar',
-                            name: 'Puts',
-                            marker: {
-                                color: '#ff3e3e', // Красный для Puts
-                            },
-                        },
-                        {
-                            x: strikePrices,
-                            y: deltaAdjustedCalls,
-                            type: 'bar',
-                            name: 'Calls',
-                            marker: {
-                                color: '#00cc96', // Зеленый для Calls
-                            },
-                        },
-                    ]}
-                    layout={{
-                        autosize: true,
-                        xaxis: {
-                            title: 'Strike Price',
-                            range: defaultXRange, // Начальный диапазон для оси X
-                            tickfont: {
-                                size: 12,
-                                color: '#FFFFFF', // Белый цвет подписей
-                            },
-                        },
-                        yaxis: {
-                            title: 'Delta Adjusted Open Interest',
-                            tickfont: {
-                                size: 12,
-                                color: '#FFFFFF', // Белый цвет подписей
-                            },
-                            gridcolor: '#393E47',
-                            zeroline: false, // Убираем нулевую линию
-                        },
-                        legend: {
-                            x: 0.01,
-                            y: 1.1,
-                            orientation: 'h', // Горизонтальная легенда
-                            font: {
-                                size: 12,
-                                color: '#FFFFFF',
-                            },
-                        },
-                        margin: {
-                            l: 50,
-                            r: 50,
-                            b: 50,
-                            t: 30,
-                        },
-                        bargap: 0.3, // Промежуток между столбцами
-                        height: 600, // Высота графика
-                        paper_bgcolor: '#151518', // Фон графика
-                        plot_bgcolor: '#151518', // Фон области построения
-                    }}
-                    useResizeHandler={true}
-                    style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
-                />
             </div>
-        </div>
+            <div className="graph">
+                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+            </div>
         </div>
     );
 };

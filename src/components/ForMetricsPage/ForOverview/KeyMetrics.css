@@ -4,6 +4,23 @@
     box-sizing: border-box;
 }
 
+.metric-key-block {
+    flex: 1 1 calc(33% - 20px); /* Три элемента в ряду, с учётом отступов */
+    /*max-width: 343px; !* Ограничение ширины контейнера *!*/
+    width: 100%;
+    background: #151518;
+    padding-left: 20px; /* Добавляем внутренний отступ */
+    border-radius: 12px; /* Закругленные углы */
+    border: 1px solid #393E47; /* Цвет границы */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Тень */
+    display: flex;
+    flex-direction: column; /* Выровняем элементы по вертикали */
+    align-items: flex-start; /* Выровняем элементы по левому краю */
+    justify-content: space-between; /* Распределим место сверху и снизу */
+    color: white; /* Цвет текста */
+    height: 164px; /* Высота для метрик */
+}
+
 /* Контейнер для выпадающего списка и кнопок */
 .asset-key-buttons {
     position: relative;
@@ -64,24 +81,6 @@
     gap: 20px; /* Расстояние между элементами */
     overflow-x: auto; /* Позволяем прокрутку по горизонтали на маленьких экранах */
 }
-
-/* Контейнеры для метрик */
-.metric-key-block {
-    flex: 1 1 calc(33% - 20px); /* Три элемента в ряду, с учётом отступов */
-    max-width: 343px; /* Ограничение ширины контейнера */
-    background: #151518;
-    padding-left: 20px; /* Добавляем внутренний отступ */
-    border-radius: 12px; /* Закругленные углы */
-    border: 1px solid #393E47; /* Цвет границы */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Тень */
-    display: flex;
-    flex-direction: column; /* Выровняем элементы по вертикали */
-    align-items: flex-start; /* Выровняем элементы по левому краю */
-    justify-content: space-between; /* Распределим место сверху и снизу */
-    color: white; /* Цвет текста */
-    height: 164px; /* Высота для метрик */
-}
-
 /* Контейнер для иконки */
 .icon-container {
     font-size: 3rem;

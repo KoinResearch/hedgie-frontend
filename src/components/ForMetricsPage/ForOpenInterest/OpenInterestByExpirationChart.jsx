@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Plot from 'react-plotly.js';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import * as echarts from 'echarts';
 import './OpenInterestByExpirationChart.css'; // Подключение CSS
 
 const OpenInterestByExpirationChart = () => {
@@ -10,6 +10,7 @@ const OpenInterestByExpirationChart = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [strikes, setStrikes] = useState([]); // Для хранения доступных страйков
+    const chartRef = useRef(null); // Ref для диаграммы ECharts
 
     // Получение доступных страйков при смене актива
     useEffect(() => {
@@ -32,7 +33,6 @@ const OpenInterestByExpirationChart = () => {
                 const strikeParam = strike === 'All Strikes' ? 'all' : strike;
                 console.log(`Fetching open interest data for ${asset} with strike ${strikeParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
-                console.log('Fetched raw data:', response.data);
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
@@ -45,6 +45,144 @@ const OpenInterestByExpirationChart = () => {
         fetchData();
     }, [asset, strike]);
 
+    useEffect(() => {
+        if (data.length > 0 && chartRef.current) {
+            const chartInstance = echarts.init(chartRef.current);
+
+            // Преобразование данных для отображения
+            const expirationDates = data.map(d => d.expiration);
+            const putsOtm = data.map(d => d.puts_otm);
+            const putsItm = data.map(d => d.puts_itm);
+            const callsOtm = data.map(d => d.calls_otm);
+            const callsItm = data.map(d => d.calls_itm);
+            const putsMarketValue = data.map(d => d.puts_market_value);
+            const callsMarketValue = data.map(d => d.calls_market_value);
+            const notionalValue = data.map(d => d.notional_value);
+
+            const option = {
+                backgroundColor: '#151518',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
+                            color: '#000000', // Черный текст в метке
+                        },
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    textStyle: {
+                        color: '#000000', // Черный текст в тултипе
+                    },
+                },
+                legend: {
+                    data: [
+                        'Puts OTM', 'Puts ITM', 'Calls OTM', 'Calls ITM',
+                        'Puts Market Value [$]', 'Calls Market Value [$]', 'Notional Value [$]'
+                    ],
+                    textStyle: { color: '#B8B8B8' },
+                    top: 10,
+                },
+                xAxis: {
+                    type: 'category',
+                    data: expirationDates,
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: {
+                        color: '#7E838D',
+                        rotate: 45, // Поворот меток для читаемости
+                        interval: 0, // Показывать все метки
+                    },
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: 'Contracts',
+                        axisLine: { lineStyle: { color: '#A9A9A9' } },
+                        axisLabel: { color: '#7E838D' },
+                        splitLine: { lineStyle: { color: '#393E47' } },
+                    },
+                    {
+                        type: 'value',
+                        name: 'Market Value [$]',
+                        axisLine: { lineStyle: { color: '#A9A9A9' } },
+                        axisLabel: { color: '#7E838D' },
+                        splitLine: { lineStyle: { color: '#151518' } },
+                        position: 'right',
+                    },
+                ],
+                series: [
+                    {
+                        name: 'Puts OTM',
+                        type: 'bar',
+                        data: putsOtm,
+                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts OTM
+                        barWidth: '25%',
+                    },
+                    {
+                        name: 'Calls OTM',
+                        type: 'bar',
+                        data: callsOtm,
+                        itemStyle: { color: '#00cc96' }, // Зелёный для Calls OTM
+                        barWidth: '25%',
+                    },
+                    {
+                        name: 'Puts Market Value [$]',
+                        type: 'line',
+                        data: putsMarketValue,
+                        yAxisIndex: 1, // Привязываем к второй оси
+                        lineStyle: {
+                            color: '#ff3e3e',
+                            type: 'dotted',
+                            width: 2,
+                        },
+                    },
+                    {
+                        name: 'Calls Market Value [$]',
+                        type: 'line',
+                        data: callsMarketValue,
+                        yAxisIndex: 1,
+                        lineStyle: {
+                            color: '#00cc96',
+                            type: 'dotted',
+                            width: 2,
+                        },
+                    },
+                    {
+                        name: 'Notional Value [$]',
+                        type: 'line',
+                        data: notionalValue,
+                        yAxisIndex: 1,
+                        lineStyle: {
+                            color: '#333',
+                            type: 'dashed',
+                            width: 2,
+                        },
+                    },
+                ],
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '10%',
+                    top: '15%',
+                    containLabel: true,
+                },
+            };
+
+            chartInstance.setOption(option);
+
+            const handleResize = () => {
+                chartInstance.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                chartInstance.dispose();
+            };
+        }
+    }, [data]);
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -53,34 +191,22 @@ const OpenInterestByExpirationChart = () => {
         return <div>Error: {error}</div>;
     }
 
-    // Преобразование данных для отображения
-    const expirationDates = data.map(d => d.expiration);
-    const putsOtm = data.map(d => d.puts_otm);
-    const putsItm = data.map(d => d.puts_itm);
-    const callsOtm = data.map(d => d.calls_otm);
-    const callsItm = data.map(d => d.calls_itm);
-    const putsMarketValue = data.map(d => d.puts_market_value);
-    const callsMarketValue = data.map(d => d.calls_market_value);
-    const notionalValue = data.map(d => d.notional_value);
+    if (data.length === 0) {
+        return <div>No data available</div>;
+    }
 
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>
-                        Open Interest By Expiration
+                        🤟 Open Interest By Expiration
                     </h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select value={strike} onChange={(e) => setStrike(e.target.value || 'all')}>
@@ -88,152 +214,13 @@ const OpenInterestByExpirationChart = () => {
                                 <option key={s} value={s}>{s}</option>
                             ))}
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
-                <div className="graph">
-                    <Plot
-                        data={[
-                            {
-                                x: expirationDates,
-                                y: putsOtm,
-                                type: 'bar',
-                                name: 'Puts OTM',
-                                marker: {
-                                    color: '#ff3e3e', // Красный для Puts OTM
-                                },
-                                yaxis: 'y1',
-                            },
-                            {
-                                x: expirationDates,
-                                y: putsItm,
-                                type: 'bar',
-                                name: 'Puts ITM',
-                                marker: {
-                                    color: '#ff7f7f', // Светло-красный для Puts ITM
-                                },
-                                yaxis: 'y1',
-                            },
-                            {
-                                x: expirationDates,
-                                y: callsOtm,
-                                type: 'bar',
-                                name: 'Calls OTM',
-                                marker: {
-                                    color: '#00cc96', // Зелёный для Calls OTM
-                                },
-                                yaxis: 'y1',
-                            },
-                            {
-                                x: expirationDates,
-                                y: callsItm,
-                                type: 'bar',
-                                name: 'Calls ITM',
-                                marker: {
-                                    color: '#66ff99', // Светло-зелёный для Calls ITM
-                                },
-                                yaxis: 'y1',
-                            },
-                            {
-                                x: expirationDates,
-                                y: putsMarketValue,
-                                type: 'scatter',
-                                mode: 'lines',
-                                name: 'Puts Market Value [$]',
-                                line: {
-                                    color: '#ff3e3e', // Красный для рыночной стоимости Puts
-                                    dash: 'dot',
-                                    width: 2,
-                                },
-                                yaxis: 'y2',
-                            },
-                            {
-                                x: expirationDates,
-                                y: callsMarketValue,
-                                type: 'scatter',
-                                mode: 'lines',
-                                name: 'Calls Market Value [$]',
-                                line: {
-                                    color: '#00cc96', // Зелёный для рыночной стоимости Calls
-                                    dash: 'dot',
-                                    width: 2,
-                                },
-                                yaxis: 'y2',
-                            },
-                            {
-                                x: expirationDates,
-                                y: notionalValue,
-                                type: 'scatter',
-                                mode: 'lines',
-                                name: 'Notional Value [$]',
-                                line: {
-                                    color: '#333', // Тёмный для общей рыночной стоимости
-                                    dash: 'dash',
-                                    width: 2,
-                                },
-                                yaxis: 'y2',
-                            },
-                        ]}
-                        layout={{
-                            autosize: true,
-                            xaxis: {
-                                title: 'Expiration Date',
-                                tickfont: {
-                                    size: 12,
-                                    color: '#FFFFFF',
-                                },
-                            },
-                            yaxis: {
-                                title: 'Contracts',
-                                side: 'left',
-                                showgrid: true,
-                                zeroline: false,
-                                tickfont: {
-                                    size: 12,
-                                    color: '#FFFFFF',
-                                },
-                            },
-                            yaxis2: {
-                                title: 'Market Value [$]',
-                                overlaying: 'y',
-                                side: 'right',
-                                showgrid: false,
-                                zeroline: false,
-                                tickfont: {
-                                    size: 12,
-                                    color: '#FFFFFF',
-                                },
-                            },
-                            barmode: 'group', // Группировка столбцов
-                            legend: {
-                                x: 0.01,
-                                y: 1.1,
-                                orientation: 'h',
-                                font: {
-                                    size: 12,
-                                    color: '#FFFFFF',
-                                },
-                            },
-                            paper_bgcolor: '#151518', // Тёмный фон
-                            plot_bgcolor: '#151518', // Тёмный фон для графика
-                            margin: {
-                                l: 50,
-                                r: 50, // Отступы для второй оси
-                                b: 50,
-                                t: 30,
-                            },
-                        }}
-                        useResizeHandler={true}
-                        style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
-                    />
             </div>
-        </div>
+            <div className="graph">
+                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+            </div>
         </div>
     );
 };

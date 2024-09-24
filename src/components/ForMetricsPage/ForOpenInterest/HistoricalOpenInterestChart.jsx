@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import Plot from 'react-plotly.js';
+import * as echarts from 'echarts';
 import './HistoricalOpenInterestChart.css'; // Подключаем файл CSS для стилей
 
 const HistoricalOpenInterestChart = () => {
@@ -9,6 +9,7 @@ const HistoricalOpenInterestChart = () => {
     const [error, setError] = useState(null);
     const [asset, setAsset] = useState('BTC'); // Валюта по умолчанию
     const [period, setPeriod] = useState('1d'); // Период по умолчанию
+    const chartRef = useRef(null); // Ref для ECharts
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,6 +34,101 @@ const HistoricalOpenInterestChart = () => {
         fetchData();
     }, [asset, period]);
 
+    useEffect(() => {
+        if (data && chartRef.current) {
+            const chartInstance = echarts.init(chartRef.current);
+
+            // Преобразуем данные для отображения на графике
+            const timestamps = data.map(entry => entry.timestamp);
+            const totalContracts = data.map(entry => entry.total_contracts);
+            const avgIndexPrices = data.map(entry => entry.avg_index_price);
+
+            const option = {
+                backgroundColor: '#151518',
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
+                            color: '#000000', // Черный текст в метке
+                        },
+                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    textStyle: {
+                        color: '#000000', // Черный текст в тултипе
+                    },
+                },
+                legend: {
+                    data: ['Total Contracts', 'Index Price'],
+                    textStyle: { color: '#B8B8B8' },
+                    top: 10,
+                },
+                xAxis: {
+                    type: 'category',
+                    data: timestamps,
+                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLabel: { color: '#7E838D' },
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: 'Total Contracts',
+                        axisLine: { lineStyle: { color: '#B8B8B8' } },
+                        axisLabel: { color: '#7E838D' },
+                        splitLine: { lineStyle: { color: '#393E47' } },
+                    },
+                    {
+                        type: 'value',
+                        name: 'Index Price',
+                        axisLine: { lineStyle: { color: '#7f7f7f' } },
+                        axisLabel: { color: '#7f7f7f' },
+                        splitLine: { show: false },
+                        position: 'right',
+                    },
+                ],
+                series: [
+                    {
+                        name: 'Total Contracts',
+                        type: 'line',
+                        data: totalContracts,
+                        smooth: true,
+                        lineStyle: { color: '#e74c3c', width: 2 },
+                        areaStyle: { color: '#e74c3c', opacity: 0.2 }, // Заливка под линией
+                    },
+                    {
+                        name: 'Index Price',
+                        type: 'line',
+                        data: avgIndexPrices,
+                        smooth: true,
+                        yAxisIndex: 1,
+                        lineStyle: { color: '#7f7f7f', width: 2 },
+                    },
+                ],
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    bottom: '10%',
+                    top: '15%',
+                    containLabel: true,
+                },
+            };
+
+            chartInstance.setOption(option);
+
+            const handleResize = () => {
+                chartInstance.resize();
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                chartInstance.dispose();
+            };
+        }
+    }, [data]);
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -42,130 +138,32 @@ const HistoricalOpenInterestChart = () => {
     }
 
     if (!data) {
-        return <div>No data</div>;
+        return <div>No data available</div>;
     }
-
-    // Преобразуем данные для отображения на графике
-    const timestamps = data.map(entry => entry.timestamp);
-    const totalContracts = data.map(entry => entry.total_contracts);
-    const avgIndexPrices = data.map(entry => entry.avg_index_price);
-
 
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        Historical Open Interest Chart
-                    </h2>
+                    <h2>🤠 Historical Open Interest Chart</h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                     <div className="asset-option-buttons">
-                        <select onChange={e => setPeriod(e.target.value)} value={period}>
+                        <select onChange={(e) => setPeriod(e.target.value)} value={period}>
                             <option value="1d">1d</option>
                             <option value="7d">7d</option>
                             <option value="1m">1m</option>
                             <option value="all">All</option>
                         </select>
-                        <span className="custom-arrow">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                  stroke-linejoin="round"/>
-        </svg>
-    </span>
                     </div>
                 </div>
-                <div className="flow-option-dedicated"></div>
-                <div className="graph">
-                    <Plot
-                        data={[
-                            {
-                                x: timestamps,
-                                y: totalContracts,
-                                type: 'scatter',
-                                mode: 'lines',
-                                fill: 'tozeroy', // Заливка области под линией
-                                name: 'Total Contracts',
-                                line: {
-                                    color: '#e74c3c', // Красный для контрактов
-                                    width: 2,
-                                },
-                                yaxis: 'y1', // Привязка к левой оси Y
-                            },
-                            {
-                                x: timestamps,
-                                y: avgIndexPrices,
-                                type: 'scatter',
-                                mode: 'lines',
-                                name: 'Index Price',
-                                line: {
-                                    color: '#7f7f7f', // Серый для индекса
-                                    width: 2,
-                                },
-                                yaxis: 'y2', // Привязка к правой оси Y
-                            },
-                        ]}
-                        layout={{
-                            autosize: true,
-                            xaxis: {
-                                title: 'Time',
-                                tickfont: {
-                                    size: 12,
-                                    color: '#FFFFFF',
-                                },
-                                showgrid: false,
-                            },
-                            yaxis: {
-                                title: 'Total Contracts',
-                                side: 'left',
-                                tickfont: {
-                                    size: 12,
-                                    color: '#e74c3c', // Красный цвет оси для контрактов
-                                },
-                                showgrid: false,
-                            },
-                            yaxis2: {
-                                title: 'Index Price',
-                                overlaying: 'y', // Накладываем на первую ось
-                                side: 'right',
-                                tickfont: {
-                                    size: 12,
-                                    color: '#7f7f7f', // Серый цвет оси для индекса
-                                },
-                            },
-                            legend: {
-                                x: 0.1,
-                                y: 1.1,
-                                orientation: 'h', // Горизонтальная легенда
-                                font: {
-                                    size: 12,
-                                    color: '#FFFFFF',
-                                },
-                            },
-                            margin: {
-                                l: 50,
-                                r: 50,
-                                b: 50,
-                                t: 30,
-                            },
-                            paper_bgcolor: '#151518', // Тёмный фон
-                            plot_bgcolor: '#151518', // Тёмный фон области графика
-                            showlegend: true,
-                        }}
-                        useResizeHandler={true}
-                        style={{ width: '100%', height: '100%' }} // График будет занимать весь контейнер
-                    />
-                </div>
+            </div>
+            <div className="graph">
+                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
             </div>
         </div>
     );
