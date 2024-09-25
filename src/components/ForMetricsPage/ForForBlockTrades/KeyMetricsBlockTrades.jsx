@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import './KeyMetricsBlockTrades.css';
 
@@ -33,14 +33,6 @@ const KeyMetricsBlockTrades = () => {
         fetchMetrics();
     }, [asset]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
     return (
         <div className="metrics-key-container">
             <div className="asset-key-buttons">
@@ -61,14 +53,33 @@ const KeyMetricsBlockTrades = () => {
                         <i className="fas fa-dollar-sign"></i>
                     </div>
                     <div className="metric-key-content">
-                        <p className="metric-label">
-                            <div className="metric-label-image">🤑</div>
-                            Average Price
-                        </p>
-                        <p className="metric-value">{Number(metrics.avg_price).toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })} $</p>
+                        {loading && (
+                            <div className="loading-container">
+                                <div className="spinner"></div>
+                            </div>
+                        )}
+                        {!loading && error && (
+                            <div className="error-container">
+                                <p>Error: {error}</p>
+                            </div>
+                        )}
+                        {!loading && !error === 0 && (
+                            <div className="no-data-container">
+                                <p>No data available</p>
+                            </div>
+                        )}
+                        {!loading && !error > 0 && (
+                            <div className="metric-key-content">
+                                <p className="metric-label">
+                                    <div className="metric-label-image">🤑</div>
+                                    Average Price
+                                </p>
+                                <p className="metric-value">{Number(metrics.avg_price).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })} $</p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="metric-key-block">
@@ -76,14 +87,33 @@ const KeyMetricsBlockTrades = () => {
                         <i className="fas fa-chart-bar"></i>
                     </div>
                     <div className="metric-key-content">
-                        <p className="metric-label">
-                            <div className="metric-label-image">📊</div>
-                            Total Volume
-                        </p>
-                        <p className="metric-value">{Number(metrics.total_nominal_volume).toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })}</p>
+                        {loading && (
+                            <div className="loading-container">
+                                <div className="spinner"></div>
+                            </div>
+                        )}
+                        {!loading && error && (
+                            <div className="error-container">
+                                <p>Error: {error}</p>
+                            </div>
+                        )}
+                        {!loading && !error === 0 && (
+                            <div className="no-data-container">
+                                <p>No data available</p>
+                            </div>
+                        )}
+                        {!loading && !error > 0 && (
+                            <div className="metric-key-content">
+                                <p className="metric-label">
+                                    <div className="metric-label-image">📊</div>
+                                    Total Volume
+                                </p>
+                                <p className="metric-value">{Number(metrics.total_nominal_volume).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="metric-key-block">
@@ -91,14 +121,33 @@ const KeyMetricsBlockTrades = () => {
                         <i className="fas fa-coins"></i>
                     </div>
                     <div className="metric-key-content">
-                        <p className="metric-label">
-                            <div className="metric-label-image">📈</div>
-                            Total Premium
-                        </p>
-                        <p className="metric-value">{Number(metrics.total_premium).toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })} $</p>
+                        {loading && (
+                            <div className="loading-container">
+                                <div className="spinner"></div>
+                            </div>
+                        )}
+                        {!loading && error && (
+                            <div className="error-container">
+                                <p>Error: {error}</p>
+                            </div>
+                        )}
+                        {!loading && !error === 0 && (
+                            <div className="no-data-container">
+                                <p>No data available</p>
+                            </div>
+                        )}
+                        {!loading && !error > 0 && (
+                            <div className="metric-key-content">
+                                <p className="metric-label">
+                                    <div className="metric-label-image">📈</div>
+                                    Total Premium
+                                </p>
+                                <p className="metric-value">{Number(metrics.total_premium).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })} $</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -107,3 +156,5 @@ const KeyMetricsBlockTrades = () => {
 };
 
 export default KeyMetricsBlockTrades;
+
+

@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import Plot from 'react-plotly.js';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './BTCETHBlockTrades.css'
+import './BTCETHBlockTrades.css';
 
 
 const BTCETHBlockTrades = () => {
@@ -41,7 +41,6 @@ const BTCETHBlockTrades = () => {
                 ((metrics.Put_Buys / total) * 100).toFixed(2),
                 ((metrics.Call_Buys / total) * 100).toFixed(2),
             ];
-
             // Определение градиентов
             const colorGradient = [
                 {
@@ -133,6 +132,8 @@ const BTCETHBlockTrades = () => {
 
     const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
 
+    const per1=((metrics.Call_Buys*10000)/(metrics.Call_Buys + metrics.Call_Sells + metrics.Put_Buys + metrics.Put_Sells)).toFixed(2);
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -192,3 +193,5 @@ const BTCETHBlockTrades = () => {
 };
 
 export default BTCETHBlockTrades;
+
+

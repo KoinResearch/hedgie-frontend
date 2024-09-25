@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
+import './ExpirationActivityChart.css'; // Подключение стилей для спиннера и контейнеров
 
 const ExpirationActivityChart = () => {
     const [asset, setAsset] = useState('BTC');
-    const [strike, setStrike] = useState('all');  // Устанавливаем начальное значение как 'all'
+    const [strike, setStrike] = useState('all');
     const [data, setData] = useState({ calls: [], puts: [] });
-    const [strikes, setStrikes] = useState([]);  // Список доступных страйков
+    const [strikes, setStrikes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartRef = useRef(null);
 
     // Получение доступных страйков при изменении актива
     useEffect(() => {
@@ -19,6 +20,7 @@ const ExpirationActivityChart = () => {
                 setStrikes(response.data);
             } catch (err) {
                 console.error('Error fetching strikes:', err);
+                setError(err.message);
             }
         };
 
@@ -28,6 +30,8 @@ const ExpirationActivityChart = () => {
     // Получение активности по дате истечения и страйку
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 let url = `${import.meta.env.VITE_API_URL}/api/metrics/expiration-activity/${asset.toLowerCase()}`;
                 if (strike && strike !== 'all') {
@@ -36,10 +40,10 @@ const ExpirationActivityChart = () => {
 
                 const response = await axios.get(url);
                 setData(response.data);
-                setLoading(false);
             } catch (err) {
                 console.error('Error fetching expiration activity data:', err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -51,7 +55,6 @@ const ExpirationActivityChart = () => {
         if (data.calls.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
 
-            // Подготовка данных для графика
             const expirationDates = [...new Set([...data.calls.map(d => d.expiration_date), ...data.puts.map(d => d.expiration_date)])];
 
             const callCounts = expirationDates.map(date => {
@@ -64,7 +67,6 @@ const ExpirationActivityChart = () => {
                 return put ? put.trade_count : 0;
             });
 
-            // Конфигурация ECharts
             const option = {
                 backgroundColor: '#151518',
                 tooltip: {
@@ -122,20 +124,17 @@ const ExpirationActivityChart = () => {
                     },
                 ],
                 grid: {
-                    left: '5%',    // Уменьшаем отступы
+                    left: '5%',
                     right: '5%',
                     bottom: '5%', // Добавляем нижний отступ для меток X
                     top: '10%',
-                    containLabel: true, // Чтобы оси и метки не обрезались
+                    containLabel: true,
                 },
             };
 
             chartInstance.setOption(option);
 
-            const handleResize = () => {
-                chartInstance.resize();
-            };
-
+            const handleResize = () => chartInstance.resize();
             window.addEventListener('resize', handleResize);
 
             return () => {
@@ -145,36 +144,16 @@ const ExpirationActivityChart = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (data.calls.length === 0 && data.puts.length === 0) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        📉
-                        Volume By Expiration - Past 24h
-                    </h2>
+                    <h2>📉 Volume By Expiration - Past 24h</h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select value={strike} onChange={(e) => setStrike(e.target.value || 'all')}>
@@ -183,17 +162,29 @@ const ExpirationActivityChart = () => {
                                 <option key={s} value={s}>{s}</option>
                             ))}
                         </select>
-                        <span className="custom-arrow">
-                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && data.calls.length === 0 && data.puts.length === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && data.calls.length > 0 && data.puts.length > 0 && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );

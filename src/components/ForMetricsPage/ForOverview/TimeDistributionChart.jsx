@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
+import './TimeDistributionChart.css'; // Подключение стилей для спиннера и контейнеров
 
 const TimeDistributionChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -11,13 +12,15 @@ const TimeDistributionChart = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/time-distribution/${asset.toLowerCase()}`);
                 setData(response.data);
-                setLoading(false);
             } catch (err) {
                 console.error('Error fetching time distribution data:', err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -147,10 +150,7 @@ const TimeDistributionChart = () => {
 
             chartInstance.setOption(option);
 
-            const handleResize = () => {
-                chartInstance.resize();
-            };
-
+            const handleResize = () => chartInstance.resize();
             window.addEventListener('resize', handleResize);
 
             return () => {
@@ -160,42 +160,39 @@ const TimeDistributionChart = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (data.calls.length === 0 && data.puts.length === 0) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        📦
-                        Historical Volume - Past 24h
-                    </h2>
+                    <h2>📦 Historical Volume - Past 24h</h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
-                        <span className="custom-arrow">
-                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && data.calls.length === 0 && data.puts.length === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && data.calls.length > 0 && data.puts.length > 0 && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );

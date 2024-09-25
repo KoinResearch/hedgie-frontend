@@ -1,24 +1,78 @@
-/* Основной контейнер */
+/* Основной контейнер для метрик */
 .metrics-key-container {
     width: 100%;
     box-sizing: border-box;
 }
 
+/* Грид для метрик */
+.metrics-key-grid {
+    display: flex;
+    justify-content: space-between; /* Равномерное распределение контейнеров */
+    flex-wrap: nowrap; /* Контейнеры будут в одном ряду */
+    gap: 20px; /* Расстояние между элементами */
+    overflow-x: auto; /* Позволяем прокрутку по горизонтали на маленьких экранах */
+}
+
+/* Блок для каждой метрики */
 .metric-key-block {
-    flex: 1 1 calc(33% - 20px); /* Три элемента в ряду, с учётом отступов */
-    /*max-width: 343px; !* Ограничение ширины контейнера *!*/
+    flex: 1 1 calc(33% - 20px); /* Три элемента в ряду, с учетом отступов */
     width: 100%;
     background: #151518;
-    padding-left: 20px; /* Добавляем внутренний отступ */
+    padding-left: 20px; /* Внутренний отступ слева */
     border-radius: 12px; /* Закругленные углы */
     border: 1px solid #393E47; /* Цвет границы */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Тень */
     display: flex;
-    flex-direction: column; /* Выровняем элементы по вертикали */
-    align-items: flex-start; /* Выровняем элементы по левому краю */
-    justify-content: space-between; /* Распределим место сверху и снизу */
+    flex-direction: column; /* Элементы вертикально */
+    align-items: flex-start; /* Выровнены по левому краю */
+    justify-content: space-between; /* Распределяем элементы сверху и снизу */
     color: white; /* Цвет текста */
-    height: 164px; /* Высота для метрик */
+    height: 164px; /* Высота блока метрики */
+}
+
+/* Контент внутри метрики */
+.metric-key-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* Контейнер для иконки в метрике */
+.icon-container {
+    font-size: 3rem;
+    margin-bottom: auto; /* Иконка остается наверху */
+}
+
+/* Метка метрики */
+.metric-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    color: #F2F2F2;
+    margin-bottom: auto; /* Метка остается наверху */
+}
+
+/* Иконка (смайлик) внутри метки */
+.metric-label-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #162C49;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 24px;
+}
+
+/* Значение метрики */
+.metric-value {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'JetBrains Mono', monospace; /* Применяем шрифт JetBrains Mono */
+    margin-top: auto; /* Значение перемещается вниз */
 }
 
 /* Контейнер для выпадающего списка и кнопок */
@@ -71,56 +125,4 @@
     stroke-width: 1.66667;
     stroke-linecap: round;
     stroke-linejoin: round;
-}
-
-/* Сетка для метрик */
-.metrics-key-grid {
-    display: flex;
-    justify-content: space-between; /* Равномерное распределение контейнеров */
-    flex-wrap: nowrap; /* Контейнеры будут в одном ряду */
-    gap: 20px; /* Расстояние между элементами */
-    overflow-x: auto; /* Позволяем прокрутку по горизонтали на маленьких экранах */
-}
-/* Контейнер для иконки */
-.icon-container {
-    font-size: 3rem;
-    margin-bottom: auto; /* Иконка останется наверху */
-}
-
-/* Контент внутри метрики */
-.metric-key-content {
-    display: flex;
-    flex-direction: column; /* Элементы расположены вертикально */
-    align-items: flex-start; /* Выровнены по левому краю */
-    justify-content: space-between;
-    height: 100%;
-}
-
-/* Метка метрики */
-p.metric-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1rem;
-    color: #F2F2F2;
-    margin-bottom: auto; /* Метка остается наверху */
-}
-
-/* Значение метрики */
-p.metric-value {
-    font-size: 24px;
-    font-weight: bold;
-    font-family: 'JetBrains Mono', monospace; /* Применяем шрифт JetBrains Mono */
-    margin-top: auto; /* Значение перемещается вниз */
-}
-
-.metric-label-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #162C49;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-
 }

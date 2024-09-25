@@ -32,16 +32,12 @@ const BlockTrades = () => {
                 <div className="rounded-container">
                     <OptionVolumeChartBlockTrades/>
                 </div>
-            </div>
-            <div className="flow-row">
                 <div className="rounded-container">
                     <StrikeActivityChartBlockTrades/>
                 </div>
                 <div className="rounded-container">
                     <ExpirationActivityChartBlockTrades/>
                 </div>
-            </div>
-            <div className="flow-row">
                 <div className="full-width-container">
                     <TimeDistributionChartBlockTrades/>
                 </div>

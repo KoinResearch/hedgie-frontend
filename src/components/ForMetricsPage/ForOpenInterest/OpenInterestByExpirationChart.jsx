@@ -20,6 +20,7 @@ const OpenInterestByExpirationChart = () => {
                 setStrikes(['All Strikes', ...response.data]); // Добавляем "All Strikes" в начало списка
             } catch (err) {
                 console.error('Error fetching strikes:', err);
+                setError(err.message);
             }
         };
         fetchStrikes();
@@ -28,16 +29,17 @@ const OpenInterestByExpirationChart = () => {
     // Получение данных об открытых интересах по экспирации
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 // Используем "all" для запроса всех страйков
                 const strikeParam = strike === 'All Strikes' ? 'all' : strike;
-                console.log(`Fetching open interest data for ${asset} with strike ${strikeParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
                 setData(response.data);
-                setLoading(false);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -183,18 +185,6 @@ const OpenInterestByExpirationChart = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (data.length === 0) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -219,7 +209,24 @@ const OpenInterestByExpirationChart = () => {
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && data.length === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && data.length > 0 && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );

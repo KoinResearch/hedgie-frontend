@@ -20,6 +20,7 @@ const OpenInterestChart = () => {
                 setExpirations(['All Expirations', ...response.data]); // Добавляем "All Expirations" в начало списка
             } catch (err) {
                 console.error('Error fetching expirations:', err);
+                setError(err.message);
             }
         };
         fetchExpirations();
@@ -28,16 +29,17 @@ const OpenInterestChart = () => {
     // Fetch open interest data
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 // Используем "all" вместо "All Expirations" для запроса на сервер
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                console.log(`Fetching open interest data for ${asset} with expiration ${expirationParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest/${asset.toLowerCase()}/${expirationParam}`);
                 setData(response.data);
-                setLoading(false);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -111,21 +113,11 @@ const OpenInterestChart = () => {
         }
     }, [data, loading]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        🦾 Open Interest By Option Kind
-                    </h2>
+                    <h2>🦾 Open Interest By Option Kind</h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -145,7 +137,24 @@ const OpenInterestChart = () => {
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && data.Calls === 0 && data.Puts === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && (data.Calls > 0 || data.Puts > 0) && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );

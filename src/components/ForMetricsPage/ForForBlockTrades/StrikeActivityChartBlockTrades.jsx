@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
+import './StrikeActivityChartBlockTrades.css'; // Подключение стилей для спиннера и контейнеров
 
 const StrikeActivityChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
@@ -14,11 +15,15 @@ const StrikeActivityChartBlockTrades = () => {
     // Fetch available expirations when the asset changes
     useEffect(() => {
         const fetchExpirations = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
                 setExpirations(['All Expirations', ...response.data]);
             } catch (err) {
                 console.error('Error fetching expirations:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
         };
         fetchExpirations();
@@ -26,13 +31,15 @@ const StrikeActivityChartBlockTrades = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/strike-activity/${asset.toLowerCase()}?expiration=${expiration}`);
                 setData(response.data);
-                setLoading(false);
             } catch (err) {
                 console.error('Error fetching strike activity data:', err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -48,7 +55,7 @@ const StrikeActivityChartBlockTrades = () => {
             let callData = data.filter(d => d.option_type === 'C');
             let putData = data.filter(d => d.option_type === 'P');
 
-            // Сортировка данных по strike_price по возрастанию
+            // Сортируем данные по strike_price по возрастанию
             callData = callData.sort((a, b) => a.strike_price - b.strike_price);
             putData = putData.sort((a, b) => a.strike_price - b.strike_price);
 
@@ -61,13 +68,9 @@ const StrikeActivityChartBlockTrades = () => {
                 backgroundColor: '#151518',
                 tooltip: {
                     trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    axisPointer: { type: 'shadow' },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: {
-                        color: '#000',
-                    },
+                    textStyle: { color: '#000' },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
@@ -88,9 +91,7 @@ const StrikeActivityChartBlockTrades = () => {
                     type: 'value',
                     name: 'Number of Trades',
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: {
-                        color: '#7E838D',
-                    },
+                    axisLabel: { color: '#7E838D' },
                     splitLine: { lineStyle: { color: '#393E47' } },
                 },
                 series: [
@@ -114,20 +115,17 @@ const StrikeActivityChartBlockTrades = () => {
                     },
                 ],
                 grid: {
-                    left: '5%',    // Уменьшаем отступы
+                    left: '5%',
                     right: '5%',
-                    bottom: '5%', // Добавляем нижний отступ для меток X
+                    bottom: '5%',
                     top: '10%',
-                    containLabel: true, // Чтобы оси и метки не обрезались
+                    containLabel: true,
                 },
             };
 
             chartInstance.setOption(option);
 
-            const handleResize = () => {
-                chartInstance.resize();
-            };
-
+            const handleResize = () => chartInstance.resize();
             window.addEventListener('resize', handleResize);
 
             return () => {
@@ -137,26 +135,11 @@ const StrikeActivityChartBlockTrades = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (data.length === 0) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        📈
-                        Volume By Strike Price - Past 24h
-                    </h2>
+                    <h2>📈 Volume By Strike Price - Past 24h</h2>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -176,10 +159,29 @@ const StrikeActivityChartBlockTrades = () => {
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && data.length === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && data.length > 0 && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );
 };
 
 export default StrikeActivityChartBlockTrades;
+
+

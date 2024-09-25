@@ -19,6 +19,7 @@ const VolumeByStrikePriceChart = () => {
                 setExpirations(['All Expirations', ...response.data]);
             } catch (err) {
                 console.error('Error fetching expirations:', err);
+                setError(err.message);
             }
         };
         fetchExpirations();
@@ -26,16 +27,16 @@ const VolumeByStrikePriceChart = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
-                // Ensure the correct expiration parameter is passed to the API.
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                console.log(`Fetching open interest data for ${asset} with expiration ${expirationParam}`);
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
                 setData(response.data);
-                setLoading(false);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -53,13 +54,6 @@ const VolumeByStrikePriceChart = () => {
             const putsMarketValue = data.map(d => d.puts_market_value);
             const callsMarketValue = data.map(d => d.calls_market_value);
 
-            // Safely calculate totals only if data is available
-            const totalPuts = puts.length ? puts.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0;
-            const totalCalls = calls.length ? calls.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0;
-            const totalNotional = (putsMarketValue.length ? putsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0)
-                + (callsMarketValue.length ? callsMarketValue.reduce((a, b) => a + (parseFloat(b) || 0), 0) : 0);
-            const putCallRatio = totalCalls !== 0 ? (totalPuts / totalCalls) : 0;
-
             const option = {
                 backgroundColor: '#151518',
                 tooltip: {
@@ -67,14 +61,12 @@ const VolumeByStrikePriceChart = () => {
                     axisPointer: {
                         type: 'cross',
                         label: {
-                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
-                            color: '#000000', // Черный текст в метке
+                            backgroundColor: '#FFFFFF',
+                            color: '#000000',
                         },
                     },
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
-                    textStyle: {
-                        color: '#000000', // Черный текст в тултипе
-                    },
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    textStyle: { color: '#000000' },
                 },
                 legend: {
                     data: ['Puts', 'Calls', 'Puts Market Value [$]', 'Calls Market Value [$]'],
@@ -87,7 +79,7 @@ const VolumeByStrikePriceChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот меток для читаемости
+                        rotate: 45,
                     },
                 },
                 yAxis: [
@@ -112,14 +104,14 @@ const VolumeByStrikePriceChart = () => {
                         name: 'Puts',
                         type: 'bar',
                         data: puts,
-                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts
+                        itemStyle: { color: '#ff3e3e' },
                         barWidth: '30%',
                     },
                     {
                         name: 'Calls',
                         type: 'bar',
                         data: calls,
-                        itemStyle: { color: '#00cc96' }, // Зелёный для Calls
+                        itemStyle: { color: '#00cc96' },
                         barWidth: '30%',
                     },
                     {
@@ -169,18 +161,6 @@ const VolumeByStrikePriceChart = () => {
         }
     }, [data, loading]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (data.length === 0) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -207,7 +187,24 @@ const VolumeByStrikePriceChart = () => {
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && data.length === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && data.length > 0 && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );

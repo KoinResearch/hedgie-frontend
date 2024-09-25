@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-
+import "./MaxPainByExpirationChart.css"
 const convertToISODate = (dateStr) => {
     const year = `20${dateStr.slice(-2)}`;
     const monthStr = dateStr.slice(-5, -2).toUpperCase();
@@ -185,18 +185,6 @@ const MaxPainByExpirationChart = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (!data) {
-        return <div>No data</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -220,7 +208,24 @@ const MaxPainByExpirationChart = () => {
                 <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{width: '100%', height: '490px'}}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error === 0 && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error > 0 && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );

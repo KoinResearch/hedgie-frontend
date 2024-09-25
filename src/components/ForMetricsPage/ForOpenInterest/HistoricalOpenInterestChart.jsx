@@ -13,6 +13,8 @@ const HistoricalOpenInterestChart = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null); // Сбрасываем ошибку при каждом новом запросе
             try {
                 // Формируем URL с параметрами
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/historical-open-interest/${asset.toLowerCase()}/${period}`);
@@ -23,10 +25,10 @@ const HistoricalOpenInterestChart = () => {
                     console.warn('Нет доступных данных:', response.data);
                     setData(null);
                 }
-                setLoading(false);
             } catch (error) {
                 console.error('Ошибка при получении данных Historical Open Interest:', error);
                 setError(error.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -129,18 +131,6 @@ const HistoricalOpenInterestChart = () => {
         }
     }, [data]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (!data) {
-        return <div>No data available</div>;
-    }
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -161,9 +151,27 @@ const HistoricalOpenInterestChart = () => {
                         </select>
                     </div>
                 </div>
+                <div className="flow-option-dedicated"></div>
             </div>
             <div className="graph">
-                <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                {loading && (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                    </div>
+                )}
+                {!loading && error && (
+                    <div className="error-container">
+                        <p>Error: {error}</p>
+                    </div>
+                )}
+                {!loading && !error && !data && (
+                    <div className="no-data-container">
+                        <p>No data available</p>
+                    </div>
+                )}
+                {!loading && !error && data && (
+                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                )}
             </div>
         </div>
     );
