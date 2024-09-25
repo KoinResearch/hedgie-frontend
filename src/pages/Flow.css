@@ -133,11 +133,12 @@
 .show-all-container {
     text-align: center;
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .show-all-btn {
     padding: 10px 20px;
-    background-color: #2E86DE;
+    background-color: #174799;
     border: none;
     border-radius: 8px;
     color: white;

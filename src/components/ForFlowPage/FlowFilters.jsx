@@ -21,6 +21,7 @@ const FlowFilters = () => {
     const [trades, setTrades] = useState([]);
     const [limitedTrades, setLimitedTrades] = useState([]);
     const [showAll, setShowAll] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [putCallRatio, setPutCallRatio] = useState(0);
     const [totalPuts, setTotalPuts] = useState(0);
@@ -31,6 +32,7 @@ const FlowFilters = () => {
     const [sizeOrder, setSizeOrder] = useState('All Sizes');
     const [premiumOrder, setPremiumOrder] = useState('All Premiums');
 
+    // Загружаем даты экспирации
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
@@ -44,8 +46,10 @@ const FlowFilters = () => {
         fetchExpirations();
     }, [asset]);
 
+    // Загружаем первые 100 строк
     useEffect(() => {
         const fetchLimitedTrades = async () => {
+            setIsLoading(true);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
                     params: {
@@ -55,7 +59,7 @@ const FlowFilters = () => {
                         expiration,
                         sizeOrder,
                         premiumOrder,
-                        limit: 50,
+                        limit: 100, // Лимит на первые 100 строк
                     },
                 });
 
@@ -69,13 +73,17 @@ const FlowFilters = () => {
                 setShowAll(false);
             } catch (error) {
                 console.error('Error fetching trades:', error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchLimitedTrades();
     }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder]);
 
+    // Загружаем все данные при нажатии на кнопку
     const fetchAllTrades = async () => {
+        setIsLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
                 params: {
@@ -93,57 +101,14 @@ const FlowFilters = () => {
             setShowAll(true);
         } catch (error) {
             console.error('Error fetching all trades:', error);
+        } finally {
+            setIsLoading(false);
         }
-    };
-
-    // Данные для графиков
-    const putCallData = {
-        labels: ['Put', 'Call'],
-        datasets: [
-            {
-                data: [putCallRatio, 1 - putCallRatio],
-                backgroundColor: ['#ff3e3e', '#00cc96'],
-                borderWidth: 0,
-            },
-        ],
-    };
-
-    const totalCallsData = {
-        labels: ['Calls %', ''],
-        datasets: [
-            {
-                data: [callsPercentage, 100 - callsPercentage],
-                backgroundColor: ['#00cc96', '#333'],
-                borderWidth: 0,
-            },
-        ],
-    };
-
-    const totalPutsData = {
-        labels: ['Puts %', ''],
-        datasets: [
-            {
-                data: [putsPercentage, 100 - putsPercentage],
-                backgroundColor: ['#ff3e3e', '#333'],
-                borderWidth: 0,
-            },
-        ],
-    };
-
-    const options = {
-        cutout: '70%',
-        plugins: {
-            tooltip: {
-                enabled: false,
-            },
-            legend: {
-                display: false,
-            },
-        },
     };
 
     return (
         <div className="flow-container">
+            {/* Фильтры */}
             <div className="flow-filters">
                 <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                     <option value="BTC">BTC</option>
@@ -181,74 +146,44 @@ const FlowFilters = () => {
                 </select>
             </div>
 
-            {/* Display metrics in a row */}
-            <div className="metrics-row">
-                <div className="metric">
-                    <div className="metric-data">
-                    <span className="metric-label">Put to Call Ratio</span>
-                    <span className="metric-value">{putCallRatio.toFixed(2)}</span>
-                    </div>
-                    <Doughnut data={putCallData} options={options}/>
-                </div>
-
-                <div className="dedicate-metric"></div>
-
-                <div className="metric">
-                    <div className="metric-data">
-                    <span className="metric-label">Total Calls</span>
-                    <span className="metric-value">{totalCalls.toFixed(2)}</span>
-                    </div>
-                    <Doughnut data={totalCallsData} options={options}/>
-                </div>
-
-                <div className="dedicate-metric"></div>
-
-                <div className="metric">
-                    <div className="metric-data">
-                    <span className="metric-label">Total Puts</span>
-                    <span className="metric-value">{totalPuts.toFixed(2)}</span>
-                    </div>
-                    <Doughnut data={totalPutsData} options={options}/>
-                </div>
-            </div>
-
+            {/* Таблица сделок */}
             <div className="flow-table">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Market</th>
-                        <th>Side</th>
-                        <th>Type</th>
-                        <th>Expiry</th>
-                        <th>Strike</th>
-                        <th>Size</th>
-                        <th>Price</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {(showAll ? trades : limitedTrades).map((trade, index) => (
-                        <tr key={index}>
-                            <td>{asset}</td>
-                            {/* Столбец "Side" с цветовой логикой */}
-                            <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
-                                {trade.direction.toUpperCase()}
-                            </td>
-                            {/* Столбец "Type" с цветовой логикой */}
-                            <td style={{color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548'}}>
-                                {trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}
-                            </td>
-                            {/* Столбец "Expiry" с цветовой логикой */}
-                            <td style={{color: '#4B88E1'}}>
-                                {trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}
-                            </td>
-                            <td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>
-                            <td>{trade.amount}</td>
-                            <td>{trade.price}</td>
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Market</th>
+                            <th>Side</th>
+                            <th>Type</th>
+                            <th>Expiry</th>
+                            <th>Strike</th>
+                            <th>Size</th>
+                            <th>Price</th>
                         </tr>
-                    ))}
-                    </tbody>
-
-                </table>
+                        </thead>
+                        <tbody>
+                        {(showAll ? trades : limitedTrades).map((trade, index) => (
+                            <tr key={index}>
+                                <td>{asset}</td>
+                                <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
+                                    {trade.direction.toUpperCase()}
+                                </td>
+                                <td style={{color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548'}}>
+                                    {trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}
+                                </td>
+                                <td style={{color: '#4B88E1'}}>
+                                    {trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}
+                                </td>
+                                <td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>
+                                <td>{trade.amount}</td>
+                                <td>{trade.price}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
                 {!showAll && (
                     <div className="show-all-container">
                         <button className="show-all-btn" onClick={fetchAllTrades}>Show All</button>
