@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
+import dayjs from 'dayjs'; // Для форматирования дат
 import './HistoricalOpenInterestChart.css'; // Подключаем файл CSS для стилей
 
 const HistoricalOpenInterestChart = () => {
@@ -41,24 +42,32 @@ const HistoricalOpenInterestChart = () => {
             const chartInstance = echarts.init(chartRef.current);
 
             // Преобразуем данные для отображения на графике
-            const timestamps = data.map(entry => entry.timestamp);
-            const totalContracts = data.map(entry => entry.total_contracts);
-            const avgIndexPrices = data.map(entry => entry.avg_index_price);
+            const timestamps = data.map(entry => dayjs(entry.timestamp).format('YYYY-MM-DD HH:mm'));
+            const totalContracts = data.map(entry => Number(entry.total_contracts || 0).toFixed(2));
+            const avgIndexPrices = data.map(entry => Number(entry.avg_index_price || 0).toFixed(2));
 
             const option = {
                 backgroundColor: '#151518',
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
-                        type: 'cross',
+                        type: 'line', // Используем только вертикальную линию
+                        axis: 'x', // Указываем, что линия появляется только на оси X (вертикальная линия)
                         label: {
-                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
-                            color: '#000000', // Черный текст в метке
+                            backgroundColor: '#FFFFFF',
+                            color: '#000000',
                         },
                     },
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
-                        color: '#000000', // Черный текст в тултипе
+                        color: '#000000',
+                    },
+                    formatter: function (params) {
+                        let result = `<b>${params[0].axisValue}</b><br/>`;
+                        params.forEach((item) => {
+                            result += `<span style="color:${item.color};">●</span> ${item.seriesName}: ${parseFloat(item.value).toFixed(2)}<br/>`;
+                        });
+                        return result;
                     },
                 },
                 legend: {
@@ -74,17 +83,27 @@ const HistoricalOpenInterestChart = () => {
                 },
                 yAxis: [
                     {
-                        type: 'value',
+                        type: 'log',
                         name: 'Total Contracts',
                         axisLine: { lineStyle: { color: '#B8B8B8' } },
-                        axisLabel: { color: '#7E838D' },
+                        axisLabel: {
+                            color: '#7E838D',
+                            formatter: function (value) {
+                                return value.toFixed(2);
+                            }
+                        },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
                     {
                         type: 'value',
                         name: 'Index Price',
                         axisLine: { lineStyle: { color: '#7f7f7f' } },
-                        axisLabel: { color: '#7f7f7f' },
+                        axisLabel: {
+                            color: '#7f7f7f',
+                            formatter: function (value) {
+                                return value.toFixed(2);
+                            }
+                        },
                         splitLine: { show: false },
                         position: 'right',
                     },
@@ -96,7 +115,7 @@ const HistoricalOpenInterestChart = () => {
                         data: totalContracts,
                         smooth: true,
                         lineStyle: { color: '#e74c3c', width: 2 },
-                        areaStyle: { color: '#e74c3c', opacity: 0.2 }, // Заливка под линией
+                        areaStyle: { color: '#e74c3c', opacity: 0.2 },
                     },
                     {
                         name: 'Index Price',
@@ -141,6 +160,13 @@ const HistoricalOpenInterestChart = () => {
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select onChange={(e) => setPeriod(e.target.value)} value={period}>
@@ -149,6 +175,13 @@ const HistoricalOpenInterestChart = () => {
                             <option value="1m">1m</option>
                             <option value="all">All</option>
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>

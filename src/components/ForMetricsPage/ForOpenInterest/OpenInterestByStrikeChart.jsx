@@ -48,11 +48,12 @@ const OpenInterestByStrikeChart = () => {
         if (!loading && chartRef.current && data.length > 0) {
             const chartInstance = echarts.init(chartRef.current);
 
+            // Преобразование данных с округлением до 2 знаков после запятой
             const strikePrices = data.map(d => d.strike);
-            const puts = data.map(d => d.puts);
-            const calls = data.map(d => d.calls);
-            const putsMarketValue = data.map(d => d.puts_market_value);
-            const callsMarketValue = data.map(d => d.calls_market_value);
+            const puts = data.map(d => parseFloat(d.puts).toFixed(2));
+            const calls = data.map(d => parseFloat(d.calls).toFixed(2));
+            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
+            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
 
             const option = {
                 backgroundColor: '#151518',
@@ -173,6 +174,13 @@ const OpenInterestByStrikeChart = () => {
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
@@ -182,6 +190,13 @@ const OpenInterestByStrikeChart = () => {
                                 </option>
                             ))}
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>

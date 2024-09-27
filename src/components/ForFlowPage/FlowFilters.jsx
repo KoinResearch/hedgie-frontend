@@ -106,6 +106,52 @@ const FlowFilters = () => {
         }
     };
 
+    // Данные для графиков
+    const putCallData = {
+        labels: ['Put', 'Call'],
+        datasets: [
+            {
+                data: [putCallRatio, 1 - putCallRatio],
+                backgroundColor: ['#ff3e3e', '#00cc96'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const totalCallsData = {
+        labels: ['Calls %', ''],
+        datasets: [
+            {
+                data: [callsPercentage, 100 - callsPercentage],
+                backgroundColor: ['#00cc96', '#333'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const totalPutsData = {
+        labels: ['Puts %', ''],
+        datasets: [
+            {
+                data: [putsPercentage, 100 - putsPercentage],
+                backgroundColor: ['#ff3e3e', '#333'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const options = {
+        cutout: '70%',
+        plugins: {
+            tooltip: {
+                enabled: false,
+            },
+            legend: {
+                display: false,
+            },
+        },
+    };
+
     return (
         <div className="flow-container">
             {/* Фильтры */}
@@ -144,6 +190,37 @@ const FlowFilters = () => {
                     <option value="low">Low</option>
                     <option value="high">High</option>
                 </select>
+            </div>
+
+            {/* Display metrics in a row */}
+            <div className="metrics-row">
+                <div className="metric">
+                    <div className="metric-data">
+                        <span className="metric-label">Put to Call Ratio</span>
+                        <span className="metric-value">{putCallRatio.toFixed(2)}</span>
+                    </div>
+                    <Doughnut data={putCallData} options={options}/>
+                </div>
+
+                <div className="dedicate-metric"></div>
+
+                <div className="metric">
+                    <div className="metric-data">
+                        <span className="metric-label">Total Calls</span>
+                        <span className="metric-value">{totalCalls.toFixed(2)}</span>
+                    </div>
+                    <Doughnut data={totalCallsData} options={options}/>
+                </div>
+
+                <div className="dedicate-metric"></div>
+
+                <div className="metric">
+                    <div className="metric-data">
+                        <span className="metric-label">Total Puts</span>
+                        <span className="metric-value">{totalPuts.toFixed(2)}</span>
+                    </div>
+                    <Doughnut data={totalPutsData} options={options}/>
+                </div>
             </div>
 
             {/* Таблица сделок */}

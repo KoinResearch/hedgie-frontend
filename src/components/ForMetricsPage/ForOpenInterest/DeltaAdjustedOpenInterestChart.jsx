@@ -50,10 +50,10 @@ const DeltaAdjustedOpenInterestChart = () => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
 
-            // Преобразование данных для отображения
+            // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const strikePrices = data.map(d => d.strike);
-            const deltaAdjustedPuts = data.map(d => -Math.abs(d.puts_delta_adjusted)); // Отрицательные значения для Puts
-            const deltaAdjustedCalls = data.map(d => Math.abs(d.calls_delta_adjusted)); // Положительные значения для Calls
+            const deltaAdjustedPuts = data.map(d => -Math.abs(parseFloat(d.puts_delta_adjusted).toFixed(2))); // Отрицательные значения для Puts
+            const deltaAdjustedCalls = data.map(d => Math.abs(parseFloat(d.calls_delta_adjusted).toFixed(2))); // Положительные значения для Calls
 
             const option = {
                 backgroundColor: '#151518',
@@ -66,7 +66,7 @@ const DeltaAdjustedOpenInterestChart = () => {
                         const tooltipDate = params[0].axisValue;
                         let result = `<b>${tooltipDate}</b><br/>`;
                         params.forEach((item) => {
-                            result += `<span style="color:${item.color};">●</span> ${item.seriesName}: ${item.value}<br/>`;
+                            result += `<span style="color:${item.color};">●</span> ${item.seriesName}: ${parseFloat(item.value).toFixed(2)}<br/>`; // Округляем значения в тултипе
                         });
                         return result;
                     },
@@ -144,6 +144,13 @@ const DeltaAdjustedOpenInterestChart = () => {
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select value={expiration} onChange={(e) => setExpiration(e.target.value)}>
@@ -153,6 +160,13 @@ const DeltaAdjustedOpenInterestChart = () => {
                                 </option>
                             ))}
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>

@@ -55,7 +55,7 @@ const KeyMetricsBlockTrades = () => {
                     <div className="metric-key-content">
                         {loading && (
                             <div className="loading-container">
-                                <div className="spinner"></div>
+                                <div className="spinner-small"></div>
                             </div>
                         )}
                         {!loading && error && (
@@ -89,7 +89,7 @@ const KeyMetricsBlockTrades = () => {
                     <div className="metric-key-content">
                         {loading && (
                             <div className="loading-container">
-                                <div className="spinner"></div>
+                                <div className="spinner-small"></div>
                             </div>
                         )}
                         {!loading && error && (
@@ -123,7 +123,7 @@ const KeyMetricsBlockTrades = () => {
                     <div className="metric-key-content">
                         {loading && (
                             <div className="loading-container">
-                                <div className="spinner"></div>
+                                <div className="spinner-small"></div>
                             </div>
                         )}
                         {!loading && error && (

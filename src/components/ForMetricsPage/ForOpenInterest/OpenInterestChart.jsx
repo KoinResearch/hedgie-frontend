@@ -76,17 +76,13 @@ const OpenInterestChart = () => {
                     {
                         name: 'Open Interest',
                         type: 'bar',
-                        data: [data.Calls, data.Puts],
+                        data: [data.Calls.toFixed(2), data.Puts.toFixed(2)],
                         itemStyle: {
                             color: function (params) {
                                 return params.dataIndex === 0 ? '#00cc96' : '#ff3e3e'; // Зеленый для Calls, Красный для Puts
                             },
-                            borderColor: function (params) {
-                                return params.dataIndex === 0 ? '#00b383' : '#e60000'; // Цвет границ
-                            },
-                            borderWidth: 2,
                         },
-                        barWidth: '40%',
+                        barWidth: '10%',
                     },
                 ],
                 grid: {
@@ -123,6 +119,13 @@ const OpenInterestChart = () => {
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
@@ -132,11 +135,18 @@ const OpenInterestChart = () => {
                                 </option>
                             ))}
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
-            <div className="graph">
+            <div className="graph-chart">
                 {loading && (
                     <div className="loading-container">
                         <div className="spinner"></div>
@@ -153,7 +163,7 @@ const OpenInterestChart = () => {
                     </div>
                 )}
                 {!loading && !error && (data.Calls > 0 || data.Puts > 0) && (
-                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                    <div ref={chartRef} style={{ width: '100%', height: '290px' }}></div>
                 )}
             </div>
         </div>

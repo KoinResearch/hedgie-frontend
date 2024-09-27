@@ -51,15 +51,15 @@ const OpenInterestByExpirationChart = () => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
 
-            // Преобразование данных для отображения
+            // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const expirationDates = data.map(d => d.expiration);
-            const putsOtm = data.map(d => d.puts_otm);
-            const putsItm = data.map(d => d.puts_itm);
-            const callsOtm = data.map(d => d.calls_otm);
-            const callsItm = data.map(d => d.calls_itm);
-            const putsMarketValue = data.map(d => d.puts_market_value);
-            const callsMarketValue = data.map(d => d.calls_market_value);
-            const notionalValue = data.map(d => d.notional_value);
+            const putsOtm = data.map(d => parseFloat(d.puts_otm).toFixed(2));
+            const putsItm = data.map(d => parseFloat(d.puts_itm).toFixed(2));
+            const callsOtm = data.map(d => parseFloat(d.calls_otm).toFixed(2));
+            const callsItm = data.map(d => parseFloat(d.calls_itm).toFixed(2));
+            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
+            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
+            const notionalValue = data.map(d => parseFloat(d.notional_value).toFixed(2));
 
             const option = {
                 backgroundColor: '#151518',
@@ -197,6 +197,13 @@ const OpenInterestByExpirationChart = () => {
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                     <div className="asset-option-buttons">
                         <select value={strike} onChange={(e) => setStrike(e.target.value || 'all')}>
@@ -204,6 +211,13 @@ const OpenInterestByExpirationChart = () => {
                                 <option key={s} value={s}>{s}</option>
                             ))}
                         </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div className="flow-option-dedicated"></div>

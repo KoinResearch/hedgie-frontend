@@ -22,11 +22,13 @@
 .flow-filters {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
     margin-bottom: 20px;
 }
 
 .flow-filters select {
+    width: 100%;
+    height: 100%;
     padding: 10px;
     background-color: #0E0E11;
     color: #ABAFB8;
