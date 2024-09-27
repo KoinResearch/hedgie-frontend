@@ -18,14 +18,14 @@ html, body, #root {
 main {
   flex: 1;
   margin-top: 60px; /* Отступ сверху для хедера */
-  margin-bottom: 40px; /* Отступ снизу для футера */
-  padding: 20px;
+  /*margin-bottom: 40px; !* Отступ снизу для футера *!*/
+  padding: 20px 20px 0 20px;
   box-sizing: border-box;
   background-color: black; /* Убедимся, что фон у основного контента черный */
 }
 
 .footer {
-  position: fixed;
+  position: relative; /* Relative чтобы не перекрывать контент */
   left: 0;
   width: 100%;
   padding: 10px 20px;
@@ -33,5 +33,29 @@ main {
   border-top: 1px solid #393E47;
   z-index: 1000;
   box-sizing: border-box;
-  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.footer.visible {
+  opacity: 1; /* Показываем футер */
+}
+
+.footer.hidden {
+  opacity: 0; /* Скрываем футер */
+}
+
+.footer-text, .footer-links {
+  color: #fff;
+  text-align: center;
+}
+
+.footer-links a {
+  color: #9CA3AF;
+  text-decoration: none;
+  margin: 0 15px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
 }
