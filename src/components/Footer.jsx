@@ -31,13 +31,13 @@ const Footer = () => {
     return (
         <footer ref={footerRef} className={`footer ${isVisible ? 'visible' : 'hidden'}`}>
             <div className="footer-text">
-                © 2024 Hedgie.org. All rights reserved.
+                © 2024 Hedgie.org. Not financial advice.
             </div>
-            <div className="footer-links">
-                <a href="/terms">Terms</a>
-                <a href="/blog">Blog</a>
-                <a href="/twitter">Twitter</a>
-            </div>
+            {/*<div className="footer-links">*/}
+            {/*    <a href="/terms">Terms</a>*/}
+            {/*    <a href="/blog">Blog</a>*/}
+            {/*    <a href="/twitter">Twitter</a>*/}
+            {/*</div>*/}
         </footer>
     );
 };

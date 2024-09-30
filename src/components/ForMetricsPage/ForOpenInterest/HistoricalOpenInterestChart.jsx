@@ -3,6 +3,10 @@ import axios from 'axios';
 import * as echarts from 'echarts';
 import dayjs from 'dayjs'; // Для форматирования дат
 import './HistoricalOpenInterestChart.css'; // Подключаем файл CSS для стилей
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+
 
 const HistoricalOpenInterestChart = () => {
     const [data, setData] = useState(null);
@@ -11,6 +15,7 @@ const HistoricalOpenInterestChart = () => {
     const [asset, setAsset] = useState('BTC'); // Валюта по умолчанию
     const [period, setPeriod] = useState('1d'); // Период по умолчанию
     const chartRef = useRef(null); // Ref для ECharts
+    const chartInstanceRef = useRef(null); // Ref для инстанса диаграммы
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,6 +45,7 @@ const HistoricalOpenInterestChart = () => {
     useEffect(() => {
         if (data && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
             // Преобразуем данные для отображения на графике
             const timestamps = data.map(entry => dayjs(entry.timestamp).format('YYYY-MM-DD HH:mm'));
@@ -150,11 +156,32 @@ const HistoricalOpenInterestChart = () => {
         }
     }, [data]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `historical_open_interest_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>🤠 Historical Open Interest Chart</h2>
+                    <Camera className="icon" id="historyCamera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="historyCamera" html={true}/>
+                    <ShieldAlert className="icon" id="historyInfo"
+                                 data-tooltip-html="Number of option contracts sold,<br> sorted by different periods"/>
+                    <Tooltip anchorId="historyInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import "./MaxPainByExpirationBlockTrades.css"
+import './MaxPainByExpirationBlockTrades.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'; // Подключите CSS для отображения тултипов
+
 const convertToISODate = (dateStr) => {
     const year = `20${dateStr.slice(-2)}`;
     const monthStr = dateStr.slice(-5, -2).toUpperCase();
@@ -36,6 +40,7 @@ const MaxPainByExpirationBlockTrades = () => {
     const [error, setError] = useState(null);
     const [asset, setAsset] = useState('BTC');
     const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartInstanceRef = useRef(null); // Добавляем ref для хранения инстанса диаграммы
 
     useEffect(() => {
         const fetchData = async () => {
@@ -61,6 +66,7 @@ const MaxPainByExpirationBlockTrades = () => {
     useEffect(() => {
         if (data && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
             let expirationDates = Object.keys(data);
             expirationDates = expirationDates.sort((a, b) => convertToISODate(a) - convertToISODate(b));
@@ -185,6 +191,20 @@ const MaxPainByExpirationBlockTrades = () => {
         }
     }, [data]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -193,6 +213,13 @@ const MaxPainByExpirationBlockTrades = () => {
                         😡
                         Max pain by expiration
                     </h2>
+                    <Camera className="icon" id="cameraMaxPain"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="cameraMaxPain" html={true}/>
+                    <ShieldAlert className="icon" id="maxPainData"
+                                 data-tooltip-html="The max pain price across all expiration"/>
+                    <Tooltip anchorId="maxPainData" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -218,12 +245,7 @@ const MaxPainByExpirationBlockTrades = () => {
                         <p>Error: {error}</p>
                     </div>
                 )}
-                {!loading && !error === 0 && (
-                    <div className="no-data-container">
-                        <p>No data available</p>
-                    </div>
-                )}
-                {!loading && !error > 0 && (
+                {!loading && !error && data && (
                     <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
                 )}
             </div>

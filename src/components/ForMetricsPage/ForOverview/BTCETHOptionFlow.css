@@ -1,4 +1,3 @@
-/*Работа над диаграммой и метриками выпадающими*/
 
 /* Контейнер всего контента */
 .flow-option-content {
@@ -14,7 +13,6 @@
 .metrics-option {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     flex: 1;
 }
 
@@ -32,6 +30,7 @@
     align-items: center; /* Выравнивание по вертикали */
     font-family: 'Paloseco', sans-serif; /* Шрифт Paloseco, резервный sans-serif */
     font-size: 14px; /* Размер текста */
+    padding-bottom: 0;
 }
 
 
@@ -54,18 +53,11 @@
 }
 
 .put-buys .metric-option-label::before {
-    background-color: #7A59C4; /* Зеленый градиент для Call Buys */
+    background-color: #9B21A2; /* Зеленый градиент для Call Buys */
 }
 
 .put-sells .metric-option-label::before {
     background-color: #DE495A; /* Зеленый градиент для Call Buys */
-}
-
-.metric-option-value {
-    font-size: 15px;
-    font-weight: bold;
-    font-family: 'JetBrains Mono', monospace;
-    color: #A2A2A2;
 }
 
 /* Стиль для диаграммы */
@@ -82,12 +74,22 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
+    padding-left: 90px;
+    width: 100%;
+    position: relative;
     justify-content: center;
     align-items: center;
 }
 
+.metric-option-value {
+    font-size: 11px;
+    font-weight: bold;
+    font-family: 'JetBrains Mono', monospace;
+    color: #A2A2A2;
+}
+
 .metric-option-percentage{
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     font-family: 'JetBrains Mono', monospace;
     color: #BEEBD8;
@@ -95,4 +97,16 @@
     border: 1px solid #1F5535;
     border-radius: 5px;
     padding: 3px;
+}
+
+p.metric-option-label {
+    margin-bottom: 0;
+}
+
+.metric-option.call-sells{
+    padding-right: 150px;
+}
+
+.metric-option.put-sells{
+    padding-right: 150px;
 }

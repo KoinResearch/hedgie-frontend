@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './ExpirationActivityChart.css'; // Подключение стилей для спиннера и контейнеров
+import { ShieldAlert, Camera } from 'lucide-react';
+import { Tooltip } from "react-tooltip";
+
 
 const ExpirationActivityChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -10,7 +13,8 @@ const ExpirationActivityChart = () => {
     const [strikes, setStrikes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const chartRef = useRef(null);
+    const chartRef = useRef(null); // Ref для контейнера диаграммы
+    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
     // Получение доступных страйков при изменении актива
     useEffect(() => {
@@ -54,6 +58,7 @@ const ExpirationActivityChart = () => {
     useEffect(() => {
         if (data.calls.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
             const expirationDates = [...new Set([...data.calls.map(d => d.expiration_date), ...data.puts.map(d => d.expiration_date)])];
 
@@ -144,11 +149,34 @@ const ExpirationActivityChart = () => {
         }
     }, [data]);
 
+    // Функция для скачивания графика
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `expiration_activity_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>📉 Volume By Expiration - Past 24h</h2>
+                    <Camera className="icon" id="cameraExp"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="cameraExp" html={true}/>
+                    <ShieldAlert className="icon" id="expInfo"
+                                 data-tooltip-html="The amount of option contracts traded<br> in the last 24h sorted by expiration date"/>
+                    <Tooltip anchorId="expInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

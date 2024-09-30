@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './VolumeByExpirationChart.css'; // Подключение CSS
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+
 
 const VolumeByExpirationChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -11,6 +15,7 @@ const VolumeByExpirationChart = () => {
     const [error, setError] = useState(null);
     const [strikes, setStrikes] = useState([]); // Для хранения доступных страйков
     const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartInstanceRef = useRef(null); // Ref для инстанса диаграммы
 
     // Получение доступных страйков при смене актива
     useEffect(() => {
@@ -50,6 +55,7 @@ const VolumeByExpirationChart = () => {
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
             // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const expirationDates = data.map(d => d.expiration);
@@ -185,6 +191,21 @@ const VolumeByExpirationChart = () => {
         }
     }, [data]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `open_interest_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -192,6 +213,13 @@ const VolumeByExpirationChart = () => {
                     <h2>
                         🤟 Open Interest By Expiration
                     </h2>
+                    <Camera className="icon" id="interestCamera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="interestCamera" html={true}/>
+                    <ShieldAlert className="icon" id="interestInfo"
+                                 data-tooltip-html="The amount of option contracts traded in<br> the last 24h sorted by expiration date"/>
+                    <Tooltip anchorId="interestInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

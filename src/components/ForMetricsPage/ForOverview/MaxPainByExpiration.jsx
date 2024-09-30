@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import "./MaxPainByExpiration.css"
+import './MaxPainByExpiration.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'; // Подключите CSS для отображения тултипов
+
 const convertToISODate = (dateStr) => {
     const year = `20${dateStr.slice(-2)}`;
     const monthStr = dateStr.slice(-5, -2).toUpperCase();
@@ -36,6 +40,7 @@ const MaxPainByExpiration = () => {
     const [error, setError] = useState(null);
     const [asset, setAsset] = useState('BTC');
     const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartInstanceRef = useRef(null); // Добавляем ref для хранения инстанса диаграммы
 
     useEffect(() => {
         const fetchData = async () => {
@@ -61,12 +66,17 @@ const MaxPainByExpiration = () => {
     useEffect(() => {
         if (data && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
             let expirationDates = Object.keys(data);
             expirationDates = expirationDates.sort((a, b) => convertToISODate(a) - convertToISODate(b));
 
             const maxPainValues = expirationDates.map(exp => parseFloat(data[exp].maxPain));
             const notionalValues = expirationDates.map(exp => calculateNotionalValue(data[exp].intrinsicValues));
+
+            // Максимум для Notional Value — 7 миллиардов
+            const maxNotionalValue = 7e9;
+            const notionalValueStep = 1e9; // Шаг для оси Notional Value — 1 миллиард
 
             // Конфигурация ECharts
             const option = {
@@ -112,6 +122,9 @@ const MaxPainByExpiration = () => {
                             formatter: value => value.toLocaleString(),
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
+                        min: 57000, // Минимум для Max Pain Price
+                        max: Math.max(...maxPainValues) + 3000, // Корректируем максимум
+                        interval: 3000, // Шаг для Max Pain Price
                     },
                     {
                         type: 'value',
@@ -120,9 +133,12 @@ const MaxPainByExpiration = () => {
                         axisLine: { lineStyle: { color: '#B8B8B8' } },
                         axisLabel: {
                             color: '#A9A9A9',
-                            formatter: value => value.toLocaleString(),
+                            formatter: value => `${(value / 1e9).toFixed(1)}b`, // Преобразуем в млрд для отображения
                         },
                         splitLine: { show: false },
+                        min: 0, // Минимум для Notional Value
+                        max: maxNotionalValue, // Устанавливаем максимум на 7 миллиардов
+                        interval: notionalValueStep, // Шаг для Notional Value — 1 миллиард
                     },
                 ],
                 series: [
@@ -161,17 +177,16 @@ const MaxPainByExpiration = () => {
                     },
                 ],
                 grid: {
-                    left: '5%',    // Уменьшаем отступы
+                    left: '5%',
                     right: '5%',
                     bottom: '5%',
                     top: '10%',
-                    containLabel: true, // Чтобы оси и метки не обрезались
+                    containLabel: true,
                 },
             };
 
             chartInstance.setOption(option);
 
-            // Обработка ресайза
             const handleResize = () => {
                 chartInstance.resize();
             };
@@ -185,6 +200,20 @@ const MaxPainByExpiration = () => {
         }
     }, [data]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -193,6 +222,13 @@ const MaxPainByExpiration = () => {
                         😡
                         Max pain by expiration
                     </h2>
+                    <Camera className="icon" id="cameraMaxPain"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="cameraMaxPain" html={true}/>
+                    <ShieldAlert className="icon" id="maxPainData"
+                                 data-tooltip-html="The max pain price across all expiration"/>
+                    <Tooltip anchorId="maxPainData" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -218,12 +254,7 @@ const MaxPainByExpiration = () => {
                         <p>Error: {error}</p>
                     </div>
                 )}
-                {!loading && !error === 0 && (
-                    <div className="no-data-container">
-                        <p>No data available</p>
-                    </div>
-                )}
-                {!loading && !error > 0 && (
+                {!loading && !error && data && (
                     <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
                 )}
             </div>
@@ -231,4 +262,6 @@ const MaxPainByExpiration = () => {
     );
 };
 
+
 export default MaxPainByExpiration;
+

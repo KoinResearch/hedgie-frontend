@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './StrikeActivityChart.css'; // Подключение стилей для спиннера и контейнеров
+import { ShieldAlert, Camera } from 'lucide-react';
+import { Tooltip } from "react-tooltip";
+
 
 const StrikeActivityChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -11,6 +14,7 @@ const StrikeActivityChart = () => {
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
     const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
     // Fetch available expirations when the asset changes
     useEffect(() => {
@@ -50,6 +54,7 @@ const StrikeActivityChart = () => {
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
             // Разделение данных на Calls и Puts
             let callData = data.filter(d => d.option_type === 'C');
@@ -135,11 +140,34 @@ const StrikeActivityChart = () => {
         }
     }, [data]);
 
+    // Функция для скачивания графика
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `strike_activity_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>📈 Volume By Strike Price - Past 24h</h2>
+                    <Camera className="icon" id="cameraStr"
+                            onClick={handleDownload}
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="cameraStr" html={true}/>
+                    <ShieldAlert className="icon" id="strikeInfo"
+                                 data-tooltip-html="The amount of option contracts<br> traded in the last 24h sorted by<br> strike price"/>
+                    <Tooltip anchorId="strikeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

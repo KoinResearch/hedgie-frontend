@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './TimeDistributionChartBlockTrades.css'; // Подключение стилей для спиннера и контейнеров
+import { ShieldAlert, Camera } from 'lucide-react';
+import { Tooltip } from 'react-tooltip';
+
 
 const TimeDistributionChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
@@ -9,7 +12,9 @@ const TimeDistributionChartBlockTrades = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
+    // Получение данных с сервера
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -28,20 +33,26 @@ const TimeDistributionChartBlockTrades = () => {
         fetchData();
     }, [asset]);
 
+    // Отрисовка графика
     useEffect(() => {
-        if (data.calls.length > 0 && chartRef.current) {
-            const chartInstance = echarts.init(chartRef.current);
+        if ((!data.calls || data.calls.length === 0) && (!data.puts || data.puts.length === 0)) {
+            return; // Если данных нет, не пытаемся отрисовать график
+        }
 
+        if (chartRef.current) {
+            const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+
+            // Получаем уникальные часы
             const hours = [...new Set([...data.calls.map(d => d.hour), ...data.puts.map(d => d.hour)])];
 
-            // Форматирование числового значения часов в строку HH:MM
+            // Форматируем часы в HH:MM
             const formattedHours = hours.map(hour => {
-                const date = new Date();
-                date.setHours(hour);
-                date.setMinutes(0); // Чтобы отображать время только по часам
+                const date = new Date(hour);
                 return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
             });
 
+            // Собираем данные для графика
             const callCounts = hours.map(hour => {
                 const call = data.calls.find(d => d.hour === hour);
                 return call ? call.trade_count : 0;
@@ -57,18 +68,14 @@ const TimeDistributionChartBlockTrades = () => {
                 return call ? call.avg_index_price : 0;
             });
 
-            // Конфигурация ECharts
+            // Настройка ECharts
             const option = {
                 backgroundColor: '#151518',
                 tooltip: {
                     trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow',
-                    },
+                    axisPointer: { type: 'shadow' },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: {
-                        color: '#000',
-                    },
+                    textStyle: { color: '#000' },
                 },
                 legend: {
                     data: ['Calls', 'Puts', 'Index Price'],
@@ -81,8 +88,8 @@ const TimeDistributionChartBlockTrades = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот меток для читаемости
-                        interval: 0, // Показывать все метки
+                        rotate: 45,
+                        interval: 0,
                     },
                 },
                 yAxis: [
@@ -90,9 +97,7 @@ const TimeDistributionChartBlockTrades = () => {
                         type: 'value',
                         name: 'Number of Trades',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: {
-                            color: '#7E838D',
-                        },
+                        axisLabel: { color: '#7E838D' },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
                     {
@@ -100,9 +105,7 @@ const TimeDistributionChartBlockTrades = () => {
                         name: 'Index Price',
                         position: 'right',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: {
-                            color: '#7E838D',
-                        },
+                        axisLabel: { color: '#7E838D' },
                         splitLine: { show: false },
                     },
                 ],
@@ -112,39 +115,30 @@ const TimeDistributionChartBlockTrades = () => {
                         type: 'bar',
                         data: callCounts,
                         barWidth: '30%',
-                        itemStyle: {
-                            color: 'rgba(39,174,96, 0.8)', // Зеленый для Calls
-                        },
+                        itemStyle: { color: 'rgba(39,174,96, 0.8)' },
                     },
                     {
                         name: 'Puts',
                         type: 'bar',
                         data: putCounts,
                         barWidth: '30%',
-                        itemStyle: {
-                            color: 'rgba(231,76,60, 0.8)', // Красный для Puts
-                        },
+                        itemStyle: { color: 'rgba(231,76,60, 0.8)' },
                     },
                     {
                         name: 'Index Price',
                         type: 'line',
                         data: avgIndexPrices,
-                        yAxisIndex: 1, // Привязка к правой оси
-                        lineStyle: {
-                            color: '#FFFFFF',
-                            width: 2,
-                        },
-                        itemStyle: {
-                            color: '#FFFFFF',
-                        },
+                        yAxisIndex: 1,
+                        lineStyle: { color: '#FFFFFF', width: 2 },
+                        itemStyle: { color: '#FFFFFF' },
                     },
                 ],
                 grid: {
                     left: '5%',
                     right: '5%',
-                    bottom: '5%', // Добавляем нижний отступ для меток X
+                    bottom: '5%',
                     top: '10%',
-                    containLabel: true, // Чтобы оси и метки не обрезались
+                    containLabel: true,
                 },
             };
 
@@ -160,11 +154,32 @@ const TimeDistributionChartBlockTrades = () => {
         }
     }, [data]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>📦 Historical Volume - Past 24h</h2>
+                    <Camera className="icon" id="camerDis"
+                            onClick={handleDownload}
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="camerDis" html={true}/>
+                    <ShieldAlert className="icon" id="timeInfo"
+                                 data-tooltip-html="The amount of option contracts sold<br> in the last 24 hours, sorted by hour range"/>
+                    <Tooltip anchorId="timeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

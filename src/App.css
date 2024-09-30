@@ -3,29 +3,41 @@ html, body, #root {
   padding: 0;
   height: 100%;
   width: 100%;
-  background-color: black; /* Фоновый цвет для всей страницы */
-  overflow-x: hidden; /* Отключаем горизонтальный скроллинг */
-  overflow-y: auto; /* Включаем вертикальный скроллинг */
+  background-color: black;
+  overflow-x: hidden;
+  overflow-y: auto; /* Отключаем вертикальный скроллинг для тестирования */
 }
 
+/* Скрываем вертикальную полосу прокрутки */
+html::-webkit-scrollbar {
+  display: none; /* Скрываем скролл для браузеров на основе WebKit (Chrome, Safari) */
+}
+
+/* Для всех браузеров, кроме Firefox */
+html {
+  scrollbar-width: none; /* Скрываем скролл для Firefox */
+}
+
+/* Стиль для всего приложения */
 .App {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Полное покрытие экрана */
-  background-color: black; /* Фон для всего приложения */
+  min-height: 100vh;
+  background-color: black;
 }
 
+/* Основной контент */
 main {
   flex: 1;
-  margin-top: 60px; /* Отступ сверху для хедера */
-  /*margin-bottom: 40px; !* Отступ снизу для футера *!*/
+  margin-top: 60px;
   padding: 20px 20px 0 20px;
   box-sizing: border-box;
-  background-color: black; /* Убедимся, что фон у основного контента черный */
+  background-color: black;
 }
 
+/* Футер */
 .footer {
-  position: relative; /* Relative чтобы не перекрывать контент */
+  position: relative;
   left: 0;
   width: 100%;
   padding: 10px 20px;
@@ -38,13 +50,14 @@ main {
 }
 
 .footer.visible {
-  opacity: 1; /* Показываем футер */
+  opacity: 1;
 }
 
 .footer.hidden {
-  opacity: 0; /* Скрываем футер */
+  opacity: 0;
 }
 
+/* Стили для текста футера */
 .footer-text, .footer-links {
   color: #fff;
   text-align: center;

@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'; // Обязательно подключите CSS для отображения тултипов
 import './KeyMetrics.css';
 
 const KeyMetrics = () => {
     const [asset, setAsset] = useState('BTC');
     const [metrics, setMetrics] = useState({
         avg_price: 0,
-        total_nominal_volume: 0, // Исправляем имя поля на корректное
+        total_nominal_volume: 0,
         total_premium: 0,
     });
     const [loading, setLoading] = useState(true);
@@ -20,7 +22,7 @@ const KeyMetrics = () => {
 
                 setMetrics({
                     avg_price: Number(data.avg_price) || 0,
-                    total_nominal_volume: Number(data.total_nominal_volume) || 0, // Правильное имя
+                    total_nominal_volume: Number(data.total_nominal_volume) || 0,
                     total_premium: Number(data.total_premium) || 0,
                 });
                 setLoading(false);
@@ -53,99 +55,71 @@ const KeyMetrics = () => {
                         <i className="fas fa-dollar-sign"></i>
                     </div>
                     <div className="metric-key-content">
-                        {loading && (
-                            <div className="loading-container">
-                                <div className="spinner-small"></div>
-                            </div>
-                        )}
-                        {!loading && error && (
-                            <div className="error-container">
-                                <p>Error: {error}</p>
-                            </div>
-                        )}
-                        {!loading && !error === 0 && (
-                            <div className="no-data-container">
-                                <p>No data available</p>
-                            </div>
-                        )}
-                        {!loading && !error > 0 && (
+                    {loading && <div className="loading-container"><div className="spinner-small"></div></div>}
+                        {error && <div className="error-container"><p>Error: {error}</p></div>}
+                        {!loading && !error && (
                             <div className="metric-key-content">
-                                <p className="metric-label">
+                                <p className="metric-label" id="avgPrice" data-tooltip-content="Average price of transactions for 24h.">
                                     <div className="metric-label-image">🤑</div>
                                     Average Price
                                 </p>
-                                <p className="metric-value">{Number(metrics.avg_price).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                })} $</p>
+                                <Tooltip anchorId="avgPrice" />
+                                <p className="metric-value">
+                                    {Number(metrics.avg_price).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })} $
+                                </p>
                             </div>
                         )}
                     </div>
                 </div>
+
                 <div className="metric-key-block">
                     <div className="icon-container">
                         <i className="fas fa-chart-bar"></i>
                     </div>
                     <div className="metric-key-content">
-                        {loading && (
-                            <div className="loading-container">
-                                <div className="spinner-small"></div>
-                            </div>
-                        )}
-                        {!loading && error && (
-                            <div className="error-container">
-                                <p>Error: {error}</p>
-                            </div>
-                        )}
-                        {!loading && !error === 0 && (
-                            <div className="no-data-container">
-                                <p>No data available</p>
-                            </div>
-                        )}
-                        {!loading && !error > 0 && (
+                        {loading && <div className="loading-container"><div className="spinner-small"></div></div>}
+                        {error && <div className="error-container"><p>Error: {error}</p></div>}
+                        {!loading && !error && (
                             <div className="metric-key-content">
-                                <p className="metric-label">
+                                <p className="metric-label" id="totalVolume" data-tooltip-content="Nominal volume for 24h.">
                                     <div className="metric-label-image">📊</div>
                                     Total Volume
                                 </p>
-                                <p className="metric-value">{Number(metrics.total_nominal_volume).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                })}</p>
+                                <Tooltip anchorId="totalVolume" />
+                                <p className="metric-value">
+                                    {Number(metrics.total_nominal_volume).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })} $
+                                </p>
                             </div>
                         )}
                     </div>
                 </div>
+
                 <div className="metric-key-block">
                     <div className="icon-container">
                         <i className="fas fa-coins"></i>
                     </div>
                     <div className="metric-key-content">
-                        {loading && (
-                            <div className="loading-container">
-                                <div className="spinner-small"></div>
-                            </div>
-                        )}
-                        {!loading && error && (
-                            <div className="error-container">
-                                <p>Error: {error}</p>
-                            </div>
-                        )}
-                        {!loading && !error === 0 && (
-                            <div className="no-data-container">
-                                <p>No data available</p>
-                            </div>
-                        )}
-                        {!loading && !error > 0 && (
+                        {loading && <div className="loading-container"><div className="spinner-small"></div></div>}
+                        {error && <div className="error-container"><p>Error: {error}</p></div>}
+                        {!loading && !error && (
                             <div className="metric-key-content">
-                                <p className="metric-label">
+                                <p className="metric-label" id="totalPremium" data-tooltip-content="Premium paid for 24h.">
                                     <div className="metric-label-image">📈</div>
                                     Total Premium
                                 </p>
-                                <p className="metric-value">{Number(metrics.total_premium).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                })} $</p>
+                                <Tooltip anchorId="totalPremium" />
+                                <p className="metric-value">
+                                    {Number(metrics.total_premium).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })} $
+                                </p>
                             </div>
                         )}
                     </div>

@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './DeltaAdjustedOpenInterestChart.css'; // Подключение CSS
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+
 
 const DeltaAdjustedOpenInterestChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -11,6 +15,7 @@ const DeltaAdjustedOpenInterestChart = () => {
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
     const chartRef = useRef(null); // Ref для ECharts
+    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
     // Получение доступных дат экспирации при смене актива
     useEffect(() => {
@@ -49,6 +54,7 @@ const DeltaAdjustedOpenInterestChart = () => {
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
             // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const strikePrices = data.map(d => d.strike);
@@ -134,11 +140,32 @@ const DeltaAdjustedOpenInterestChart = () => {
         }
     }, [data]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `delta_adjusted_open_interest_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>👻 Delta Adjusted Open Interest By Strike</h2>
+                    <Camera className="icon" id="deltaCamera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="deltaCamera" html={true}/>
+                    <ShieldAlert className="icon" id="deltaInfo"
+                                 data-tooltip-html="The amount of option contracts in active positions<br> multiplied by their delta value. Delta-adjusted<br> open interest can tell us the amount of the underlying asset<br> option writers need to buy or sell in order to remain<br> delta neutral"/>
+                    <Tooltip anchorId="deltaInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

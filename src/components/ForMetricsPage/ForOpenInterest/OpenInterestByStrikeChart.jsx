@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './OpenInterestByStrikeChart.css'; // Подключение CSS
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+
 
 const OpenInterestByStrikeChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -11,6 +15,7 @@ const OpenInterestByStrikeChart = () => {
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
     const chartRef = useRef(null); // Ref для ECharts
+    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
     useEffect(() => {
         const fetchExpirations = async () => {
@@ -47,6 +52,7 @@ const OpenInterestByStrikeChart = () => {
     useEffect(() => {
         if (!loading && chartRef.current && data.length > 0) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
             // Преобразование данных с округлением до 2 знаков после запятой
             const strikePrices = data.map(d => d.strike);
@@ -162,6 +168,21 @@ const OpenInterestByStrikeChart = () => {
         }
     }, [data, loading]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `open_interest_by_strike_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -169,6 +190,13 @@ const OpenInterestByStrikeChart = () => {
                     <h2>
                         😬 Open Interest By Strike Price
                     </h2>
+                    <Camera className="icon" id="strikeCamera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="strikeCamera" html={true}/>
+                    <ShieldAlert className="icon" id="strikeInfo"
+                                 data-tooltip-html="The amount of option contracts and their dollar<br> equivalent held in active positions sorted by<br> strike price. The max pain price represents the strike<br> price where most options will expire worthless.<br> More info on this can be found"/>
+                    <Tooltip anchorId="strikeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>

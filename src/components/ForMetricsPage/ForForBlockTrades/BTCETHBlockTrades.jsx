@@ -1,8 +1,10 @@
-import React, {useState, useEffect, useRef} from 'react';
-import Plot from 'react-plotly.js';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './BTCETHBlockTrades.css';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'; // Обязательно подключите CSS для отображения тултипов
+import { ShieldAlert, Camera } from 'lucide-react';
 
 
 const BTCETHBlockTrades = () => {
@@ -12,14 +14,20 @@ const BTCETHBlockTrades = () => {
         Call_Sells: 0,
         Put_Buys: 0,
         Put_Sells: 0,
+        Call_Buys_Percent: '0.00',
+        Call_Sells_Percent: '0.00',
+        Put_Buys_Percent: '0.00',
+        Put_Sells_Percent: '0.00',
     });
 
     const chartRef = useRef(null); // Ref для диаграммы
+    const chartInstanceRef = useRef(null); // Ref для сохранения инстанса диаграммы
 
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/${asset.toLowerCase()}`);
+                console.log("Metrics from server:", response.data); // Проверка данных с сервера
                 setMetrics(response.data);
             } catch (error) {
                 console.error('Error fetching metrics:', error);
@@ -32,24 +40,7 @@ const BTCETHBlockTrades = () => {
     useEffect(() => {
         if (chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-
-            // Данные
-            const total = metrics.Call_Sells + metrics.Put_Sells + metrics.Put_Buys + metrics.Call_Buys;
-            const percentages = [
-                ((metrics.Call_Sells / total) * 100).toFixed(2),
-                ((metrics.Put_Sells / total) * 100).toFixed(2),
-                ((metrics.Put_Buys / total) * 100).toFixed(2),
-                ((metrics.Call_Buys / total) * 100).toFixed(2),
-            ];
-            // Определение градиентов
-            const colorGradient = [
-                {
-                    offset: 0, color: '#0D866C' // Color at 0%
-                },
-                {
-                    offset: 1, color: '#5DDC86' // Color at 100%
-                },
-            ];
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
             // Опции диаграммы
             const option = {
@@ -72,7 +63,7 @@ const BTCETHBlockTrades = () => {
                             color: '#fff',
                         },
                         itemStyle: {
-                            borderRadius: 10, // Закругленные края сегментов
+                            borderRadius: 10,
                             borderColor: '#000',
                             borderWidth: 2,
                         },
@@ -130,15 +121,35 @@ const BTCETHBlockTrades = () => {
         }
     }, [metrics]);
 
-    const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
+    // Функция для скачивания графика
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
 
-    const per1=((metrics.Call_Buys*10000)/(metrics.Call_Buys + metrics.Call_Sells + metrics.Put_Buys + metrics.Put_Sells)).toFixed(2);
+    const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
 
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>Options - Past 24h</h2>
+                    <Camera className="icon" id="camera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="camera" html={true}/>
+                    <ShieldAlert className="icon" id="optionData"
+                                 data-tooltip-html="It provides information on Call<br> and Put trades for the last<br> 24 hours"/>
+                    <Tooltip anchorId="optionData" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -157,6 +168,7 @@ const BTCETHBlockTrades = () => {
             </div>
             <div className="flow-option-content">
                 <div className="metrics-option call-metrics">
+
                     <div className="metric-option call-buys">
                         <p className="metric-option-label">Call Buys</p>
                         <div className="metric-option-variable">
@@ -167,6 +179,21 @@ const BTCETHBlockTrades = () => {
                         </div>
                     </div>
 
+
+                    <div className="metric-option put-buys">
+                        <p className="metric-option-label">Put Buys</p>
+                        <div className="metric-option-variable">
+                            <p className="metric-option-value">{assetSymbol} {metrics.Put_Buys}</p>
+                            <p className="metric-option-percentage"> {metrics.Put_Buys_Percent}% </p>
+                        </div>
+                    </div>
+
+                </div>
+                <div>
+                    <div ref={chartRef} style={{width: '320px', height: '320px'}}></div>
+                </div>
+                <div className="metrics-option put-metrics">
+
                     <div className="metric-option call-sells">
                         <p className="metric-option-label">Call Sells</p>
                         <div className="metric-option-variable">
@@ -176,18 +203,7 @@ const BTCETHBlockTrades = () => {
                             <p className="metric-option-percentage"> {metrics.Call_Sells_Percent}% </p>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <div ref={chartRef} style={{width: '320px', height: '320px'}}></div>
-                </div>
-                <div className="metrics-option put-metrics">
-                    <div className="metric-option put-buys">
-                        <p className="metric-option-label">Put Buys</p>
-                        <div className="metric-option-variable">
-                            <p className="metric-option-value">{assetSymbol} {metrics.Put_Buys}</p>
-                            <p className="metric-option-percentage"> {metrics.Put_Buys_Percent}% </p>
-                        </div>
-                    </div>
+
                     <div className="metric-option put-sells">
                         <p className="metric-option-label">Put Sells</p>
                         <div className="metric-option-variable">
@@ -195,6 +211,7 @@ const BTCETHBlockTrades = () => {
                             <p className="metric-option-percentage"> {metrics.Put_Sells_Percent}% </p>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

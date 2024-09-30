@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './VolumeByOptionKindChart.css'; // Импортируем CSS-файл для стилей
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
+import { ShieldAlert, Camera } from 'lucide-react';
+
 
 const VolumeByOptionKindChart = () => {
     const [asset, setAsset] = useState('BTC');
@@ -11,6 +15,7 @@ const VolumeByOptionKindChart = () => {
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]); // Для хранения доступных дат экспирации
     const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartInstanceRef = useRef(null); // Ref для инстанса диаграммы
 
     // Fetch available expirations when the asset changes
     useEffect(() => {
@@ -50,6 +55,7 @@ const VolumeByOptionKindChart = () => {
     useEffect(() => {
         if (!loading && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
             const option = {
                 backgroundColor: '#151518',
@@ -109,11 +115,33 @@ const VolumeByOptionKindChart = () => {
         }
     }, [data, loading]);
 
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>🦾 Open Interest By Option Kind</h2>
+                    <Camera className="icon" id="OpenCamera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="OpenCamera" html={true}/>
+                    <ShieldAlert className="icon" id="openInfo"
+                                 data-tooltip-html="The amount of option contracts traded in<br> the last 24h by option type"/>
+                    <Tooltip anchorId="openInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -171,6 +199,7 @@ const VolumeByOptionKindChart = () => {
 };
 
 export default VolumeByOptionKindChart;
+
 
 
 

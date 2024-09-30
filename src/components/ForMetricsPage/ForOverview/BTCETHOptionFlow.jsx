@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './BTCETHOptionFlow.css';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'; // Обязательно подключите CSS для отображения тултипов
+import { ShieldAlert, Camera } from 'lucide-react';
+
 
 const BTCETHOptionFlow = () => {
     const [asset, setAsset] = useState('BTC');
@@ -17,6 +21,7 @@ const BTCETHOptionFlow = () => {
     });
 
     const chartRef = useRef(null); // Ref для диаграммы
+    const chartInstanceRef = useRef(null); // Ref для сохранения инстанса диаграммы
 
     useEffect(() => {
         const fetchMetrics = async () => {
@@ -35,6 +40,7 @@ const BTCETHOptionFlow = () => {
     useEffect(() => {
         if (chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
             // Опции диаграммы
             const option = {
@@ -115,6 +121,21 @@ const BTCETHOptionFlow = () => {
         }
     }, [metrics]);
 
+    // Функция для скачивания графика
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
 
     return (
@@ -122,6 +143,13 @@ const BTCETHOptionFlow = () => {
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>Options - Past 24h</h2>
+                    <Camera className="icon" id="camera"
+                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="camera" html={true}/>
+                    <ShieldAlert className="icon" id="optionData"
+                                 data-tooltip-html="It provides information on Call<br> and Put trades for the last<br> 24 hours"/>
+                    <Tooltip anchorId="optionData" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -140,44 +168,49 @@ const BTCETHOptionFlow = () => {
             </div>
             <div className="flow-option-content">
                 <div className="metrics-option call-metrics">
+
                     <div className="metric-option call-buys">
                         <p className="metric-option-label">Call Buys</p>
                         <div className="metric-option-variable">
-                        <p className="metric-option-value">
-                            {assetSymbol} {metrics.Call_Buys}
-                        </p>
-                        <p className="metric-option-percentage"> {metrics.Call_Buys_Percent}% </p>
+                            <p className="metric-option-value">
+                                {assetSymbol} {metrics.Call_Buys}
+                            </p>
+                            <p className="metric-option-percentage"> {metrics.Call_Buys_Percent}% </p>
                         </div>
                     </div>
+
+                    <div className="metric-option put-buys">
+                        <p className="metric-option-label">Put Buys</p>
+                        <div className="metric-option-variable">
+                            <p className="metric-option-value">{assetSymbol} {metrics.Put_Buys}</p>
+                            <p className="metric-option-percentage"> {metrics.Put_Buys_Percent}% </p>
+                        </div>
+                    </div>
+
+                </div>
+                <div>
+                    <div ref={chartRef} style={{width: '320px', height: '320px'}}></div>
+                </div>
+                <div className="metrics-option put-metrics">
 
                     <div className="metric-option call-sells">
                         <p className="metric-option-label">Call Sells</p>
                         <div className="metric-option-variable">
-                        <p className="metric-option-value">
-                            {assetSymbol} {metrics.Call_Sells}
-                        </p>
-                        <p className="metric-option-percentage"> {metrics.Call_Sells_Percent}% </p>
+                            <p className="metric-option-value">
+                                {assetSymbol} {metrics.Call_Sells}
+                            </p>
+                            <p className="metric-option-percentage"> {metrics.Call_Sells_Percent}% </p>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <div ref={chartRef} style={{width: '320px', height: '320px' }}></div>
-                </div>
-                <div className="metrics-option put-metrics">
-                    <div className="metric-option put-buys">
-                        <p className="metric-option-label">Put Buys</p>
-                        <div className="metric-option-variable">
-                        <p className="metric-option-value">{assetSymbol} {metrics.Put_Buys}</p>
-                        <p className="metric-option-percentage"> {metrics.Put_Buys_Percent}% </p>
-                        </div>
-                    </div>
+
                     <div className="metric-option put-sells">
                         <p className="metric-option-label">Put Sells</p>
                         <div className="metric-option-variable">
-                        <p className="metric-option-value">{assetSymbol} {metrics.Put_Sells}</p>
-                        <p className="metric-option-percentage"> {metrics.Put_Sells_Percent}% </p>
+                            <p className="metric-option-value">{assetSymbol} {metrics.Put_Sells}</p>
+                            <p className="metric-option-percentage"> {metrics.Put_Sells_Percent}% </p>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

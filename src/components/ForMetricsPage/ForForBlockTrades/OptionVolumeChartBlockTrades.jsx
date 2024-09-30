@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
 import './OptionVolumeChartBlockTrades.css'; // Подключение стилей для спиннера и контейнеров
+import { ShieldAlert, Camera } from 'lucide-react';
+import { Tooltip } from "react-tooltip";
 
 const OptionVolumeChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
@@ -9,6 +11,7 @@ const OptionVolumeChartBlockTrades = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const chartRef = useRef(null); // Ref для диаграммы ECharts
+    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
     // Функция получения данных с сервера
     useEffect(() => {
@@ -34,8 +37,12 @@ const OptionVolumeChartBlockTrades = () => {
     useEffect(() => {
         if (trades.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
+            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
-            const instrumentNames = trades.map(trade => trade.instrument_name);
+            // Обрезаем символ актива
+            const instrumentNames = trades.map(trade => {
+                return trade.instrument_name.split('-').slice(1).join('-'); // Убираем символ актива (например, 'BTC-')
+            });
             const tradeCounts = trades.map(trade => trade.trade_count);
 
             const option = {
@@ -53,7 +60,7 @@ const OptionVolumeChartBlockTrades = () => {
                 },
                 xAxis: {
                     type: 'category',
-                    data: instrumentNames,
+                    data: instrumentNames, // Обновляем данные оси X
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
@@ -103,6 +110,21 @@ const OptionVolumeChartBlockTrades = () => {
         }
     }, [trades]);
 
+    // Функция для скачивания графика
+    const handleDownload = () => {
+        if (chartInstanceRef.current) {
+            const url = chartInstanceRef.current.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#FFFFFF', // Белый фон для изображения
+            });
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.click();
+        }
+    };
+
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
@@ -111,6 +133,13 @@ const OptionVolumeChartBlockTrades = () => {
                         🏆
                         Top Traded Options - Past 24h
                     </h2>
+                    <Camera className="icon" id="cameraVol"
+                            onClick={handleDownload}
+                            data-tooltip-html="Export image"/>
+                    <Tooltip anchorId="cameraVol" html={true}/>
+                    <ShieldAlert className="icon" id="optionChartInfo"
+                                 data-tooltip-html="The top traded options in the last 24h"/>
+                    <Tooltip anchorId="optionChartInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -152,5 +181,7 @@ const OptionVolumeChartBlockTrades = () => {
 };
 
 export default OptionVolumeChartBlockTrades;
+
+
 
 

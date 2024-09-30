@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'Paloseco';
+    src: url('../../fonts/Paloseco-Medium.ttf') format('truetype'); /* Используем 'truetype' для TTF */
+    font-weight: 400; /* Обычный вес */
+    font-style: normal;
+}
+
 /* Контейнер всего компонента */
 .flow-option-container {
     width: 100%;
@@ -25,6 +32,7 @@
     align-items: center; /* Выравнивание по вертикали */
     padding-top: 7px;
     width: 100%; /* Ширина контейнера по всей странице */
+    gap: 20px;
 }
 
 .graph{
@@ -50,14 +58,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-left: 20px;
 }
 
 /* Стили для выпадающего списка */
 .asset-option-buttons select {
     width: 100%;
     height: 100%;
-    padding: 0 36px 0 15px; /* Увеличьте правый padding для места под стрелку */
+    padding: 0 34px 0 7px; /* Увеличьте правый padding для места под стрелку */
     background-color: #151518;
     color: #9CA3AF;
     border: 1px solid #393E47;
@@ -87,6 +94,23 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.icon {
+    color: #616774; /* Изначальный цвет */
+    transition: color 0.3s ease; /* Плавная смена цвета при наведении */
+    cursor: pointer; /* Указатель мыши в виде руки при наведении */
+    outline: none; /* Убираем бордюр при фокусе */
+}
+
+.icon:focus {
+    outline: none; /* Убираем бордюр при фокусе */
+}
+
+.icon:hover {
+    color: #FFFFFF; /* Цвет становится белым при наведении */
+}
+
+
 
 /* Разделительная линия под заголовком и переключателем */
 .flow-option-dedicated {
@@ -161,6 +185,15 @@
     font-size: 18px;
     color: white;
 }
+
+.react-tooltip {
+    z-index: 9999; /* Установите высокий z-index */
+}
+
+.flow-option-header-container {
+    overflow: visible; /* Убедитесь, что тултипы не обрезаются */
+}
+
 
 
 
