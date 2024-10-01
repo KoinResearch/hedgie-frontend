@@ -17,6 +17,7 @@ const VolumeByStrikePriceChart = () => {
     const chartRef = useRef(null); // Ref для ECharts
     const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
+    // Фетч данных с сервера для экспираций
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
@@ -30,13 +31,14 @@ const VolumeByStrikePriceChart = () => {
         fetchExpirations();
     }, [asset]);
 
+    // Фетч данных по объемам по страйкам
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
@@ -49,6 +51,7 @@ const VolumeByStrikePriceChart = () => {
         fetchData();
     }, [asset, expiration]);
 
+    // Обработка данных и настройка графика
     useEffect(() => {
         if (!loading && chartRef.current && data.length > 0) {
             const chartInstance = echarts.init(chartRef.current);
@@ -168,6 +171,7 @@ const VolumeByStrikePriceChart = () => {
         }
     }, [data, loading]);
 
+    // Функция для скачивания графика
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
@@ -182,14 +186,11 @@ const VolumeByStrikePriceChart = () => {
         }
     };
 
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>
-                        😬 Open Interest By Strike Price
-                    </h2>
+                    <h2>😬 Open Interest By Strike Price</h2>
                     <Camera className="icon" id="strikeCamera"
                             onClick={handleDownload} // Обработчик нажатия для скачивания изображения
                             data-tooltip-html="Export image"/>
@@ -213,9 +214,7 @@ const VolumeByStrikePriceChart = () => {
                     <div className="asset-option-buttons">
                         <select onChange={(e) => setExpiration(e.target.value)} value={expiration}>
                             {expirations.map(exp => (
-                                <option key={exp} value={exp}>
-                                    {exp}
-                                </option>
+                                <option key={exp} value={exp}>{exp}</option>
                             ))}
                         </select>
                         <span className="custom-arrow">
@@ -254,5 +253,3 @@ const VolumeByStrikePriceChart = () => {
 };
 
 export default VolumeByStrikePriceChart;
-
-

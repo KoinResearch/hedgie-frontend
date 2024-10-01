@@ -60,9 +60,7 @@ const OpenInterestByExpirationChart = () => {
             // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const expirationDates = data.map(d => d.expiration);
             const putsOtm = data.map(d => parseFloat(d.puts_otm).toFixed(2));
-            const putsItm = data.map(d => parseFloat(d.puts_itm).toFixed(2));
             const callsOtm = data.map(d => parseFloat(d.calls_otm).toFixed(2));
-            const callsItm = data.map(d => parseFloat(d.calls_itm).toFixed(2));
             const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
             const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
             const notionalValue = data.map(d => parseFloat(d.notional_value).toFixed(2));
@@ -85,7 +83,7 @@ const OpenInterestByExpirationChart = () => {
                 },
                 legend: {
                     data: [
-                        'Puts OTM', 'Puts ITM', 'Calls OTM', 'Calls ITM',
+                        'Puts OTM', 'Calls OTM',
                         'Puts Market Value [$]', 'Calls Market Value [$]', 'Notional Value [$]'
                     ],
                     textStyle: { color: '#B8B8B8' },

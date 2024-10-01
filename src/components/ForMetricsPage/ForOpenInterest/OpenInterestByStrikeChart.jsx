@@ -17,6 +17,7 @@ const OpenInterestByStrikeChart = () => {
     const chartRef = useRef(null); // Ref для ECharts
     const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
 
+    // Получаем доступные даты экспирации для выбранного актива
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
@@ -30,6 +31,7 @@ const OpenInterestByStrikeChart = () => {
         fetchExpirations();
     }, [asset]);
 
+    // Получение данных открытого интереса по страйку с учётом рыночной стоимости в долларах
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -37,7 +39,7 @@ const OpenInterestByStrikeChart = () => {
             try {
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
-                setData(response.data);
+                setData(response.data); // Данные уже сконвертированы в доллары на сервере
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
                 setError(err.message);
@@ -49,17 +51,18 @@ const OpenInterestByStrikeChart = () => {
         fetchData();
     }, [asset, expiration]);
 
+    // Отрисовка диаграммы с обновлёнными данными
     useEffect(() => {
         if (!loading && chartRef.current && data.length > 0) {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
-            // Преобразование данных с округлением до 2 знаков после запятой
+            // Преобразование данных для отображения
             const strikePrices = data.map(d => d.strike);
             const puts = data.map(d => parseFloat(d.puts).toFixed(2));
             const calls = data.map(d => parseFloat(d.calls).toFixed(2));
-            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
-            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
+            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2)); // Рыночная стоимость в долларах
+            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2)); // Рыночная стоимость в долларах
 
             const option = {
                 backgroundColor: '#151518',
@@ -168,6 +171,7 @@ const OpenInterestByStrikeChart = () => {
         }
     }, [data, loading]);
 
+    // Обработчик для скачивания изображения диаграммы
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
@@ -181,7 +185,6 @@ const OpenInterestByStrikeChart = () => {
             a.click();
         }
     };
-
 
     return (
         <div className="flow-option-container">

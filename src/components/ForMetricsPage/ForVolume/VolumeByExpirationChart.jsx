@@ -6,7 +6,6 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 
-
 const VolumeByExpirationChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [strike, setStrike] = useState('All Strikes');
@@ -37,9 +36,8 @@ const VolumeByExpirationChart = () => {
             setLoading(true);
             setError(null);
             try {
-                // Используем "all" для запроса всех страйков
                 const strikeParam = strike === 'All Strikes' ? 'all' : strike;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
@@ -60,9 +58,7 @@ const VolumeByExpirationChart = () => {
             // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const expirationDates = data.map(d => d.expiration);
             const putsOtm = data.map(d => parseFloat(d.puts_otm).toFixed(2));
-            const putsItm = data.map(d => parseFloat(d.puts_itm).toFixed(2));
             const callsOtm = data.map(d => parseFloat(d.calls_otm).toFixed(2));
-            const callsItm = data.map(d => parseFloat(d.calls_itm).toFixed(2));
             const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
             const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
             const notionalValue = data.map(d => parseFloat(d.notional_value).toFixed(2));
@@ -85,8 +81,7 @@ const VolumeByExpirationChart = () => {
                 },
                 legend: {
                     data: [
-                        'Puts OTM', 'Puts ITM', 'Calls OTM', 'Calls ITM',
-                        'Puts Market Value [$]', 'Calls Market Value [$]', 'Notional Value [$]'
+                        'Puts OTM', 'Calls OTM', 'Puts Market Value [$]', 'Calls Market Value [$]', 'Notional Value [$]'
                     ],
                     textStyle: { color: '#B8B8B8' },
                     top: 10,
@@ -123,21 +118,21 @@ const VolumeByExpirationChart = () => {
                         name: 'Puts OTM',
                         type: 'bar',
                         data: putsOtm,
-                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts OTM
+                        itemStyle: { color: '#ff3e3e' },
                         barWidth: '25%',
                     },
                     {
                         name: 'Calls OTM',
                         type: 'bar',
                         data: callsOtm,
-                        itemStyle: { color: '#00cc96' }, // Зелёный для Calls OTM
+                        itemStyle: { color: '#00cc96' },
                         barWidth: '25%',
                     },
                     {
                         name: 'Puts Market Value [$]',
                         type: 'line',
                         data: putsMarketValue,
-                        yAxisIndex: 1, // Привязываем к второй оси
+                        yAxisIndex: 1,
                         lineStyle: {
                             color: '#ff3e3e',
                             type: 'dotted',
@@ -275,6 +270,3 @@ const VolumeByExpirationChart = () => {
 };
 
 export default VolumeByExpirationChart;
-
-
-
