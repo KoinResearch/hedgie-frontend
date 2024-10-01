@@ -42,8 +42,11 @@ const TimeDistributionChart = () => {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
+            // Получаем текущий час
+            const currentHour = new Date().getUTCHours();
+
             // Форматируем данные для оси X (часы)
-            const hours = [...Array(24).keys()].map(hour => `${hour}:00`);
+            const hours = Array.from({ length: 24 }, (_, i) => `${(currentHour - i + 24) % 24}:00`).reverse();
 
             // Собираем данные для Calls и Puts
             const callCounts = data.map(hourData => hourData.calls.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
