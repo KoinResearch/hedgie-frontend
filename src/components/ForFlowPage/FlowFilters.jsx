@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './FlowFilters.css';
 import { Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -8,6 +7,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import './FlowFilters.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -101,6 +101,29 @@ const FlowFilters = () => {
         fetchLimitedTrades();
     }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder]);
 
+    const fetchAllTrades = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
+                params: {
+                    asset,
+                    tradeType,
+                    optionType,
+                    expiration,
+                    sizeOrder,
+                    premiumOrder,
+                },
+            });
+
+            setTrades(response.data.trades);
+            setShowAll(true);
+        } catch (error) {
+            console.error('Error fetching all trades:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const putCallData = {
         labels: ['Put', 'Call'],
         datasets: [
@@ -186,7 +209,7 @@ const FlowFilters = () => {
                 </select>
             </div>
 
-            {/* Display metrics */}
+            {/* Метрики */}
             <div className="metrics-row">
                 <div className="metric">
                     <div className="metric-data">
@@ -235,7 +258,7 @@ const FlowFilters = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {limitedTrades.map((trade, index) => (
+                        {(showAll ? trades : limitedTrades).map((trade, index) => (
                             <tr key={index}>
                                 <td>{asset}</td>
                                 <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
