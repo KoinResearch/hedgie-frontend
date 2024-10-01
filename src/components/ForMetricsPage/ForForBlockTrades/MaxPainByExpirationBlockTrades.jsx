@@ -4,7 +4,7 @@ import * as echarts from 'echarts';
 import './MaxPainByExpirationBlockTrades.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
-import 'react-tooltip/dist/react-tooltip.css'; // Подключите CSS для отображения тултипов
+import 'react-tooltip/dist/react-tooltip.css';
 
 const convertToISODate = (dateStr) => {
     const year = `20${dateStr.slice(-2)}`;
@@ -32,6 +32,20 @@ const convertToISODate = (dateStr) => {
 
 const calculateNotionalValue = (intrinsicValues) => {
     return Object.values(intrinsicValues).reduce((acc, val) => acc + val, 0);
+};
+
+// Функция для нахождения оптимального диапазона и шага для осей
+const getOptimalAxisSettings = (values, steps) => {
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const range = maxValue - minValue;
+    const step = range / steps;
+
+    const roundedStep = Math.ceil(step / 1000) * 1000; // Округляем шаг для Max Pain Price
+    const optimalMin = Math.floor(minValue / roundedStep) * roundedStep;
+    const optimalMax = Math.ceil(maxValue / roundedStep) * roundedStep;
+
+    return { min: optimalMin, max: optimalMax, step: roundedStep };
 };
 
 const MaxPainByExpirationBlockTrades = () => {
@@ -74,6 +88,10 @@ const MaxPainByExpirationBlockTrades = () => {
             const maxPainValues = expirationDates.map(exp => parseFloat(data[exp].maxPain));
             const notionalValues = expirationDates.map(exp => calculateNotionalValue(data[exp].intrinsicValues));
 
+            // Получение оптимальных настроек осей для Max Pain Price и Notional Value
+            const maxPainSettings = getOptimalAxisSettings(maxPainValues, 6); // 6 шагов для Max Pain Price
+            const notionalSettings = getOptimalAxisSettings(notionalValues, 4); // 4 шага для Notional Value
+
             // Конфигурация ECharts
             const option = {
                 backgroundColor: '#151518',
@@ -112,6 +130,9 @@ const MaxPainByExpirationBlockTrades = () => {
                         type: 'value',
                         name: 'Max Pain Price [$]',
                         position: 'left',
+                        min: maxPainSettings.min,
+                        max: maxPainSettings.max,
+                        interval: maxPainSettings.step,
                         axisLine: { lineStyle: { color: '#B8B8B8' } },
                         axisLabel: {
                             color: '#7E838D',
@@ -123,10 +144,13 @@ const MaxPainByExpirationBlockTrades = () => {
                         type: 'value',
                         name: 'Notional Value',
                         position: 'right',
+                        min: notionalSettings.min,
+                        max: notionalSettings.max,
+                        interval: notionalSettings.step,
                         axisLine: { lineStyle: { color: '#B8B8B8' } },
                         axisLabel: {
                             color: '#A9A9A9',
-                            formatter: value => value.toLocaleString(),
+                            formatter: value => `${(value / 1e9).toFixed(1)}b`,
                         },
                         splitLine: { show: false },
                     },
@@ -167,7 +191,7 @@ const MaxPainByExpirationBlockTrades = () => {
                     },
                 ],
                 grid: {
-                    left: '5%',    // Уменьшаем отступы
+                    left: '5%',
                     right: '5%',
                     bottom: '5%',
                     top: '10%',

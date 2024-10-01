@@ -5,10 +5,9 @@ import './TimeDistributionChart.css'; // Подключение стилей д�
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
 
-
 const TimeDistributionChart = () => {
     const [asset, setAsset] = useState('BTC');
-    const [data, setData] = useState({ calls: [], puts: [] });
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const chartRef = useRef(null);
@@ -21,7 +20,7 @@ const TimeDistributionChart = () => {
             setError(null);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/time-distribution/${asset.toLowerCase()}`);
-                setData(response.data);
+                setData(response.data);  // Данные теперь массив с 24 объектами
             } catch (err) {
                 console.error('Error fetching time distribution data:', err);
                 setError(err.message);
@@ -35,7 +34,7 @@ const TimeDistributionChart = () => {
 
     // Отрисовка графика
     useEffect(() => {
-        if ((!data.calls || data.calls.length === 0) && (!data.puts || data.puts.length === 0)) {
+        if (data.length === 0) {
             return; // Если данных нет, не пытаемся отрисовать график
         }
 
@@ -43,30 +42,12 @@ const TimeDistributionChart = () => {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
-            // Получаем уникальные часы
-            const hours = [...new Set([...data.calls.map(d => d.hour), ...data.puts.map(d => d.hour)])];
+            // Форматируем данные для оси X (часы)
+            const hours = [...Array(24).keys()].map(hour => `${hour}:00`);
 
-            // Форматируем часы в HH:MM
-            const formattedHours = hours.map(hour => {
-                const date = new Date(hour);
-                return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-            });
-
-            // Собираем данные для графика
-            const callCounts = hours.map(hour => {
-                const call = data.calls.find(d => d.hour === hour);
-                return call ? call.trade_count : 0;
-            });
-
-            const putCounts = hours.map(hour => {
-                const put = data.puts.find(d => d.hour === hour);
-                return put ? put.trade_count : 0;
-            });
-
-            const avgIndexPrices = hours.map(hour => {
-                const call = data.calls.find(d => d.hour === hour);
-                return call ? call.avg_index_price : 0;
-            });
+            // Собираем данные для Calls и Puts
+            const callCounts = data.map(hourData => hourData.calls.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
+            const putCounts = data.map(hourData => hourData.puts.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
 
             // Настройка ECharts
             const option = {
@@ -78,13 +59,13 @@ const TimeDistributionChart = () => {
                     textStyle: { color: '#000' },
                 },
                 legend: {
-                    data: ['Calls', 'Puts', 'Index Price'],
+                    data: ['Calls', 'Puts'],
                     textStyle: { color: '#B8B8B8' },
                     top: 10,
                 },
                 xAxis: {
                     type: 'category',
-                    data: formattedHours,
+                    data: hours,
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
@@ -99,15 +80,7 @@ const TimeDistributionChart = () => {
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
                         axisLabel: { color: '#7E838D' },
                         splitLine: { lineStyle: { color: '#393E47' } },
-                    },
-                    {
-                        type: 'value',
-                        name: 'Index Price',
-                        position: 'right',
-                        axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: { color: '#7E838D' },
-                        splitLine: { show: false },
-                    },
+                    }
                 ],
                 series: [
                     {
@@ -123,15 +96,7 @@ const TimeDistributionChart = () => {
                         data: putCounts,
                         barWidth: '30%',
                         itemStyle: { color: 'rgba(231,76,60, 0.8)' },
-                    },
-                    {
-                        name: 'Index Price',
-                        type: 'line',
-                        data: avgIndexPrices,
-                        yAxisIndex: 1,
-                        lineStyle: { color: '#FFFFFF', width: 2 },
-                        itemStyle: { color: '#FFFFFF' },
-                    },
+                    }
                 ],
                 grid: {
                     left: '5%',
@@ -207,12 +172,7 @@ const TimeDistributionChart = () => {
                         <p>Error: {error}</p>
                     </div>
                 )}
-                {!loading && !error && data.calls.length === 0 && data.puts.length === 0 && (
-                    <div className="no-data-container">
-                        <p>No data available</p>
-                    </div>
-                )}
-                {!loading && !error && data.calls.length > 0 && data.puts.length > 0 && (
+                {!loading && !error && data.length > 0 && (
                     <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
                 )}
             </div>
