@@ -9,7 +9,6 @@ import {
     Legend,
 } from 'chart.js';
 
-// Регистрация компонентов Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const FlowFilters = () => {
@@ -46,7 +45,34 @@ const FlowFilters = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Загружаем первые 100 строк
+    // Логика загрузки метрик (только по активу)
+    useEffect(() => {
+        const fetchMetrics = async () => {
+            setIsLoading(true);
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
+                    params: {
+                        asset,
+                    },
+                });
+
+                const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage } = response.data;
+                setPutCallRatio(putCallRatio);
+                setTotalPuts(totalPuts);
+                setTotalCalls(totalCalls);
+                setPutsPercentage(putsPercentage);
+                setCallsPercentage(callsPercentage);
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchMetrics();
+    }, [asset]);
+
+    // Логика загрузки сделок с фильтрами
     useEffect(() => {
         const fetchLimitedTrades = async () => {
             setIsLoading(true);
@@ -59,17 +85,11 @@ const FlowFilters = () => {
                         expiration,
                         sizeOrder,
                         premiumOrder,
-                        limit: 100, // Лимит на первые 100 строк
+                        limit: 25, // Лимит на 25 строк
                     },
                 });
 
-                const { trades, putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage } = response.data;
-                setLimitedTrades(trades);
-                setPutCallRatio(putCallRatio);
-                setTotalPuts(totalPuts);
-                setTotalCalls(totalCalls);
-                setPutsPercentage(putsPercentage);
-                setCallsPercentage(callsPercentage);
+                setLimitedTrades(response.data.trades);
                 setShowAll(false);
             } catch (error) {
                 console.error('Error fetching trades:', error);
@@ -81,32 +101,6 @@ const FlowFilters = () => {
         fetchLimitedTrades();
     }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder]);
 
-    // Загружаем все данные при нажатии на кнопку
-    const fetchAllTrades = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
-                params: {
-                    asset,
-                    tradeType,
-                    optionType,
-                    expiration,
-                    sizeOrder,
-                    premiumOrder,
-                },
-            });
-
-            const { trades } = response.data;
-            setTrades(trades);
-            setShowAll(true);
-        } catch (error) {
-            console.error('Error fetching all trades:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Данные для графиков
     const putCallData = {
         labels: ['Put', 'Call'],
         datasets: [
@@ -192,7 +186,7 @@ const FlowFilters = () => {
                 </select>
             </div>
 
-            {/* Display metrics in a row */}
+            {/* Display metrics */}
             <div className="metrics-row">
                 <div className="metric">
                     <div className="metric-data">
@@ -241,7 +235,7 @@ const FlowFilters = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {(showAll ? trades : limitedTrades).map((trade, index) => (
+                        {limitedTrades.map((trade, index) => (
                             <tr key={index}>
                                 <td>{asset}</td>
                                 <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
@@ -260,11 +254,6 @@ const FlowFilters = () => {
                         ))}
                         </tbody>
                     </table>
-                )}
-                {!showAll && (
-                    <div className="show-all-container">
-                        <button className="show-all-btn" onClick={fetchAllTrades}>Show All</button>
-                    </div>
                 )}
             </div>
         </div>
