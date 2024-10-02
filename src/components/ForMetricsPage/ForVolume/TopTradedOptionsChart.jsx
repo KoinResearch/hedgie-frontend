@@ -6,7 +6,8 @@ import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
 
 const TopTradedOptionsChart = () => {
-    const [asset, setAsset] = useState('BTC');
+    const [asset, setAsset] = useState('BTC'); // Выбор актива
+    const [tradeType, setTradeType] = useState('simple'); // Выбор типа сделки (simple или block)
     const [trades, setTrades] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,7 +21,7 @@ const TopTradedOptionsChart = () => {
             setError(null);
 
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/popular-options/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/popular-options/${asset.toLowerCase()}?type=${tradeType}`);
                 setTrades(response.data);
             } catch (error) {
                 console.error('Error fetching option volume data:', error);
@@ -31,7 +32,7 @@ const TopTradedOptionsChart = () => {
         };
 
         fetchData();
-    }, [asset]);
+    }, [asset, tradeType]); // Перезагружаем данные при изменении актива или типа сделки
 
     // Функция создания графика с ECharts
     useEffect(() => {
@@ -141,6 +142,19 @@ const TopTradedOptionsChart = () => {
                                  data-tooltip-html="The top traded options in the last 24h"/>
                     <Tooltip anchorId="optionChartInfo" html={true}/>
                     <div className="asset-option-buttons">
+                        <select value={tradeType} onChange={(e) => setTradeType(e.target.value)}>
+                            <option value="simple">Simple Trades</option>
+                            <option value="block">Block Trades</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
@@ -181,5 +195,3 @@ const TopTradedOptionsChart = () => {
 };
 
 export default TopTradedOptionsChart;
-
-
