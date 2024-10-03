@@ -2,11 +2,9 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -18,6 +16,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -28,13 +27,10 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #242424;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
+/* Кнопки */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -44,14 +40,36 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.25s, color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
+  background-color: white; /* При наведении фон становится белым */
+  color: black; /* При наведении текст становится черным */
 }
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: none;
+}
+
+/* Стили для всех select элементов */
+select {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: #0E0E11;
+  color: #ABAFB8;
+  border: 1px solid #393E47;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', sans-serif;
+  transition: border-color 0.25s;
+}
+
+select:hover {
+  border-color: white; /* Бордер становится белым при наведении */
 }
 
 @media (prefers-color-scheme: light) {
@@ -59,31 +77,12 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
-}
-
-/* Скрываем скролл */
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color: black;
-  overflow-x: hidden;
-  overflow-y: scroll; /* Оставляем возможность скроллинга */
-}
-
-/* Для WebKit-браузеров (Chrome, Safari) */
-html::-webkit-scrollbar {
-  display: none; /* Полностью скрываем скроллбар */
-}
-
-/* Для Firefox */
-html {
-  scrollbar-width: none; /* Скрываем скроллбар в Firefox */
 }

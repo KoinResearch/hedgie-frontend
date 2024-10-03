@@ -4,18 +4,22 @@ html, body, #root {
   height: 100%;
   width: 100%;
   background-color: black;
-  overflow-x: hidden;
-  overflow-y: scroll; /* Оставляем возможность прокрутки */
+  overflow-x: hidden; /* Скрываем горизонтальную прокрутку */
 }
 
-/* Скрываем вертикальную полосу прокрутки для всех браузеров */
-html::-webkit-scrollbar {
-  display: none; /* Скрываем скролл для WebKit-браузеров (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 0;
 }
 
-html {
-  scrollbar-width: none; /* Скрываем скролл для Firefox */
-}
+/*!* Скрываем вертикальную полосу прокрутки *!*/
+/*html::-webkit-scrollbar {*/
+/*  display: none; !* Скрываем скроллбар для браузеров на основе WebKit (Chrome, Safari, Edge) *!*/
+/*}*/
+
+/*!* Для всех браузеров, включая Firefox *!*/
+/*html {*/
+/*  scrollbar-width: none; !* Скрываем скроллбар для Firefox *!*/
+/*}*/
 
 /* Стиль для всего приложения */
 .App {
