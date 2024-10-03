@@ -53,25 +53,17 @@ const FlowFilters = () => {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
                     params: {
                         asset,
-                        tradeType,
-                        optionType,
-                        expiration,
-                        sizeOrder,
-                        premiumOrder,
                         page,
                     },
                 });
 
-                console.log('Response data:', response.data); // Вывод данных в консоль
-
-                const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage, totalPages, trades } = response.data;
-                setPutCallRatio(putCallRatio || 0);
-                setTotalPuts(totalPuts || 0);
-                setTotalCalls(totalCalls || 0);
-                setPutsPercentage(putsPercentage || 0);
-                setCallsPercentage(callsPercentage || 0);
-                setTotalPages(totalPages || 1);
-                setTrades(trades || []);
+                const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage, totalPages } = response.data;
+                setPutCallRatio(putCallRatio);
+                setTotalPuts(totalPuts);
+                setTotalCalls(totalCalls);
+                setPutsPercentage(putsPercentage);
+                setCallsPercentage(callsPercentage);
+                setTotalPages(totalPages); // Устанавливаем общее количество страниц
             } catch (error) {
                 console.error('Error fetching metrics:', error);
             } finally {
@@ -80,7 +72,7 @@ const FlowFilters = () => {
         };
 
         fetchMetrics();
-    }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder, page]);
+    }, [asset, page]);
 
     const handleNextPage = () => {
         if (page < totalPages) {
@@ -142,6 +134,7 @@ const FlowFilters = () => {
     return (
         <div className="flow-container">
             {/* Фильтры */}
+            {/* Фильтры */}
             <div className="flow-filters">
                 <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                     <option value="BTC">BTC</option>
@@ -180,6 +173,7 @@ const FlowFilters = () => {
                 <button onClick={handlePreviousPage} disabled={page === 1}>
                     Previous
                 </button>
+                <span>Page {page} of {totalPages}</span>
                 <button onClick={handleNextPage} disabled={page === totalPages}>
                     Next
                 </button>
@@ -190,9 +184,7 @@ const FlowFilters = () => {
                 <div className="metric">
                     <div className="metric-data">
                         <span className="metric-label">Put to Call Ratio</span>
-                        <span className="metric-value">
-                {typeof putCallRatio === 'number' && !isNaN(putCallRatio) ? putCallRatio.toFixed(2) : '0.00'}
-            </span>
+                        <span className="metric-value">{putCallRatio.toFixed(2)}</span>
                     </div>
                     <Doughnut data={putCallData} options={options}/>
                 </div>
@@ -202,9 +194,7 @@ const FlowFilters = () => {
                 <div className="metric">
                     <div className="metric-data">
                         <span className="metric-label">Total Calls</span>
-                        <span className="metric-value">
-                {typeof totalCalls === 'string' && !isNaN(parseFloat(totalCalls)) ? parseFloat(totalCalls).toFixed(2) : '0.00'}
-            </span>
+                        <span className="metric-value">{totalCalls.toFixed(2)}</span>
                     </div>
                     <Doughnut data={totalCallsData} options={options}/>
                 </div>
@@ -214,11 +204,9 @@ const FlowFilters = () => {
                 <div className="metric">
                     <div className="metric-data">
                         <span className="metric-label">Total Puts</span>
-                        <span className="metric-value">
-                {typeof totalPuts === 'string' && !isNaN(parseFloat(totalPuts)) ? parseFloat(totalPuts).toFixed(2) : '0.00'}
-            </span>
+                        <span className="metric-value">{totalPuts.toFixed(2)}</span>
                     </div>
-                    <Doughnut data={totalPutsData} options={options} />
+                    <Doughnut data={totalPutsData} options={options}/>
                 </div>
             </div>
 
@@ -240,16 +228,16 @@ const FlowFilters = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {trades.map((trade, index) => (
+                        {(showAll ? trades : limitedTrades).map((trade, index) => (
                             <tr key={index}>
                                 <td>{asset}</td>
-                                <td style={{ color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548' }}>
+                                <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
                                     {trade.direction.toUpperCase()}
                                 </td>
-                                <td style={{ color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548' }}>
+                                <td style={{color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548'}}>
                                     {trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}
                                 </td>
-                                <td style={{ color: '#4B88E1' }}>
+                                <td style={{color: '#4B88E1'}}>
                                     {trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}
                                 </td>
                                 <td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>

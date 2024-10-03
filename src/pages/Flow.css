@@ -26,6 +26,7 @@
     margin-bottom: 20px;
 }
 
+/* Стили для select */
 .flow-filters select {
     width: 100%;
     height: 100%;
@@ -36,7 +37,55 @@
     border-radius: 8px;
     font-size: 14px;
     font-family: 'JetBrains Mono', sans-serif;
+    transition: border-color 0.3s ease;
 }
+
+/* Изменение бордюра при наведении */
+.flow-filters select:hover {
+    border-color: white;
+}
+
+/* Убираем синий контур при фокусе */
+.flow-filters select:focus {
+    border-color: white;
+}
+
+/* Также можно убрать эффект при активном состоянии кнопки */
+.flow-filters select:active {
+    border-color: white;
+}
+
+/* Стили для button */
+.flow-filters button {
+    padding: 10px;
+    background-color: #0E0E11;
+    color: #ABAFB8;
+    border: 1px solid #393E47;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Изменение фона и текста при наведении */
+.flow-filters button:hover {
+    background-color: white;
+    color: black;
+    border-color: white;
+}
+
+/* Убираем синий контур при фокусе */
+.flow-filters button:focus {
+    outline: none;
+    border-color: #393E47;
+}
+
+/* Также можно убрать эффект при активном состоянии кнопки */
+.flow-filters button:active {
+    outline: none;
+    border-color: #393E47;
+}
+
 
 .metrics-row {
     display: flex;
@@ -56,7 +105,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 200px;
+    width: 220px;
     padding: 20px; /* Отступы внутри для более "воздушного" вида */
     border-radius: 12px; /* Закругляем углы */
     text-align: center;

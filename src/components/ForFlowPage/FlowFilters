@@ -53,25 +53,17 @@ const FlowFilters = () => {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
                     params: {
                         asset,
-                        tradeType,
-                        optionType,
-                        expiration,
-                        sizeOrder,
-                        premiumOrder,
                         page,
                     },
                 });
 
-                console.log('Response data:', response.data); // Вывод данных в консоль
-
-                const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage, totalPages, trades } = response.data;
-                setPutCallRatio(putCallRatio || 0);
-                setTotalPuts(totalPuts || 0);
-                setTotalCalls(totalCalls || 0);
-                setPutsPercentage(putsPercentage || 0);
-                setCallsPercentage(callsPercentage || 0);
-                setTotalPages(totalPages || 1);
-                setTrades(trades || []);
+                const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage, totalPages } = response.data;
+                setPutCallRatio(putCallRatio);
+                setTotalPuts(totalPuts);
+                setTotalCalls(totalCalls);
+                setPutsPercentage(putsPercentage);
+                setCallsPercentage(callsPercentage);
+                setTotalPages(totalPages); // Устанавливаем общее количество страниц
             } catch (error) {
                 console.error('Error fetching metrics:', error);
             } finally {
@@ -80,7 +72,7 @@ const FlowFilters = () => {
         };
 
         fetchMetrics();
-    }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder, page]);
+    }, [asset, page]);
 
     const handleNextPage = () => {
         if (page < totalPages) {
@@ -191,10 +183,10 @@ const FlowFilters = () => {
                     <div className="metric-data">
                         <span className="metric-label">Put to Call Ratio</span>
                         <span className="metric-value">
-                {typeof putCallRatio === 'number' && !isNaN(putCallRatio) ? putCallRatio.toFixed(2) : '0.00'}
-            </span>
+                            {typeof putCallRatio === 'number' && !isNaN(putCallRatio) ? putCallRatio.toFixed(2) : '0.00'}
+                        </span>
                     </div>
-                    <Doughnut data={putCallData} options={options}/>
+                    <Doughnut data={putCallData} options={options} />
                 </div>
 
                 <div className="dedicate-metric"></div>
@@ -203,10 +195,10 @@ const FlowFilters = () => {
                     <div className="metric-data">
                         <span className="metric-label">Total Calls</span>
                         <span className="metric-value">
-                {typeof totalCalls === 'string' && !isNaN(parseFloat(totalCalls)) ? parseFloat(totalCalls).toFixed(2) : '0.00'}
-            </span>
+                            {typeof totalCalls === 'number' && !isNaN(totalCalls) ? totalCalls.toFixed(2) : '0.00'}
+                        </span>
                     </div>
-                    <Doughnut data={totalCallsData} options={options}/>
+                    <Doughnut data={totalCallsData} options={options} />
                 </div>
 
                 <div className="dedicate-metric"></div>
@@ -215,8 +207,8 @@ const FlowFilters = () => {
                     <div className="metric-data">
                         <span className="metric-label">Total Puts</span>
                         <span className="metric-value">
-                {typeof totalPuts === 'string' && !isNaN(parseFloat(totalPuts)) ? parseFloat(totalPuts).toFixed(2) : '0.00'}
-            </span>
+                            {typeof totalPuts === 'number' && !isNaN(totalPuts) ? totalPuts.toFixed(2) : '0.00'}
+                        </span>
                     </div>
                     <Doughnut data={totalPutsData} options={options} />
                 </div>
