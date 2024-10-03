@@ -4,16 +4,15 @@ html, body, #root {
   height: 100%;
   width: 100%;
   background-color: black;
-  overflow-x: hidden; /* Отключаем горизонтальную прокрутку */
-  overflow-y: scroll; /* Оставляем вертикальную прокрутку */
+  overflow-x: hidden;
+  overflow-y: scroll; /* Оставляем возможность прокрутки */
 }
 
-/* Скрываем вертикальную полосу прокрутки для WebKit-браузеров (Chrome, Safari) */
+/* Скрываем вертикальную полосу прокрутки для всех браузеров */
 html::-webkit-scrollbar {
-  display: none;
+  display: none; /* Скрываем скролл для WebKit-браузеров (Chrome, Safari) */
 }
 
-/* Для всех браузеров, включая Firefox */
 html {
   scrollbar-width: none; /* Скрываем скролл для Firefox */
 }
