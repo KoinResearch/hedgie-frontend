@@ -9,7 +9,7 @@ import { ShieldAlert, Camera } from 'lucide-react';
 const VolumeByExpirationChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [strike, setStrike] = useState('All Strikes');
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [strikes, setStrikes] = useState([]); // Для хранения доступных страйков
@@ -51,17 +51,17 @@ const VolumeByExpirationChart = () => {
     }, [asset, strike]);
 
     useEffect(() => {
-        if (data.length > 0 && chartRef.current) {
+        if (Object.keys(data).length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
-            // Преобразование данных для отображения с округлением до 2 знаков после запятой
-            const expirationDates = data.map(d => d.expiration);
-            const putsOtm = data.map(d => parseFloat(d.puts_otm).toFixed(2));
-            const callsOtm = data.map(d => parseFloat(d.calls_otm).toFixed(2));
-            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
-            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
-            const notionalValue = data.map(d => parseFloat(d.notional_value).toFixed(2));
+            // Преобразование данных для отображения
+            const expirationDates = Object.keys(data);
+            const putsOtm = expirationDates.map(date => parseFloat(data[date].puts_otm).toFixed(2));
+            const callsOtm = expirationDates.map(date => parseFloat(data[date].calls_otm).toFixed(2));
+            const putsMarketValue = expirationDates.map(date => parseFloat(data[date].puts_market_value).toFixed(2));
+            const callsMarketValue = expirationDates.map(date => parseFloat(data[date].calls_market_value).toFixed(2));
+            const notionalValue = expirationDates.map(date => parseFloat(data[date].notional_value).toFixed(2));
 
             const option = {
                 backgroundColor: '#151518',
@@ -269,12 +269,12 @@ const VolumeByExpirationChart = () => {
                         <p>Error: {error}</p>
                     </div>
                 )}
-                {!loading && !error && data.length === 0 && (
+                {!loading && !error && Object.keys(data).length === 0 && (
                     <div className="no-data-container">
                         <p>No data available</p>
                     </div>
                 )}
-                {!loading && !error && data.length > 0 && (
+                {!loading && !error && Object.keys(data).length > 0 && (
                     <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
                 )}
             </div>
