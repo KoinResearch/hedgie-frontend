@@ -61,15 +61,15 @@ const BTCETHBlockTrades = () => {
                         label: {
                             show: true,
                             position: 'inside',
-                            formatter: '{d}%', // Отображаем проценты
+                            formatter: (params) => `${Math.round(params.percent)}%`, // Округляем проценты до целого
                             fontSize: 12,
                             color: '#fff',
                             fontFamily: 'JetBrains Mono', // Шрифт для меток
                         },
                         itemStyle: {
                             borderRadius: 10,
-                            borderColor: '#000',
-                            borderWidth: 2,
+                            borderColor: '#151518',
+                            borderWidth: 4,
                         },
                         data: [
                             {
