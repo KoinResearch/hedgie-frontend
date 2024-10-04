@@ -62,11 +62,13 @@ const HistoricalOpenInterestChart = () => {
                         label: {
                             backgroundColor: '#FFFFFF',
                             color: '#000000',
+                            fontFamily: 'JetBrains Mono', // Шрифт для метки оси
                         },
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000000',
+                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
                     },
                     formatter: function (params) {
                         let result = `<b>${params[0].axisValue}</b><br/>`;
@@ -78,25 +80,32 @@ const HistoricalOpenInterestChart = () => {
                 },
                 legend: {
                     data: ['Total Contracts', 'Index Price'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
                     type: 'category',
                     data: timestamps,
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: { color: '#7E838D' },
+                    axisLabel: {
+                        color: '#7E838D',
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
+                    },
                 },
                 yAxis: [
                     {
                         type: 'log',
                         name: 'Total Contracts',
-                        axisLine: { lineStyle: { color: '#B8B8B8' } },
+                        axisLine: { lineStyle: { color: '#7f7f7f' } },
                         axisLabel: {
                             color: '#7E838D',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
                             formatter: function (value) {
                                 return value.toFixed(2);
-                            }
+                            },
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
@@ -106,9 +115,10 @@ const HistoricalOpenInterestChart = () => {
                         axisLine: { lineStyle: { color: '#7f7f7f' } },
                         axisLabel: {
                             color: '#7f7f7f',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
                             formatter: function (value) {
                                 return value.toFixed(2);
-                            }
+                            },
                         },
                         splitLine: { show: false },
                         position: 'right',

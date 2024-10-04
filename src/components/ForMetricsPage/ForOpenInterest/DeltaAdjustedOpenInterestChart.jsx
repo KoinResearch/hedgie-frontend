@@ -66,22 +66,28 @@ const DeltaAdjustedOpenInterestChart = () => {
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
-                        type: 'shadow'
+                        type: 'shadow',
                     },
                     formatter: function (params) {
                         const tooltipDate = params[0].axisValue;
                         let result = `<b>${tooltipDate}</b><br/>`;
                         params.forEach((item) => {
-                            result += `<span style="color:${item.color};">●</span> ${item.seriesName}: ${parseFloat(item.value).toFixed(2)}<br/>`; // Округляем значения в тултипе
+                            result += `<span style="color:${item.color};">●</span> ${item.seriesName}: ${parseFloat(item.value).toFixed(2)}<br/>`;
                         });
                         return result;
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: { color: '#000' },
+                    textStyle: {
+                        color: '#000',
+                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для тултипа
+                    },
                 },
                 legend: {
                     data: ['Puts', 'Calls'],
-                    textStyle: { color: '#FFFFFF' },
+                    textStyle: {
+                        color: '#FFFFFF',
+                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
@@ -90,14 +96,18 @@ const DeltaAdjustedOpenInterestChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот для читаемости
+                        rotate: 45,
+                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для меток оси X
                     },
                 },
                 yAxis: {
                     type: 'value',
                     name: 'Delta Adjusted Open Interest',
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: { color: '#7E838D' },
+                    axisLabel: {
+                        color: '#7E838D',
+                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для меток оси Y
+                    },
                     splitLine: { lineStyle: { color: '#393E47' } },
                 },
                 series: [
@@ -114,7 +124,7 @@ const DeltaAdjustedOpenInterestChart = () => {
                         data: deltaAdjustedCalls,
                         itemStyle: { color: '#00cc96' }, // Зеленый для Calls
                         barWidth: '30%',
-                    }
+                    },
                 ],
                 grid: {
                     left: '5%',

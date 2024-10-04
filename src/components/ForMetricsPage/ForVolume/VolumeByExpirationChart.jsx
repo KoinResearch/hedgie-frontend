@@ -72,18 +72,24 @@ const VolumeByExpirationChart = () => {
                         label: {
                             backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
                             color: '#000000', // Черный текст в метке
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток axisPointer
                         },
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
                     textStyle: {
                         color: '#000000', // Черный текст в тултипе
+                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
                     },
                 },
                 legend: {
                     data: [
-                        'Puts OTM', 'Calls OTM', 'Puts Market Value [$]', 'Calls Market Value [$]', 'Notional Value [$]'
+                        'Puts OTM', 'Calls OTM',
+                        'Puts Market Value [$]', 'Calls Market Value [$]', 'Notional Value [$]'
                     ],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
@@ -94,6 +100,7 @@ const VolumeByExpirationChart = () => {
                         color: '#7E838D',
                         rotate: 45, // Поворот меток для читаемости
                         interval: 0, // Показывать все метки
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
                     },
                 },
                 yAxis: [
@@ -101,14 +108,20 @@ const VolumeByExpirationChart = () => {
                         type: 'value',
                         name: 'Contracts',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: { color: '#7E838D' },
+                        axisLabel: {
+                            color: '#7E838D',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                        },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
                     {
                         type: 'value',
                         name: 'Market Value [$]',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: { color: '#7E838D' },
+                        axisLabel: {
+                            color: '#7E838D',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                        },
                         splitLine: { lineStyle: { color: '#151518' } },
                         position: 'right',
                     },
@@ -118,21 +131,21 @@ const VolumeByExpirationChart = () => {
                         name: 'Puts OTM',
                         type: 'bar',
                         data: putsOtm,
-                        itemStyle: { color: '#ff3e3e' },
+                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts OTM
                         barWidth: '25%',
                     },
                     {
                         name: 'Calls OTM',
                         type: 'bar',
                         data: callsOtm,
-                        itemStyle: { color: '#00cc96' },
+                        itemStyle: { color: '#00cc96' }, // Зелёный для Calls OTM
                         barWidth: '25%',
                     },
                     {
                         name: 'Puts Market Value [$]',
                         type: 'line',
                         data: putsMarketValue,
-                        yAxisIndex: 1,
+                        yAxisIndex: 1, // Привязываем к второй оси
                         lineStyle: {
                             color: '#ff3e3e',
                             type: 'dotted',

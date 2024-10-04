@@ -63,20 +63,29 @@ const VolumeByOptionKindChart = () => {
                     trigger: 'axis',
                     axisPointer: { type: 'shadow' },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: { color: '#000' },
+                    textStyle: {
+                        color: '#000',
+                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                    },
                 },
                 xAxis: {
                     type: 'value',
-                    name: 'Number of Contracts',
+                    name: 'Contracts',
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: { color: '#7E838D' },
+                    axisLabel: {
+                        color: '#7E838D',
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
+                    },
                     splitLine: { lineStyle: { color: '#393E47' } },
                 },
                 yAxis: {
                     type: 'category',
                     data: ['Calls', 'Puts'],
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: { color: '#7E838D' },
+                    axisLabel: {
+                        color: '#7E838D',
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                    },
                 },
                 series: [
                     {

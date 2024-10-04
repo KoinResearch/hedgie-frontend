@@ -73,14 +73,21 @@ const VolumeByStrikePriceChart = () => {
                         label: {
                             backgroundColor: '#FFFFFF',
                             color: '#000000',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток axisPointer
                         },
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: { color: '#000000' },
+                    textStyle: {
+                        color: '#000000',
+                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                    },
                 },
                 legend: {
                     data: ['Puts', 'Calls', 'Puts Market Value [$]', 'Calls Market Value [$]'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
@@ -90,6 +97,7 @@ const VolumeByStrikePriceChart = () => {
                     axisLabel: {
                         color: '#7E838D',
                         rotate: 45,
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
                     },
                 },
                 yAxis: [
@@ -97,14 +105,20 @@ const VolumeByStrikePriceChart = () => {
                         type: 'value',
                         name: 'Contracts',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: { color: '#7E838D' },
+                        axisLabel: {
+                            color: '#7E838D',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                        },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
                     {
                         type: 'value',
                         name: 'Market Value [$]',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: { color: '#7E838D' },
+                        axisLabel: {
+                            color: '#7E838D',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                        },
                         position: 'right',
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },

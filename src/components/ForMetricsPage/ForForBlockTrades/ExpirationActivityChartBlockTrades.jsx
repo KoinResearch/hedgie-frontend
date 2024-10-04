@@ -82,31 +82,43 @@ const ExpirationActivityChartBlockTrades = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
+                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для тултипа
                     },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
                     type: 'category',
                     data: expirationDates,
-                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLine: {
+                        lineStyle: { color: '#A9A9A9' }
+                    },
                     axisLabel: {
                         color: '#7E838D',
                         rotate: 45, // Поворот меток для читаемости
                         interval: 0, // Показывать все метки
+                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для меток X
                     },
                 },
                 yAxis: {
                     type: 'value',
                     name: 'Number of Trades',
-                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLine: {
+                        lineStyle: { color: '#A9A9A9' }
+                    },
                     axisLabel: {
                         color: '#7E838D',
+                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для меток Y
                     },
-                    splitLine: { lineStyle: { color: '#393E47' } },
+                    splitLine: {
+                        lineStyle: { color: '#393E47' }
+                    },
                 },
                 series: [
                     {

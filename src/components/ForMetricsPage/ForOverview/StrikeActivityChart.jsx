@@ -73,31 +73,49 @@ const StrikeActivityChart = () => {
                 backgroundColor: '#151518',
                 tooltip: {
                     trigger: 'axis',
-                    axisPointer: { type: 'shadow' },
+                    axisPointer: {
+                        type: 'shadow'
+                    },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: { color: '#000' },
+                    textStyle: {
+                        color: '#000',
+                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для тултипа
+                    },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
                     type: 'category',
                     data: strikePrices,
-                    axisLine: { lineStyle: { color: '#A9A9A9' } },
+                    axisLine: {
+                        lineStyle: { color: '#A9A9A9' }
+                    },
                     axisLabel: {
                         color: '#7E838D',
                         rotate: 45, // Поворот меток для читаемости
                         interval: 0, // Показывать все метки
+                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для меток оси X
                     },
                 },
                 yAxis: {
                     type: 'value',
                     name: 'Number of Trades',
-                    axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: { color: '#7E838D' },
-                    splitLine: { lineStyle: { color: '#393E47' } },
+                    axisLine: {
+                        lineStyle: { color: '#A9A9A9' }
+                    },
+                    axisLabel: {
+                        color: '#7E838D',
+                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для меток оси Y
+                    },
+                    splitLine: {
+                        lineStyle: { color: '#393E47' }
+                    },
                 },
                 series: [
                     {

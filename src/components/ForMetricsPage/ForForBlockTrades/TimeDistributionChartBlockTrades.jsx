@@ -56,11 +56,17 @@ const TimeDistributionChartBlockTrades = () => {
                     trigger: 'axis',
                     axisPointer: { type: 'shadow' },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: { color: '#000' },
+                    textStyle: {
+                        color: '#000',
+                        fontFamily: 'JetBrains Mono', // Шрифт для тултипа
+                    },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
@@ -71,6 +77,7 @@ const TimeDistributionChartBlockTrades = () => {
                         color: '#7E838D',
                         rotate: 45,
                         interval: 0,
+                        fontFamily: 'JetBrains Mono', // Шрифт для оси X
                     },
                 },
                 yAxis: [
@@ -78,7 +85,10 @@ const TimeDistributionChartBlockTrades = () => {
                         type: 'value',
                         name: 'Number of Trades',
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
-                        axisLabel: { color: '#7E838D' },
+                        axisLabel: {
+                            color: '#7E838D',
+                            fontFamily: 'JetBrains Mono', // Шрифт для оси Y
+                        },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     }
                 ],

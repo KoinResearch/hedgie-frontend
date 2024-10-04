@@ -102,16 +102,21 @@ const MaxPainByExpirationChart = () => {
                         label: {
                             backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
                             color: '#000000', // Черный текст в метке
+                            fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono
                         },
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
                     textStyle: {
                         color: '#000000', // Черный текст в тултипе
+                        fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для тултипа
                     },
                 },
                 legend: {
                     data: ['Max Pain Price [$]', 'Notional Value'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
@@ -122,6 +127,7 @@ const MaxPainByExpirationChart = () => {
                         color: '#7E838D',
                         rotate: 45, // Поворот меток для читаемости
                         interval: 0, // Показывать все метки
+                        fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для меток оси X
                     },
                     splitLine: { show: false },
                 },
@@ -137,6 +143,7 @@ const MaxPainByExpirationChart = () => {
                         axisLabel: {
                             color: '#7E838D',
                             formatter: value => value.toLocaleString(),
+                            fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для меток оси Y
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
@@ -151,6 +158,7 @@ const MaxPainByExpirationChart = () => {
                         axisLabel: {
                             color: '#A9A9A9',
                             formatter: value => `${(value / 1e9).toFixed(1)}b`,
+                            fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для меток оси Y
                         },
                         splitLine: { show: false },
                     },

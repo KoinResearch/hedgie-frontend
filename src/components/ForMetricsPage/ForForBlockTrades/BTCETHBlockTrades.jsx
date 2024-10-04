@@ -47,6 +47,9 @@ const BTCETHBlockTrades = () => {
                 tooltip: {
                     trigger: 'item',
                     formatter: '{b}: {c} ({d}%)',
+                    textStyle: {
+                        fontFamily: 'JetBrains Mono', // Шрифт для тултипа
+                    },
                 },
                 series: [
                     {
@@ -61,6 +64,7 @@ const BTCETHBlockTrades = () => {
                             formatter: '{d}%', // Отображаем проценты
                             fontSize: 12,
                             color: '#fff',
+                            fontFamily: 'JetBrains Mono', // Шрифт для меток
                         },
                         itemStyle: {
                             borderRadius: 10,

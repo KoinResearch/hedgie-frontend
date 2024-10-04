@@ -203,7 +203,8 @@ const FlowFilters = () => {
                     <div className="metric-data">
                         <span className="metric-label">Total Calls</span>
                         <span className="metric-value">
-                {typeof totalCalls === 'string' && !isNaN(parseFloat(totalCalls)) ? parseFloat(totalCalls).toFixed(2) : '0.00'}
+                {typeof totalCalls === 'string' && !isNaN(parseFloat(totalCalls)) ?
+                    parseFloat(totalCalls).toLocaleString(undefined, {minimumFractionDigits: 0}) : '0'}
             </span>
                     </div>
                     <Doughnut data={totalCallsData} options={options}/>
@@ -215,7 +216,8 @@ const FlowFilters = () => {
                     <div className="metric-data">
                         <span className="metric-label">Total Puts</span>
                         <span className="metric-value">
-                {typeof totalPuts === 'string' && !isNaN(parseFloat(totalPuts)) ? parseFloat(totalPuts).toFixed(2) : '0.00'}
+                {typeof totalPuts === 'string' && !isNaN(parseFloat(totalPuts)) ?
+                    parseFloat(totalPuts).toLocaleString(undefined, { minimumFractionDigits: 0 }) : '0'}
             </span>
                     </div>
                     <Doughnut data={totalPutsData} options={options} />

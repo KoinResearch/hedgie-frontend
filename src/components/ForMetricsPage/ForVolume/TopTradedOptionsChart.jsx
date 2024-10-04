@@ -52,11 +52,17 @@ const TopTradedOptionsChart = () => {
                     trigger: 'axis',
                     axisPointer: { type: 'shadow' },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    textStyle: { color: '#000' },
+                    textStyle: {
+                        color: '#000',
+                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                    },
                 },
                 legend: {
                     data: ['Trade Counts'],
-                    textStyle: { color: '#B8B8B8' },
+                    textStyle: {
+                        color: '#B8B8B8',
+                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                    },
                     top: 10,
                 },
                 xAxis: {
@@ -67,13 +73,17 @@ const TopTradedOptionsChart = () => {
                         color: '#7E838D',
                         rotate: -45,
                         interval: 0,
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
                     },
                 },
                 yAxis: {
                     type: 'value',
                     name: 'Trade Counts',
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
-                    axisLabel: { color: '#7E838D' },
+                    axisLabel: {
+                        color: '#7E838D',
+                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                    },
                     splitLine: { lineStyle: { color: '#393E47' } },
                 },
                 series: [
