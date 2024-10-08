@@ -1,3 +1,19 @@
+@media (min-width: 1536px) {
+  .App {
+    max-width: 1536px; /* Ограничение ширины для больших экранов */
+  }
+}
+
+/* Медиа-запрос для небольших экранов */
+@media (max-width: 768px) {
+  main {
+    padding: 20px 4vw;
+  }
+  .footer {
+    padding: 10px 4vw;
+  }
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -11,61 +27,53 @@ html, body, #root {
   width: 0;
 }
 
-/*!* Скрываем вертикальную полосу прокрутки *!*/
-/*html::-webkit-scrollbar {*/
-/*  display: none; !* Скрываем скроллбар для браузеров на основе WebKit (Chrome, Safari, Edge) *!*/
-/*}*/
-
-/*!* Для всех браузеров, включая Firefox *!*/
-/*html {*/
-/*  scrollbar-width: none; !* Скрываем скроллбар для Firefox *!*/
-/*}*/
-
 /* Стиль для всего приложения */
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: black;
+  max-width: 1536px; /* Ограничиваем ширину */
+  margin: 0 auto; /* Центрируем по горизонтали */
 }
 
 /* Основной контент */
 main {
   flex: 1;
-  margin-top: 60px;
-  padding: 20px 20px 0 20px;
+  padding: 0 20px 0 20px;
   box-sizing: border-box;
   background-color: black;
 }
 
-/* Футер */
 .footer {
-  position: relative;
-  left: 0;
-  width: 100%;
-  padding: 10px 20px;
+  position: relative; /* Убираем фиксированное позиционирование */
+  width: 100%; /* Футер на всю ширину */
+  padding: 10px 0;
   background-color: #151518;
   border-top: 1px solid #393E47;
-  z-index: 1000;
   box-sizing: border-box;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  z-index: 1000;
 }
 
-.footer.visible {
-  opacity: 1;
+.footer-container {
+  max-width: 1536px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center; /* Центрируем содержимое */
+  align-items: center;
 }
 
-.footer.hidden {
-  opacity: 0;
-}
-
-/* Стили для текста футера */
-.footer-text, .footer-links {
+.footer-text {
   color: #fff;
   text-align: center;
 }
 
+
+
+
+
+/* Ссылки (если их нужно добавить позже) */
 .footer-links a {
   color: #9CA3AF;
   text-decoration: none;

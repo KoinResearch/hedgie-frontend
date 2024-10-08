@@ -140,7 +140,7 @@ const FlowFilters = () => {
     };
 
     return (
-        <div className="flow-container">
+        <div className="flow-main-container">
             {/* Фильтры */}
             <div className="flow-filters">
                 <select value={asset} onChange={(e) => setAsset(e.target.value)}>

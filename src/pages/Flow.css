@@ -1,8 +1,13 @@
 .flow-container {
+    margin-top: 72px;
     padding: 20px;
     background-color: black; /* Темный фон страницы */
     color: #F2F2F2; /* Белый цвет текста */
     font-family: 'Paloseco', sans-serif;
+}
+
+.flow-main-container{
+    padding: 20px;
 }
 
 .flow-container h1 {
@@ -16,7 +21,6 @@
     padding-left: 20px;
     font-size: 16px;
     color: #ABAFB8;
-    margin-bottom: 20px;
 }
 
 .flow-filters {

@@ -1,56 +1,49 @@
+/* Когда ширина экрана меньше 768px, Sidebar станет узким */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Уменьшенная ширина Sidebar */
+    }
+}
+
+/* Когда ширина экрана меньше 480px, Sidebar станет еще меньше */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 150px; /* Еще более узкий Sidebar для маленьких экранов */
+    }
+}
+
 .metrics-page-container {
     display: flex;
+    flex-direction: row;
     height: 100vh; /* Контейнер растянут по всей высоте окна */
 }
 
 .sidebar {
-    width: 256px;
+    width: 218px;
     background-color: black;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     height: 100vh;
-    position: fixed;
-    top: 0; /* Ставим top: 0, чтобы сайдбар начинался с самого верха */
+    position: relative;
+    box-sizing: border-box;
 }
 
 .content {
-    margin-left: 250px; /* This margin should match the width of the sidebar */
-    width: calc(100% - 250px); /* Ensure the content takes the rest of the space */
-    padding: 20px;
+    flex: 1;
+    margin-top: 72px;
+    padding: 20px 20px 0 40px;
     overflow: auto; /* Включаем прокрутку */
+    box-sizing: border-box;
+    width: 100%;
 
 }
 
 .divider {
-    width: 2px;
+    width: 1px;
     background-color: #393E47;
     height: 100vh; /* Высота на всю страницу */
-    position: fixed; /* Разделитель будет фиксирован вместе с сайдбаром */
-    left: 236px; /* Размещаем его справа от сайдбара */
+    position: relative; /* Разделитель будет фиксирован вместе с сайдбаром */
     top: 0; /* Убедимся, что разделитель начинается от верха страницы */
-    z-index: 1; /* Разделитель будет поверх остальных элементов */
 }
-
-
-
-/*!* Эффекты при наведении *!*/
-/*.rounded-container:hover, .full-width-container:hover {*/
-/*    transform: translateY(-5px);*/
-/*    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);*/
-/*}*/
-
-/* Адаптивный текст внутри карточек */
-/*.rounded-container > *, .full-width-container > * {*/
-/*    flex-grow: 1;*/
-/*    width: 100%;*/
-/*    font-size: clamp(1rem, 2vw, 1.5rem);*/
-/*}*/
-
-/*!* Адаптивные стили для мобильных устройств *!*/
-/*@media (max-width: 768px) {*/
-/*    .rounded-container, .full-width-container {*/
-/*        padding: 15px;*/
-/*    }*/
-/*}*/
 
 /* Стили для заголовков графиков */
 h2 {
@@ -93,20 +86,6 @@ select:hover {
 .metrics-page-container {
     display: flex;
 }
-
-.content {
-    padding: 20px;
-    width: 100%;
-}
-
-/*.full-width-container {*/
-/*    background-color: black;*/
-/*    padding: 20px;*/
-/*    border-radius: 8px;*/
-/*    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
-/*    flex: 1;*/
-/*    margin: 10px;*/
-/*}*/
 
 .rounded-container {
     background-color: black;

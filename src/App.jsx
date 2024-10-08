@@ -42,8 +42,8 @@ function App() {
                         <Route path="/datalab" element={<DataLab />} />
                     </Routes>
                 </main>
-                <Footer />
             </div>
+            <Footer />
         </Router>
     );
 }

@@ -1,43 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Footer.css';
 
 const Footer = () => {
     const [isVisible, setIsVisible] = useState(false);
-    const footerRef = useRef(null);
 
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const entry = entries[0];
-                setIsVisible(entry.isIntersecting);
-            },
-            {
-                root: null,
-                threshold: 0.1,
-            }
-        );
+        const handleScroll = () => {
+            const scrolledToBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 10;
+            // '-10' добавляем небольшой отступ, чтобы срабатывало точнее
+            setIsVisible(scrolledToBottom);
+        };
 
-        if (footerRef.current) {
-            observer.observe(footerRef.current);
-        }
+        window.addEventListener('scroll', handleScroll);
 
         return () => {
-            if (footerRef.current) {
-                observer.unobserve(footerRef.current);
-            }
+            window.removeEventListener('scroll', handleScroll);
         };
     }, []);
 
     return (
-        <footer ref={footerRef} className={`footer ${isVisible ? 'visible' : 'hidden'}`}>
-            <div className="footer-text">
-                © 2024 Hedgie.org. Not financial advice.
+        <footer className={`footer ${isVisible ? 'visible' : ''}`}>
+            <div className="footer-container">
+                <div className="footer-text">
+                    © 2024 Hedgie.org. Not financial advice.
+                </div>
             </div>
-            {/*<div className="footer-links">*/}
-            {/*    <a href="/terms">Terms</a>*/}
-            {/*    <a href="/blog">Blog</a>*/}
-            {/*    <a href="/twitter">Twitter</a>*/}
-            {/*</div>*/}
         </footer>
     );
 };
