@@ -15,6 +15,7 @@ const ExpirationActivityChartBlockTrades = () => {
     const [error, setError] = useState(null);
     const chartRef = useRef(null); // Ref для контейнера диаграммы
     const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
+    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
 
     // Получение доступных страйков при изменении актива
     useEffect(() => {
@@ -42,7 +43,11 @@ const ExpirationActivityChartBlockTrades = () => {
                     url += `/${strike}`;
                 }
 
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    params: {
+                        timeRange // Передаем временной интервал в запрос
+                    }
+                });
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching expiration activity data:', err);
@@ -53,7 +58,7 @@ const ExpirationActivityChartBlockTrades = () => {
         };
 
         fetchData();
-    }, [asset, strike]);
+    }, [asset, strike, timeRange]);
 
     useEffect(() => {
         if (data.calls.length > 0 && chartRef.current) {
@@ -181,14 +186,28 @@ const ExpirationActivityChartBlockTrades = () => {
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>📉 Volume By Expiration - Past 24h</h2>
+                    <h2>📉 Volume By Expiration</h2>
                     <Camera className="icon" id="cameraExp"
                             onClick={handleDownload} // Обработчик нажатия для скачивания изображения
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraExp" html={true}/>
                     <ShieldAlert className="icon" id="expInfo"
-                                 data-tooltip-html="The amount of option contracts traded<br> in the last 24h sorted by expiration date"/>
+                                 data-tooltip-html="The amount of option contracts<br> sorted by expiration date"/>
                     <Tooltip anchorId="expInfo" html={true}/>
+                    <div className="asset-option-buttons">
+                        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+                            <option value="24h">Past 24 Hours</option>
+                            <option value="7d">Last Week</option>
+                            <option value="30d">Last Month</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -237,7 +256,7 @@ const ExpirationActivityChartBlockTrades = () => {
                     </div>
                 )}
                 {!loading && !error && data.calls.length > 0 && data.puts.length > 0 && (
-                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                    <div ref={chartRef} style={{width: '100%', height: '490px' }}></div>
                 )}
             </div>
         </div>
@@ -245,4 +264,6 @@ const ExpirationActivityChartBlockTrades = () => {
 };
 
 export default ExpirationActivityChartBlockTrades;
+
+
 

@@ -7,11 +7,12 @@ import { Tooltip } from 'react-tooltip';
 
 const TimeDistributionChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
-    const [data, setData] = useState([]); // Изменяем структуру данных
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
+    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
 
     // Получение данных с сервера
     useEffect(() => {
@@ -19,8 +20,12 @@ const TimeDistributionChartBlockTrades = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/time-distribution/${asset.toLowerCase()}`);
-                setData(response.data);  // Теперь data - это массив из 24 объектов
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/time-distribution/${asset.toLowerCase()}`, {
+                    params: {
+                        timeRange // Передаем временной интервал в запрос
+                    }
+                });
+                setData(response.data);  // Данные теперь массив с 24 объектами
             } catch (err) {
                 console.error('Error fetching time distribution data:', err);
                 setError(err.message);
@@ -30,7 +35,7 @@ const TimeDistributionChartBlockTrades = () => {
         };
 
         fetchData();
-    }, [asset]);
+    }, [asset, timeRange]);
 
     // Отрисовка графика
     useEffect(() => {
@@ -42,8 +47,11 @@ const TimeDistributionChartBlockTrades = () => {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
+            // Получаем текущий час
+            const currentHour = new Date().getUTCHours();
+
             // Форматируем данные для оси X (часы)
-            const hours = [...Array(24).keys()].map(hour => `${hour}:00`);
+            const hours = Array.from({ length: 24 }, (_, i) => `${(currentHour - i + 24) % 24}:00`).reverse();
 
             // Собираем данные для Calls и Puts
             const callCounts = data.map(hourData => hourData.calls.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
@@ -138,7 +146,7 @@ const TimeDistributionChartBlockTrades = () => {
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `block_trade_chart_${asset}.png`; // Имя файла
+            a.download = `option_flow_chart_${asset}.png`; // Имя файла
             a.click();
         }
     };
@@ -147,14 +155,28 @@ const TimeDistributionChartBlockTrades = () => {
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>📦 Historical Block Trades - Past 24h</h2>
+                    <h2>📦 Historical Volume - Past 24h</h2>
                     <Camera className="icon" id="camerDis"
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="camerDis" html={true}/>
                     <ShieldAlert className="icon" id="timeInfo"
-                                 data-tooltip-html="The amount of block trades sold<br> in the last 24 hours, sorted by hour range"/>
+                                 data-tooltip-html="The amount of option contracts sold,<br>sorted by hour range"/>
                     <Tooltip anchorId="timeInfo" html={true}/>
+                    <div className="asset-option-buttons">
+                        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+                            <option value="24h">Past 24 Hours</option>
+                            <option value="7d">Last Week</option>
+                            <option value="30d">Last Month</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -183,7 +205,7 @@ const TimeDistributionChartBlockTrades = () => {
                     </div>
                 )}
                 {!loading && !error && data.length > 0 && (
-                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                    <div ref={chartRef} style={{width: '100%', height: '490px'}}></div>
                 )}
             </div>
         </div>
@@ -191,3 +213,5 @@ const TimeDistributionChartBlockTrades = () => {
 };
 
 export default TimeDistributionChartBlockTrades;
+
+

@@ -15,6 +15,7 @@ const StrikeActivityChart = () => {
     const [expirations, setExpirations] = useState([]);
     const chartRef = useRef(null); // Ref для диаграммы ECharts
     const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
+    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
 
     // Fetch available expirations when the asset changes
     useEffect(() => {
@@ -38,7 +39,12 @@ const StrikeActivityChart = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/strike-activity/${asset.toLowerCase()}?expiration=${expiration}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/strike-activity/${asset.toLowerCase()}`, {
+                    params: {
+                        expiration,
+                        timeRange // Передаем временной интервал в запрос
+                    }
+                });
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching strike activity data:', err);
@@ -49,7 +55,7 @@ const StrikeActivityChart = () => {
         };
 
         fetchData();
-    }, [asset, expiration]);
+    }, [asset, expiration, timeRange]);
 
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
@@ -178,14 +184,28 @@ const StrikeActivityChart = () => {
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>📈 Volume By Strike Price - Past 24h</h2>
+                    <h2>📈 Volume By Strike Price</h2>
                     <Camera className="icon" id="cameraStr"
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraStr" html={true}/>
                     <ShieldAlert className="icon" id="strikeInfo"
-                                 data-tooltip-html="The amount of option contracts<br> traded in the last 24h sorted by<br> strike price"/>
+                                 data-tooltip-html="The amount of option contracts<br> sorted by strike price"/>
                     <Tooltip anchorId="strikeInfo" html={true}/>
+                    <div className="asset-option-buttons">
+                        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+                            <option value="24h">Past 24 Hours</option>
+                            <option value="7d">Last Week</option>
+                            <option value="30d">Last Month</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -235,7 +255,7 @@ const StrikeActivityChart = () => {
                     </div>
                 )}
                 {!loading && !error && data.length > 0 && (
-                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                    <div ref={chartRef} style={{width: '100%', height: '490px'}}></div>
                 )}
             </div>
         </div>

@@ -19,6 +19,8 @@ const BTCETHBlockTrades = () => {
         Put_Buys_Percent: '0.00',
         Put_Sells_Percent: '0.00',
     });
+    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+
 
     const chartRef = useRef(null); // Ref для диаграммы
     const chartInstanceRef = useRef(null); // Ref для сохранения инстанса диаграммы
@@ -26,8 +28,12 @@ const BTCETHBlockTrades = () => {
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/${asset.toLowerCase()}`);
-                console.log("Metrics from server:", response.data); // Проверка данных с сервера
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/${asset.toLowerCase()}`, {
+                    params: {
+                        timeRange: timeRange
+                    }
+                });
+                console.log("Metrics from server:", response.data);
                 setMetrics(response.data);
             } catch (error) {
                 console.error('Error fetching metrics:', error);
@@ -35,7 +41,8 @@ const BTCETHBlockTrades = () => {
         };
 
         fetchMetrics();
-    }, [asset]);
+    }, [asset, timeRange]); // Re-fetch data when asset or time range changes
+
 
     useEffect(() => {
         if (chartRef.current) {
@@ -146,14 +153,28 @@ const BTCETHBlockTrades = () => {
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>Options - Past 24h</h2>
+                    <h2>💸 Options</h2>
                     <Camera className="icon" id="camera"
                             onClick={handleDownload} // Обработчик нажатия для скачивания изображения
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="camera" html={true}/>
                     <ShieldAlert className="icon" id="optionData"
-                                 data-tooltip-html="It provides information on Call<br> and Put trades for the last<br> 24 hours"/>
+                                 data-tooltip-html="It provides information on Call<br> and Put block trades"/>
                     <Tooltip anchorId="optionData" html={true}/>
+                    <div className="asset-option-buttons">
+                        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+                            <option value="24h">Past 24 Hours</option>
+                            <option value="7d">Last Week</option>
+                            <option value="30d">Last Month</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -182,7 +203,6 @@ const BTCETHBlockTrades = () => {
                             <p className="metric-option-percentage"> {metrics.Call_Buys_Percent}% </p>
                         </div>
                     </div>
-
 
                     <div className="metric-option put-buys">
                         <p className="metric-option-label">Put Buys</p>
@@ -223,5 +243,6 @@ const BTCETHBlockTrades = () => {
 };
 
 export default BTCETHBlockTrades;
+
 
 

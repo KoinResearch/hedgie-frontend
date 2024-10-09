@@ -12,6 +12,7 @@ const OptionVolumeChart = () => {
     const [error, setError] = useState(null);
     const chartRef = useRef(null); // Ref для диаграммы ECharts
     const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
+    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
 
     // Функция получения данных с сервера
     useEffect(() => {
@@ -20,7 +21,9 @@ const OptionVolumeChart = () => {
             setError(null);
 
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/popular-options/${asset.toLowerCase()}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/popular-options/${asset.toLowerCase()}`, {
+                    params: { timeRange }
+                });
                 setTrades(response.data);
             } catch (error) {
                 console.error('Error fetching option volume data:', error);
@@ -31,7 +34,7 @@ const OptionVolumeChart = () => {
         };
 
         fetchData();
-    }, [asset]);
+    }, [asset, timeRange]);
 
     // Функция создания графика с ECharts
     useEffect(() => {
@@ -149,15 +152,29 @@ const OptionVolumeChart = () => {
                 <div className="flow-option-header-container">
                     <h2>
                         🏆
-                        Top Traded Options - Past 24h
+                        Top Traded Options
                     </h2>
                     <Camera className="icon" id="cameraVol"
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraVol" html={true}/>
                     <ShieldAlert className="icon" id="optionChartInfo"
-                                 data-tooltip-html="The top traded options in the last 24h"/>
+                                 data-tooltip-html="The top traded options"/>
                     <Tooltip anchorId="optionChartInfo" html={true}/>
+                    <div className="asset-option-buttons">
+                        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+                            <option value="24h">Past 24 Hours</option>
+                            <option value="7d">Last Week</option>
+                            <option value="30d">Last Month</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
@@ -191,7 +208,7 @@ const OptionVolumeChart = () => {
                     </div>
                 )}
                 {!loading && !error && trades.length > 0 && (
-                    <div ref={chartRef} style={{ width: '100%', height: '490px' }}></div>
+                    <div ref={chartRef} style={{width: '100%', height: '490px'}}></div>
                 )}
             </div>
         </div>
@@ -199,3 +216,4 @@ const OptionVolumeChart = () => {
 };
 
 export default OptionVolumeChart;
+

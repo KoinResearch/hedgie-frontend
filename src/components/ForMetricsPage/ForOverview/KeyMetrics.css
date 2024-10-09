@@ -79,10 +79,13 @@
 /* Контейнер для выпадающего списка и кнопок */
 .asset-key-buttons {
     position: relative;
-    width: 155px; /* Точная ширина */
+    width: 330px; /* Точная ширина */
     height: 36px; /* Точная высота */
-    display: inline-block;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 /* Стили для выпадающего списка */
