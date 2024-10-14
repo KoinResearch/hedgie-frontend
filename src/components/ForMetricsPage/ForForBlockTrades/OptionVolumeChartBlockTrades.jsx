@@ -151,7 +151,7 @@ const OptionVolumeChartBlockTrades = () => {
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>
-                        🏆
+                        🥶
                         Top Traded Options
                     </h2>
                     <Camera className="icon" id="cameraVol"
@@ -159,7 +159,7 @@ const OptionVolumeChartBlockTrades = () => {
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraVol" html={true}/>
                     <ShieldAlert className="icon" id="optionChartInfo"
-                                 data-tooltip-html="The top traded options"/>
+                                 data-tooltip-html="The top traded options by count"/>
                     <Tooltip anchorId="optionChartInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

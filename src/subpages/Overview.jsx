@@ -8,6 +8,7 @@ import StrikeActivityChart from "../components/ForMetricsPage/ForOverview/Strike
 import ExpirationActivityChart from "../components/ForMetricsPage/ForOverview/ExpirationActivityChart.jsx";
 import TimeDistributionChart from "../components/ForMetricsPage/ForOverview/TimeDistributionChart.jsx";
 import KeyMetrics from "../components/ForMetricsPage/ForOverview/KeyMetrics.jsx";
+import TopTradesByVolume from '../components/ForMetricsPage/ForOverview/TopTradesByVolume.jsx';
 import './Overview.css';
 import '../components/ForMetricsPage/StandartStyle.css';
 
@@ -23,21 +24,24 @@ const Overview = () => {
                 <div className="rounded-container">
                     <BTCETHOptionFlow asset="BTC"/>
                 </div>
-                    <div className="rounded-container">
-                        <MaxPainByExpiration/>
-                    </div>
-                    <div className="rounded-container">
-                        <OptionVolumeChart/>
-                    </div>
-                    <div className="rounded-container">
-                        <StrikeActivityChart/>
-                    </div>
-                    <div className="rounded-container">
-                        <ExpirationActivityChart/>
-                    </div>
-                    <div className="full-width-container">
-                        <TimeDistributionChart/>
-                    </div>
+                <div className="rounded-container">
+                    <MaxPainByExpiration/>
+                </div>
+                <div className="rounded-container">
+                    <OptionVolumeChart/>
+                </div>
+                <div className="rounded-container">
+                    <TopTradesByVolume/>
+                </div>
+                <div className="rounded-container">
+                    <StrikeActivityChart/>
+                </div>
+                <div className="rounded-container">
+                    <ExpirationActivityChart/>
+                </div>
+                <div className="full-width-container">
+                    <TimeDistributionChart/>
+                </div>
             </div>
         </div>
     );

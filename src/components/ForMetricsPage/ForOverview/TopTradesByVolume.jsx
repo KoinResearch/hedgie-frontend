@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './OptionVolumeChart.css'; // Подключение стилей для спиннера и контейнеров
+import './TopTradesByVolume.css'; // Подключение стилей
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
 
-const OptionVolumeChart = () => {
+const TopTradesByVolume = () => {
     const [asset, setAsset] = useState('BTC');
-    const [trades, setTrades] = useState([]);
+    const [volumes, setVolumes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const chartRef = useRef(null); // Ref для диаграммы ECharts
@@ -21,12 +21,12 @@ const OptionVolumeChart = () => {
             setError(null);
 
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/popular-options/${asset.toLowerCase()}`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/option-volumes/${asset.toLowerCase()}`, {
                     params: { timeRange }
                 });
-                setTrades(response.data);
+                setVolumes(response.data);
             } catch (error) {
-                console.error('Error fetching option volume data:', error);
+                console.error('Error fetching option volumes data:', error);
                 setError(error.message);
             } finally {
                 setLoading(false);
@@ -38,15 +38,16 @@ const OptionVolumeChart = () => {
 
     // Функция создания графика с ECharts
     useEffect(() => {
-        if (trades.length > 0 && chartRef.current) {
+        if (volumes.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
 
-            // Обрезаем символ актива
-            const instrumentNames = trades.map(trade => {
-                return trade.instrument_name.split('-').slice(1).join('-'); // Убираем символ актива (например, 'BTC-')
+            // const instrumentNames = volumes.map(volume => volume.instrument_name);
+            const instrumentNames = volumes.map(volume => {
+                return volume.instrument_name.split('-').slice(1).join('-');
             });
-            const tradeCounts = trades.map(trade => trade.trade_count);
+
+            const totalVolumes = volumes.map(volume => volume.total_volume);
 
             const option = {
                 backgroundColor: '#151518',
@@ -62,7 +63,7 @@ const OptionVolumeChart = () => {
                     },
                 },
                 legend: {
-                    data: ['Trade Counts'],
+                    data: ['Total Volume'],
                     textStyle: {
                         color: '#B8B8B8',
                         fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для легенды
@@ -84,7 +85,7 @@ const OptionVolumeChart = () => {
                 },
                 yAxis: {
                     type: 'value',
-                    name: 'Trade Counts',
+                    name: 'Total Volume (USD)',
                     axisLine: {
                         lineStyle: { color: '#A9A9A9' }
                     },
@@ -98,9 +99,9 @@ const OptionVolumeChart = () => {
                 },
                 series: [
                     {
-                        name: 'Trade Counts',
+                        name: 'Total Volume',
                         type: 'bar',
-                        data: tradeCounts,
+                        data: totalVolumes,
                         barWidth: '30%',
                         itemStyle: {
                             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -129,9 +130,8 @@ const OptionVolumeChart = () => {
                 chartInstance.dispose();
             };
         }
-    }, [trades]);
+    }, [volumes]);
 
-    // Функция для скачивания графика
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
@@ -151,16 +151,16 @@ const OptionVolumeChart = () => {
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
                     <h2>
-                        🥶
-                        Top Traded Options
+                        🏆
+                        Top Options by Volume
                     </h2>
-                    <Camera className="icon" id="cameraVol"
+                    <Camera className="icon" id="cameraTop"
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
-                    <Tooltip anchorId="cameraVol" html={true}/>
-                    <ShieldAlert className="icon" id="optionChartInfo"
-                                 data-tooltip-html="The top traded options by count"/>
-                    <Tooltip anchorId="optionChartInfo" html={true}/>
+                    <Tooltip anchorId="cameraTop" html={true}/>
+                    <ShieldAlert className="icon" id="optionTopInfo"
+                                 data-tooltip-html="The top traded options by volume"/>
+                    <Tooltip anchorId="optionTopInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
                             <option value="24h">Past 24 Hours</option>
@@ -202,12 +202,12 @@ const OptionVolumeChart = () => {
                         <p>Error: {error}</p>
                     </div>
                 )}
-                {!loading && !error && trades.length === 0 && (
+                {!loading && !error && volumes.length === 0 && (
                     <div className="no-data-container">
                         <p>No data available</p>
                     </div>
                 )}
-                {!loading && !error && trades.length > 0 && (
+                {!loading && !error && volumes.length > 0 && (
                     <div ref={chartRef} style={{width: '100%', height: '490px'}}></div>
                 )}
             </div>
@@ -215,5 +215,4 @@ const OptionVolumeChart = () => {
     );
 };
 
-export default OptionVolumeChart;
-
+export default TopTradesByVolume;

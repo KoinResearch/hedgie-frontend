@@ -37,7 +37,7 @@ const VolumeByExpirationChart = () => {
             setError(null);
             try {
                 const strikeParam = strike === 'All Strikes' ? 'all' : strike;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);

@@ -12,6 +12,8 @@ import ExpirationActivityChartBlockTrades
 import TimeDistributionChartBlockTrades
     from "../components/ForMetricsPage/ForForBlockTrades/TimeDistributionChartBlockTrades.jsx";
 import KeyMetricsBlockTrades from "../components/ForMetricsPage/ForForBlockTrades/KeyMetricsBlockTrades.jsx";
+import TopTradesByVolumeBlockTrades
+    from "../components/ForMetricsPage/ForForBlockTrades/TopTradesByVolumeBlockTrades.jsx";
 import '../components/ForMetricsPage/StandartStyle.css';
 import KeyMetrics from "../components/ForMetricsPage/ForOverview/KeyMetrics.jsx";
 
@@ -31,6 +33,9 @@ const BlockTrades = () => {
                 </div>
                 <div className="rounded-container">
                     <OptionVolumeChartBlockTrades/>
+                </div>
+                <div className="rounded-container">
+                    <TopTradesByVolumeBlockTrades/>
                 </div>
                 <div className="rounded-container">
                     <StrikeActivityChartBlockTrades/>

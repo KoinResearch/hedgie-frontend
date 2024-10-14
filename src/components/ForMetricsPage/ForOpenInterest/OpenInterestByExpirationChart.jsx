@@ -38,7 +38,7 @@ const OpenInterestByExpirationChart = () => {
             try {
                 // Используем "all" для запроса всех страйков
                 const strikeParam = strike === 'All Strikes' ? 'all' : strike;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);

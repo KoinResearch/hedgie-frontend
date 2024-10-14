@@ -33,7 +33,6 @@ const BTCETHBlockTrades = () => {
                         timeRange: timeRange
                     }
                 });
-                console.log("Metrics from server:", response.data);
                 setMetrics(response.data);
             } catch (error) {
                 console.error('Error fetching metrics:', error);

@@ -239,24 +239,31 @@ const FlowFilters = () => {
                             <th>Strike</th>
                             <th>Size</th>
                             <th>Price</th>
+                            <th>Time</th>
                         </tr>
                         </thead>
                         <tbody>
                         {trades.map((trade, index) => (
                             <tr key={index}>
                                 <td>{asset}</td>
-                                <td style={{ color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548' }}>
+                                <td style={{color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548'}}>
                                     {trade.direction.toUpperCase()}
                                 </td>
-                                <td style={{ color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548' }}>
+                                <td style={{color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548'}}>
                                     {trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}
                                 </td>
-                                <td style={{ color: '#4B88E1' }}>
+                                <td style={{color: '#4B88E1'}}>
                                     {trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}
                                 </td>
                                 <td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>
                                 <td>{trade.amount}</td>
                                 <td>{trade.price}</td>
+                                {/* Отображение времени */}
+                                <td>{new Date(trade.timestamp).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                })}</td>
                             </tr>
                         ))}
                         </tbody>
