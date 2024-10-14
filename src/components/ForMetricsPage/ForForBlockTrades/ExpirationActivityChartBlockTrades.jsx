@@ -48,7 +48,16 @@ const ExpirationActivityChartBlockTrades = () => {
                         timeRange // Передаем временной интервал в запрос
                     }
                 });
-                setData(response.data);
+
+                // Разделяем данные на calls и puts
+                const groupedData = {
+                    calls: response.data.filter(item => item.option_type === 'call'),
+                    puts: response.data.filter(item => item.option_type === 'put')
+                };
+
+                console.log('Data from API:', groupedData); // Логирование данных
+
+                setData(groupedData); // Устанавливаем данные
             } catch (err) {
                 console.error('Error fetching expiration activity data:', err);
                 setError(err.message);
@@ -60,8 +69,9 @@ const ExpirationActivityChartBlockTrades = () => {
         fetchData();
     }, [asset, strike, timeRange]);
 
+    // Построение диаграммы
     useEffect(() => {
-        if (data.calls.length > 0 && chartRef.current) {
+        if (data && data.calls.length > 0 && data.puts.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
@@ -181,18 +191,17 @@ const ExpirationActivityChartBlockTrades = () => {
         }
     };
 
-
     return (
         <div className="flow-option-container">
             <div className="flow-option-header-menu">
                 <div className="flow-option-header-container">
-                    <h2>📉 Volume By Expiration</h2>
+                    <h2>📉 Block Trades by Expiration</h2>
                     <Camera className="icon" id="cameraExp"
                             onClick={handleDownload} // Обработчик нажатия для скачивания изображения
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraExp" html={true}/>
                     <ShieldAlert className="icon" id="expInfo"
-                                 data-tooltip-html="The amount of option contracts<br> sorted by expiration date"/>
+                                 data-tooltip-html="The amount of option block trades<br> sorted by expiration date"/>
                     <Tooltip anchorId="expInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
@@ -264,6 +273,3 @@ const ExpirationActivityChartBlockTrades = () => {
 };
 
 export default ExpirationActivityChartBlockTrades;
-
-
-

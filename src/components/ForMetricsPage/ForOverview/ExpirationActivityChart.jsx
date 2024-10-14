@@ -5,11 +5,10 @@ import './ExpirationActivityChart.css'; // Подключение стилей �
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
 
-
 const ExpirationActivityChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [strike, setStrike] = useState('all');
-    const [data, setData] = useState({ calls: [], puts: [] });
+    const [data, setData] = useState({ calls: [], puts: [] }); // Структура данных calls и puts
     const [strikes, setStrikes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -48,7 +47,16 @@ const ExpirationActivityChart = () => {
                         timeRange // Передаем временной интервал в запрос
                     }
                 });
-                setData(response.data);
+
+                // Разделяем данные на calls и puts
+                const groupedData = {
+                    calls: response.data.filter(item => item.option_type === 'call'),
+                    puts: response.data.filter(item => item.option_type === 'put')
+                };
+
+                console.log('Data from API:', groupedData); // Логирование данных
+
+                setData(groupedData); // Устанавливаем данные
             } catch (err) {
                 console.error('Error fetching expiration activity data:', err);
                 setError(err.message);
@@ -60,8 +68,9 @@ const ExpirationActivityChart = () => {
         fetchData();
     }, [asset, strike, timeRange]);
 
+    // Построение диаграммы
     useEffect(() => {
-        if (data.calls.length > 0 && chartRef.current) {
+        if (data && data.calls.length > 0 && data.puts.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
 
@@ -180,7 +189,6 @@ const ExpirationActivityChart = () => {
             a.click();
         }
     };
-
 
     return (
         <div className="flow-option-container">
