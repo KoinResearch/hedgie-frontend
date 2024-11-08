@@ -18,8 +18,8 @@ const Login = () => {
             });
 
             if (response.data.success) {
-                localStorage.setItem('token', response.data.token); // Сохраняем токен в локальное хранилище
-                navigate('/home'); // Перенаправление на домашнюю страницу
+                localStorage.setItem('token', response.data.token);
+                navigate('/home');
             } else {
                 alert(response.data.message);
             }

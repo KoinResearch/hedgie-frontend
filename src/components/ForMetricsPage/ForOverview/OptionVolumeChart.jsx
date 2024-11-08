@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './OptionVolumeChart.css'; // Подключение стилей для спиннера и контейнеров
+import './OptionVolumeChart.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
 
 const OptionVolumeChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [trades, setTrades] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const chartRef = useRef(null); // Ref для диаграммы ECharts
-    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
-    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
+    const [timeRange, setTimeRange] = useState('24h');
 
-    // Функция получения данных с сервера
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -22,7 +22,7 @@ const OptionVolumeChart = () => {
 
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/popular-options/${asset.toLowerCase()}`, {
-                    params: { timeRange }
+                    params: { timeRange, exchange }
                 });
                 setTrades(response.data);
             } catch (error) {
@@ -34,17 +34,16 @@ const OptionVolumeChart = () => {
         };
 
         fetchData();
-    }, [asset, timeRange]);
+    }, [asset, timeRange, exchange]);
 
-    // Функция создания графика с ECharts
+
     useEffect(() => {
         if (trades.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
+            chartInstanceRef.current = chartInstance;
 
-            // Обрезаем символ актива
             const instrumentNames = trades.map(trade => {
-                return trade.instrument_name.split('-').slice(1).join('-'); // Убираем символ актива (например, 'BTC-')
+                return trade.instrument_name.split('-').slice(1).join('-');
             });
             const tradeCounts = trades.map(trade => trade.trade_count);
 
@@ -58,20 +57,20 @@ const OptionVolumeChart = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono
+                        fontFamily: 'JetBrains Mono'
                     },
                 },
                 legend: {
                     data: ['Trade Counts'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для легенды
+                        fontFamily: 'JetBrains Mono'
                     },
                     top: 10,
                 },
                 xAxis: {
                     type: 'category',
-                    data: instrumentNames, // Обновляем данные оси X
+                    data: instrumentNames,
                     axisLine: {
                         lineStyle: { color: '#A9A9A9' }
                     },
@@ -79,7 +78,7 @@ const OptionVolumeChart = () => {
                         color: '#7E838D',
                         rotate: -45,
                         interval: 0,
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для меток оси X
+                        fontFamily: 'JetBrains Mono'
                     },
                 },
                 yAxis: {
@@ -90,7 +89,7 @@ const OptionVolumeChart = () => {
                     },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для меток оси Y
+                        fontFamily: 'JetBrains Mono'
                     },
                     splitLine: {
                         lineStyle: { color: '#393E47' }
@@ -131,17 +130,16 @@ const OptionVolumeChart = () => {
         }
     }, [trades]);
 
-    // Функция для скачивания графика
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.download = `option_flow_chart_${asset}.png`;
             a.click();
         }
     };
@@ -179,6 +177,19 @@ const OptionVolumeChart = () => {
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

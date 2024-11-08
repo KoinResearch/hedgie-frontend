@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import dayjs from 'dayjs'; // Для форматирования дат
-import './HistoricalOpenInterestChart.css'; // Подключаем файл CSS для стилей
+import dayjs from 'dayjs';
+import './HistoricalOpenInterestChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
@@ -10,20 +10,25 @@ import { ShieldAlert, Camera } from 'lucide-react';
 
 const HistoricalOpenInterestChart = () => {
     const [data, setData] = useState(null);
+    const [exchange, setExchange] = useState('DER');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [asset, setAsset] = useState('BTC'); // Валюта по умолчанию
-    const [period, setPeriod] = useState('1d'); // Период по умолчанию
-    const chartRef = useRef(null); // Ref для ECharts
-    const chartInstanceRef = useRef(null); // Ref для инстанса диаграммы
+    const [asset, setAsset] = useState('BTC');
+    const [period, setPeriod] = useState('1d');
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            setError(null); // Сбрасываем ошибку при каждом новом запросе
+            setError(null);
             try {
-                // Формируем URL с параметрами
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/historical-open-interest/${asset.toLowerCase()}/${period}`);
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/historical-open-interest/${asset.toLowerCase()}/${period}`,
+                    {
+                        params: { exchange }
+                    }
+                );
 
                 if (response.data) {
                     setData(response.data);
@@ -40,12 +45,12 @@ const HistoricalOpenInterestChart = () => {
         };
 
         fetchData();
-    }, [asset, period]);
+    }, [asset, exchange, period]);
 
     useEffect(() => {
         if (data && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
             // Преобразуем данные для отображения на графике
             const timestamps = data.map(entry => dayjs(entry.timestamp).format('YYYY-MM-DD HH:mm'));
@@ -57,18 +62,18 @@ const HistoricalOpenInterestChart = () => {
                 tooltip: {
                     trigger: 'axis',
                     axisPointer: {
-                        type: 'line', // Используем только вертикальную линию
-                        axis: 'x', // Указываем, что линия появляется только на оси X (вертикальная линия)
+                        type: 'line',
+                        axis: 'x',
                         label: {
                             backgroundColor: '#FFFFFF',
                             color: '#000000',
-                            fontFamily: 'JetBrains Mono', // Шрифт для метки оси
+                            fontFamily: 'JetBrains Mono',
                         },
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000000',
-                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                     formatter: function (params) {
                         let result = `<b>${params[0].axisValue}</b><br/>`;
@@ -82,7 +87,7 @@ const HistoricalOpenInterestChart = () => {
                     data: ['Total Contracts', 'Index Price'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -92,7 +97,7 @@ const HistoricalOpenInterestChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 yAxis: [
@@ -102,7 +107,7 @@ const HistoricalOpenInterestChart = () => {
                         axisLine: { lineStyle: { color: '#7f7f7f' } },
                         axisLabel: {
                             color: '#7E838D',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                             formatter: function (value) {
                                 return value.toFixed(2);
                             },
@@ -115,7 +120,7 @@ const HistoricalOpenInterestChart = () => {
                         axisLine: { lineStyle: { color: '#7f7f7f' } },
                         axisLabel: {
                             color: '#7f7f7f',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                             formatter: function (value) {
                                 return value.toFixed(2);
                             },
@@ -171,11 +176,11 @@ const HistoricalOpenInterestChart = () => {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `historical_open_interest_chart_${asset}.png`; // Имя файла
+            a.download = `historical_open_interest_chart_${asset}.png`;
             a.click();
         }
     };
@@ -186,7 +191,7 @@ const HistoricalOpenInterestChart = () => {
                 <div className="flow-option-header-container">
                     <h2>🤠 Historical Open Interest Chart</h2>
                     <Camera className="icon" id="historyCamera"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="historyCamera" html={true}/>
                     <ShieldAlert className="icon" id="historyInfo"
@@ -211,6 +216,19 @@ const HistoricalOpenInterestChart = () => {
                             <option value="7d">7d</option>
                             <option value="1m">1m</option>
                             <option value="all">All</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

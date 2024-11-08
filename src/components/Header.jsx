@@ -27,18 +27,6 @@ const Header = () => {
                     </NavLink>
                 </nav>
             </div>
-            {/*<div className="auth-links">*/}
-            {/*    <NavLink*/}
-            {/*        to="/signin"*/}
-            {/*        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>*/}
-            {/*        Sign In*/}
-            {/*    </NavLink>*/}
-            {/*    <NavLink*/}
-            {/*        to="/signup"*/}
-            {/*        className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>*/}
-            {/*        Sign Up*/}
-            {/*    </NavLink>*/}
-            {/*</div>*/}
         </header>
     );
 };

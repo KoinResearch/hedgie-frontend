@@ -1,6 +1,6 @@
 .header-navigation {
     display: flex;
-    justify-content: center; /* Выровняем все элементы по левому краю */
+    justify-content: center;
     align-items: center;
     flex-shrink: 0;
     width: 100%;
@@ -12,7 +12,7 @@
     left: 0;
     z-index: 1000;
     top: 0;
-    flex-wrap: wrap; /* Добавляем перенос элементов при нехватке места */
+    flex-wrap: wrap;
 }
 
 .header-container {
@@ -23,14 +23,12 @@
     height: 100%;
     padding-left: 60px;
     max-width: 1536px;
-    /*width: 1280px;*/
-    /*height: 72px;*/
 }
 
 .logo {
-    font-weight: bold; /* Жирный шрифт */
+    font-weight: bold;
     font-size: 16px;
-    font-family: 'YourFontFamily', sans-serif; /* Используйте свой шрифт, если нужно */
+    font-family: 'YourFontFamily', sans-serif;
     color: #F2F2F2;
     width: 103px;
     height: 20px;
@@ -61,8 +59,8 @@
 }
 
 .nav-link:hover {
-    background-color: white; /* Фон становится белым при наведении */
-    color: black; /* Текст становится чёрным при наведении */
+    background-color: white;
+    color: black;
 }
 
 .new-item {
@@ -112,7 +110,7 @@
 @media (max-width: 768px) {
     .header-container {
         flex-direction: column;
-        height: auto; /* Позволяем контейнеру увеличиваться по высоте */
+        height: auto;
     }
 
     .navigation {

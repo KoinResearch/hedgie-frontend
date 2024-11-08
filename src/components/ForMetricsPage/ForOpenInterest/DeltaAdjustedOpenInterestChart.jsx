@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './DeltaAdjustedOpenInterestChart.css'; // Подключение CSS
+import './DeltaAdjustedOpenInterestChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
@@ -9,20 +9,20 @@ import { ShieldAlert, Camera } from 'lucide-react';
 
 const DeltaAdjustedOpenInterestChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [expiration, setExpiration] = useState('All Expirations');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
-    const chartRef = useRef(null); // Ref для ECharts
-    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
-    // Получение доступных дат экспирации при смене актива
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
-                setExpirations(['All Expirations', ...response.data]); // Добавляем "All Expirations" в начало списка
+                setExpirations(['All Expirations', ...response.data]);
             } catch (err) {
                 console.error('Error fetching expirations:', err);
                 setError(err.message);
@@ -31,14 +31,18 @@ const DeltaAdjustedOpenInterestChart = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Получение данных об открытых интересах с поправкой на дельту
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/delta-adjusted-open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/delta-adjusted-open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`,
+                    {
+                        params: { exchange }
+                    }
+                );
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
@@ -49,17 +53,16 @@ const DeltaAdjustedOpenInterestChart = () => {
         };
 
         fetchData();
-    }, [asset, expiration]);
+    }, [asset, exchange, expiration]);
 
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
-            // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const strikePrices = data.map(d => d.strike);
-            const deltaAdjustedPuts = data.map(d => -Math.abs(parseFloat(d.puts_delta_adjusted).toFixed(2))); // Отрицательные значения для Puts
-            const deltaAdjustedCalls = data.map(d => Math.abs(parseFloat(d.calls_delta_adjusted).toFixed(2))); // Положительные значения для Calls
+            const deltaAdjustedPuts = data.map(d => -Math.abs(parseFloat(d.puts_delta_adjusted).toFixed(2)));
+            const deltaAdjustedCalls = data.map(d => Math.abs(parseFloat(d.calls_delta_adjusted).toFixed(2)));
 
             const option = {
                 backgroundColor: '#151518',
@@ -79,14 +82,14 @@ const DeltaAdjustedOpenInterestChart = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
-                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 legend: {
                     data: ['Puts', 'Calls'],
                     textStyle: {
                         color: '#FFFFFF',
-                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -97,7 +100,7 @@ const DeltaAdjustedOpenInterestChart = () => {
                     axisLabel: {
                         color: '#7E838D',
                         rotate: 45,
-                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для меток оси X
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 yAxis: {
@@ -106,7 +109,7 @@ const DeltaAdjustedOpenInterestChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono', // Применяем шрифт JetBrains Mono для меток оси Y
+                        fontFamily: 'JetBrains Mono',
                     },
                     splitLine: { lineStyle: { color: '#393E47' } },
                 },
@@ -115,14 +118,14 @@ const DeltaAdjustedOpenInterestChart = () => {
                         name: 'Puts',
                         type: 'bar',
                         data: deltaAdjustedPuts,
-                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts
+                        itemStyle: { color: '#ff3e3e' },
                         barWidth: '30%',
                     },
                     {
                         name: 'Calls',
                         type: 'bar',
                         data: deltaAdjustedCalls,
-                        itemStyle: { color: '#00cc96' }, // Зеленый для Calls
+                        itemStyle: { color: '#00cc96' },
                         barWidth: '30%',
                     },
                 ],
@@ -155,11 +158,11 @@ const DeltaAdjustedOpenInterestChart = () => {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `delta_adjusted_open_interest_chart_${asset}.png`; // Имя файла
+            a.download = `delta_adjusted_open_interest_chart_${asset}.png`;
             a.click();
         }
     };
@@ -170,7 +173,7 @@ const DeltaAdjustedOpenInterestChart = () => {
                 <div className="flow-option-header-container">
                     <h2>👻 Delta Adjusted Open Interest By Strike</h2>
                     <Camera className="icon" id="deltaCamera"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="deltaCamera" html={true}/>
                     <ShieldAlert className="icon" id="deltaInfo"
@@ -196,6 +199,19 @@ const DeltaAdjustedOpenInterestChart = () => {
                                     {exp}
                                 </option>
                             ))}
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

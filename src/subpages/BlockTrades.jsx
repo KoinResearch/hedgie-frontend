@@ -1,4 +1,3 @@
-// src/subpages/BlockTrades.jsx
 import React from 'react';
 import BTCETHBlockTrades from "../components/ForMetricsPage/ForForBlockTrades/BTCETHBlockTrades.jsx";
 import MaxPainByExpirationBlockTrades
@@ -15,7 +14,6 @@ import KeyMetricsBlockTrades from "../components/ForMetricsPage/ForForBlockTrade
 import TopTradesByVolumeBlockTrades
     from "../components/ForMetricsPage/ForForBlockTrades/TopTradesByVolumeBlockTrades.jsx";
 import '../components/ForMetricsPage/StandartStyle.css';
-import KeyMetrics from "../components/ForMetricsPage/ForOverview/KeyMetrics.jsx";
 
 const BlockTrades = () => {
     return (
@@ -28,9 +26,9 @@ const BlockTrades = () => {
                 <div className="rounded-container">
                     <BTCETHBlockTrades asset="BTC"/>
                 </div>
-                <div className="rounded-container">
-                    <MaxPainByExpirationBlockTrades/>
-                </div>
+                {/*<div className="rounded-container">*/}
+                {/*    <MaxPainByExpirationBlockTrades/>*/}
+                {/*</div>*/}
                 <div className="rounded-container">
                     <OptionVolumeChartBlockTrades/>
                 </div>

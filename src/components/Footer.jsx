@@ -7,7 +7,6 @@ const Footer = () => {
     useEffect(() => {
         const handleScroll = () => {
             const scrolledToBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 10;
-            // '-10' добавляем небольшой отступ, чтобы срабатывало точнее
             setIsVisible(scrolledToBottom);
         };
 

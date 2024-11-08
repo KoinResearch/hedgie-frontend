@@ -1,36 +1,32 @@
-/* Основной контейнер для метрик */
 .metrics-key-container {
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Грид для метрик */
 .metrics-key-grid {
     display: flex;
-    justify-content: space-between; /* Равномерное распределение контейнеров */
-    flex-wrap: nowrap; /* Контейнеры будут в одном ряду */
-    gap: 20px; /* Расстояние между элементами */
-    overflow-x: auto; /* Позволяем прокрутку по горизонтали на маленьких экранах */
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 20px;
+    overflow-x: auto;
 }
 
-/* Блок для каждой метрики */
 .metric-key-block {
-    flex: 1 1 calc(33% - 20px); /* Три элемента в ряду, с учетом отступов */
+    flex: 1 1 calc(33% - 20px);
     width: 100%;
     background: #151518;
-    padding-left: 20px; /* Внутренний отступ слева */
-    border-radius: 12px; /* Закругленные углы */
-    border: 1px solid #393E47; /* Цвет границы */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Тень */
+    padding-left: 20px;
+    border-radius: 12px;
+    border: 1px solid #393E47;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column; /* Элементы вертикально */
-    align-items: flex-start; /* Выровнены по левому краю */
-    justify-content: space-between; /* Распределяем элементы сверху и снизу */
-    color: white; /* Цвет текста */
-    height: 164px; /* Высота блока метрики */
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    color: white;
+    height: 164px;
 }
 
-/* Контент внутри метрики */
 .metric-key-content {
     display: flex;
     flex-direction: column;
@@ -39,24 +35,21 @@
     height: 100%;
 }
 
-/* Контейнер для иконки в метрике */
 .icon-container {
     font-size: 3rem;
-    margin-bottom: auto; /* Иконка остается наверху */
+    margin-bottom: auto;
 }
 
-/* Метка метрики */
 .metric-label {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 1rem;
     color: #F2F2F2;
-    margin-bottom: auto; /* Метка остается наверху */
+    margin-bottom: auto;
     font-family: 'Paloseco', sans-serif;
 }
 
-/* Иконка (смайлик) внутри метки */
 .metric-label-image {
     display: flex;
     align-items: center;
@@ -68,19 +61,17 @@
     font-size: 24px;
 }
 
-/* Значение метрики */
 .metric-value {
     font-size: 24px;
     font-weight: bold;
-    font-family: 'JetBrains Mono', monospace; /* Применяем шрифт JetBrains Mono */
-    margin-top: auto; /* Значение перемещается вниз */
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: auto;
 }
 
-/* Контейнер для выпадающего списка и кнопок */
 .asset-key-buttons {
     position: relative;
-    width: 330px; /* Точная ширина */
-    height: 36px; /* Точная высота */
+    width: 500px;
+    height: 36px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -88,44 +79,40 @@
     gap: 20px;
 }
 
-/* Стили для выпадающего списка */
 .asset-key-buttons select {
     width: 100%;
     height: 100%;
-    padding: 0 36px 0 7px; /* Отступы: 36px справа для стрелки, 15px слева для текста */
-    background-color: #151518; /* Цвет фона */
-    color: #9CA3AF; /* Цвет текста */
-    border: 1px solid #393E47; /* Цвет границы */
-    border-radius: 8px; /* Закругленные углы */
-    appearance: none; /* Убираем стандартный вид стрелки */
-    font-family: 'JetBrains Mono', monospace; /* Пример шрифта */
+    padding: 0 36px 0 7px;
+    background-color: #151518;
+    color: #9CA3AF;
+    border: 1px solid #393E47;
+    border-radius: 8px;
+    appearance: none;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
-    line-height: 36px; /* Вертикальное выравнивание текста */
+    line-height: 36px;
     cursor: pointer;
-    text-align: left; /* Текст по левому краю */
+    text-align: left;
 }
 
-/* Стили при фокусе на выпадающем списке */
 .asset-key-buttons select:focus {
     outline: none;
-    border-color: #667085; /* Цвет границы при фокусе */
+    border-color: #667085;
 }
 
-/* Стили для стрелки (иконки) */
 .custom-arrow {
     position: absolute;
     top: 50%;
-    right: 12px; /* Расстояние стрелки от правого края */
-    pointer-events: none; /* Отключаем возможность клика на стрелку */
-    transform: translateY(-50%); /* Центрируем стрелку по вертикали */
+    right: 12px;
+    pointer-events: none;
+    transform: translateY(-50%);
 }
 
-/* Стили для иконки стрелки */
 .custom-arrow svg {
     width: 12px;
     height: 8px;
     fill: none;
-    stroke: #667085; /* Цвет стрелки */
+    stroke: #667085;
     stroke-width: 1.66667;
     stroke-linecap: round;
     stroke-linejoin: round;

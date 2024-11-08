@@ -1,10 +1,9 @@
-/* VolumeByOptionKindChart.css */
 .chart-container {
-    background-color: #ffffff; /* Белый фон */
-    border-radius: 12px; /* Закругленные края */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Небольшая тень для эффекта */
-    padding: 20px; /* Внутренние отступы */
-    margin: 20px; /* Внешние отступы */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px;
 }
 
 .chart-title {
@@ -29,7 +28,7 @@
 }
 
 .asset-button.active {
-    background-color: #00cc96; /* Цвет активной кнопки */
+    background-color: #00cc96;
     color: #ffffff;
 }
 
@@ -41,14 +40,14 @@
 
 .plot-container {
     width: 100%;
-    height: 400px; /* Высота графика */
+    height: 400px;
 }
 
 .chart-description {
-    margin-top: 20px; /* Отступ сверху */
+    margin-top: 20px;
     text-align: center;
     font-size: 1em;
-    color: #333333; /* Цвет текста */
+    color: #333333;
 }
 
 .chart-description h3 {

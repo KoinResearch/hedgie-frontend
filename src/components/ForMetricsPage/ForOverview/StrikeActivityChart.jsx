@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './StrikeActivityChart.css'; // Подключение стилей для спиннера и контейнеров
+import './StrikeActivityChart.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
 
 
 const StrikeActivityChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [expiration, setExpiration] = useState('All Expirations');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
-    const chartRef = useRef(null); // Ref для диаграммы ECharts
-    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
-    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
+    const [timeRange, setTimeRange] = useState('24h');
 
-    // Fetch available expirations when the asset changes
     useEffect(() => {
         const fetchExpirations = async () => {
             setLoading(true);
@@ -42,7 +42,8 @@ const StrikeActivityChart = () => {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/strike-activity/${asset.toLowerCase()}`, {
                     params: {
                         expiration,
-                        timeRange // Передаем временной интервал в запрос
+                        timeRange,
+                        exchange
                     }
                 });
                 setData(response.data);
@@ -55,22 +56,19 @@ const StrikeActivityChart = () => {
         };
 
         fetchData();
-    }, [asset, expiration, timeRange]);
+    }, [asset, expiration, timeRange, exchange]);
 
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
+            chartInstanceRef.current = chartInstance;
 
-            // Разделение данных на Calls и Puts
             let callData = data.filter(d => d.option_type === 'C');
             let putData = data.filter(d => d.option_type === 'P');
 
-            // Сортируем данные по strike_price по возрастанию
             callData = callData.sort((a, b) => a.strike_price - b.strike_price);
             putData = putData.sort((a, b) => a.strike_price - b.strike_price);
 
-            // Подготовка данных для отображения
             const strikePrices = callData.map(d => d.strike_price);
             const callTradeCounts = callData.map(d => d.trade_count);
             const putTradeCounts = putData.map(d => d.trade_count);
@@ -85,14 +83,14 @@ const StrikeActivityChart = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для тултипа
+                        fontFamily: 'JetBrains Mono'
                     },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для легенды
+                        fontFamily: 'JetBrains Mono'
                     },
                     top: 10,
                 },
@@ -104,9 +102,9 @@ const StrikeActivityChart = () => {
                     },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот меток для читаемости
-                        interval: 0, // Показывать все метки
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для меток оси X
+                        rotate: 45,
+                        interval: 0,
+                        fontFamily: 'JetBrains Mono'
                     },
                 },
                 yAxis: {
@@ -117,7 +115,7 @@ const StrikeActivityChart = () => {
                     },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono' // Используем шрифт JetBrains Mono для меток оси Y
+                        fontFamily: 'JetBrains Mono'
                     },
                     splitLine: {
                         lineStyle: { color: '#393E47' }
@@ -130,7 +128,7 @@ const StrikeActivityChart = () => {
                         data: callTradeCounts,
                         barWidth: '30%',
                         itemStyle: {
-                            color: 'rgba(39,174,96, 0.8)', // Зеленый для Calls
+                            color: 'rgba(39,174,96, 0.8)',
                         },
                     },
                     {
@@ -139,7 +137,7 @@ const StrikeActivityChart = () => {
                         data: putTradeCounts,
                         barWidth: '30%',
                         itemStyle: {
-                            color: 'rgba(231,76,60, 0.8)', // Красный для Puts
+                            color: 'rgba(231,76,60, 0.8)',
                         },
                     },
                 ],
@@ -164,17 +162,16 @@ const StrikeActivityChart = () => {
         }
     }, [data]);
 
-    // Функция для скачивания графика
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `strike_activity_chart_${asset}.png`; // Имя файла
+            a.download = `strike_activity_chart_${asset}.png`;
             a.click();
         }
     };
@@ -226,6 +223,19 @@ const StrikeActivityChart = () => {
                                     {exp}
                                 </option>
                             ))}
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

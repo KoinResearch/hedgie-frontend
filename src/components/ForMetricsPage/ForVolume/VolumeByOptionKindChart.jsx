@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './VolumeByOptionKindChart.css'; // Импортируем CSS-файл для стилей
+import './VolumeByOptionKindChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
@@ -9,20 +9,20 @@ import { ShieldAlert, Camera } from 'lucide-react';
 
 const VolumeByOptionKindChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [expiration, setExpiration] = useState('All Expirations');
     const [data, setData] = useState({ Calls: 0, Puts: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [expirations, setExpirations] = useState([]); // Для хранения доступных дат экспирации
-    const chartRef = useRef(null); // Ref для диаграммы ECharts
-    const chartInstanceRef = useRef(null); // Ref для инстанса диаграммы
+    const [expirations, setExpirations] = useState([]);
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
-    // Fetch available expirations when the asset changes
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
-                setExpirations(['All Expirations', ...response.data]); // Добавляем "All Expirations" в начало списка
+                setExpirations(['All Expirations', ...response.data]);
             } catch (err) {
                 console.error('Error fetching expirations:', err);
                 setError(err.message);
@@ -31,15 +31,16 @@ const VolumeByOptionKindChart = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Fetch open interest data
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
-                // Используем "all" вместо "All Expirations" для запроса на сервер
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/open-interest/${asset.toLowerCase()}/${expirationParam}`);
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/volume/open-interest/${asset.toLowerCase()}/${expirationParam}`,
+                    { params: { exchange } }
+                );
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
@@ -50,12 +51,12 @@ const VolumeByOptionKindChart = () => {
         };
 
         fetchData();
-    }, [asset, expiration]);
+    }, [asset, exchange, expiration]);
 
     useEffect(() => {
         if (!loading && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
             const option = {
                 backgroundColor: '#151518',
@@ -65,7 +66,7 @@ const VolumeByOptionKindChart = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
-                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 xAxis: {
@@ -74,7 +75,7 @@ const VolumeByOptionKindChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
+                        fontFamily: 'JetBrains Mono',
                     },
                     splitLine: { lineStyle: { color: '#393E47' } },
                 },
@@ -84,7 +85,7 @@ const VolumeByOptionKindChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 series: [
@@ -94,7 +95,7 @@ const VolumeByOptionKindChart = () => {
                         data: [data.Calls.toFixed(2), data.Puts.toFixed(2)],
                         itemStyle: {
                             color: function (params) {
-                                return params.dataIndex === 0 ? '#00cc96' : '#ff3e3e'; // Зеленый для Calls, Красный для Puts
+                                return params.dataIndex === 0 ? '#00cc96' : '#ff3e3e';
                             },
                         },
                         barWidth: '10%',
@@ -129,11 +130,11 @@ const VolumeByOptionKindChart = () => {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.download = `option_flow_chart_${asset}.png`;
             a.click();
         }
     };
@@ -145,7 +146,7 @@ const VolumeByOptionKindChart = () => {
                 <div className="flow-option-header-container">
                     <h2>🦾 Open Interest By Option Kind</h2>
                     <Camera className="icon" id="OpenCamera"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="OpenCamera" html={true}/>
                     <ShieldAlert className="icon" id="openInfo"
@@ -171,6 +172,19 @@ const VolumeByOptionKindChart = () => {
                                     {exp}
                                 </option>
                             ))}
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

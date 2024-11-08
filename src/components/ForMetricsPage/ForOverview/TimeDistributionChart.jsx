@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './TimeDistributionChart.css'; // Подключение стилей для спиннера и контейнеров
+import './TimeDistributionChart.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
 
 const TimeDistributionChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const chartRef = useRef(null);
-    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
-    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+    const chartInstanceRef = useRef(null);
+    const [timeRange, setTimeRange] = useState('24h');
 
-    // Получение данных с сервера
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -22,10 +22,11 @@ const TimeDistributionChart = () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/time-distribution/${asset.toLowerCase()}`, {
                     params: {
-                        timeRange // Передаем временной интервал в запрос
+                        timeRange,
+                        exchange
                     }
                 });
-                setData(response.data);  // Данные теперь массив с 24 объектами
+                setData(response.data);
             } catch (err) {
                 console.error('Error fetching time distribution data:', err);
                 setError(err.message);
@@ -35,29 +36,24 @@ const TimeDistributionChart = () => {
         };
 
         fetchData();
-    }, [asset, timeRange]);
+    }, [asset, timeRange, exchange]);
 
-    // Отрисовка графика
     useEffect(() => {
         if (data.length === 0) {
-            return; // Если данных нет, не пытаемся отрисовать график
+            return;
         }
 
         if (chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
-            // Получаем текущий час
             const currentHour = new Date().getUTCHours();
 
-            // Форматируем данные для оси X (часы)
             const hours = Array.from({ length: 24 }, (_, i) => `${(currentHour - i + 24) % 24}:00`).reverse();
 
-            // Собираем данные для Calls и Puts
             const callCounts = data.map(hourData => hourData.calls.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
             const putCounts = data.map(hourData => hourData.puts.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
 
-            // Настройка ECharts
             const option = {
                 backgroundColor: '#151518',
                 tooltip: {
@@ -66,14 +62,14 @@ const TimeDistributionChart = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
-                        fontFamily: 'JetBrains Mono', // Шрифт для тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -85,7 +81,7 @@ const TimeDistributionChart = () => {
                         color: '#7E838D',
                         rotate: 45,
                         interval: 0,
-                        fontFamily: 'JetBrains Mono', // Шрифт для оси X
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 yAxis: [
@@ -95,7 +91,7 @@ const TimeDistributionChart = () => {
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
                         axisLabel: {
                             color: '#7E838D',
-                            fontFamily: 'JetBrains Mono', // Шрифт для оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     }
@@ -142,11 +138,11 @@ const TimeDistributionChart = () => {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.download = `option_flow_chart_${asset}.png`;
             a.click();
         }
     };
@@ -181,6 +177,19 @@ const TimeDistributionChart = () => {
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
                             <option value="BTC">Bitcoin</option>
                             <option value="ETH">Ethereum</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

@@ -1,14 +1,13 @@
 @font-face {
     font-family: 'Paloseco';
-    src: url('../../fonts/Paloseco-Medium.ttf') format('truetype'); /* Используем 'truetype' для TTF */
-    font-weight: 400; /* Обычный вес */
+    src: url('../../fonts/Paloseco-Medium.ttf') format('truetype');
+    font-weight: 400;
     font-style: normal;
 }
 
-/* Контейнер всего компонента */
 .flow-option-container {
     width: 100%;
-    height: auto; /* Автоматическая высота */
+    height: auto;
     background-color: #151518;
     border-radius: 12px;
     border: 1px solid #393E47;
@@ -25,32 +24,28 @@
 }
 
 
-/* Верхний блок с заголовком и переключателем */
 .flow-option-header-container {
     display: flex;
-    justify-content: space-between; /* Распределение заголовка и переключателя */
-    align-items: center; /* Выравнивание по вертикали */
+    justify-content: space-between;
+    align-items: center;
     padding-top: 7px;
-    width: 100%; /* Ширина контейнера по всей странице */
+    width: 100%;
     gap: 20px;
 }
 
 .graph{
-    /*padding-bottom: 40px;*/
 }
 
-/* Стили для заголовка */
 .flow-option-header-container h2 {
     font-size: 18px;
     color: white;
-    margin: 0; /* Убираем отступы */
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-grow: 1; /* Занимает оставшееся пространство */
+    flex-grow: 1;
 }
 
-/* Контейнер для двух выпадающих списков */
 .asset-option-buttons {
     position: relative;
     width: 160px;
@@ -60,11 +55,10 @@
     justify-content: space-between;
 }
 
-/* Стили для выпадающего списка */
 .asset-option-buttons select {
     width: 100%;
     height: 100%;
-    padding: 0 34px 0 7px; /* Увеличьте правый padding для места под стрелку */
+    padding: 0 34px 0 7px;
     background-color: #151518;
     color: #9CA3AF;
     border: 1px solid #393E47;
@@ -76,10 +70,9 @@
     text-align: left;
 }
 
-/* Стили для стрелки */
 .custom-arrow {
     position: absolute;
-    right: 12px; /* Расположим стрелку справа */
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
@@ -96,48 +89,46 @@
 }
 
 .icon {
-    color: #616774; /* Изначальный цвет */
-    transition: color 0.3s ease; /* Плавная смена цвета при наведении */
-    cursor: pointer; /* Указатель мыши в виде руки при наведении */
-    outline: none; /* Убираем бордюр при фокусе */
+    color: #616774;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    outline: none;
 }
 
 .icon:focus {
-    outline: none; /* Убираем бордюр при фокусе */
+    outline: none;
 }
 
 .icon:hover {
-    color: #FFFFFF; /* Цвет становится белым при наведении */
+    color: #FFFFFF;
 }
 
 
 
-/* Разделительная линия под заголовком и переключателем */
 .flow-option-dedicated {
-    width: 100%; /* Установите ширину на 50% от ширины родительского контейнера */
+    width: 100%;
     background-color: #393E47;
-    margin: 10px auto; /* Центрирует линию относительно контейнера */
+    margin: 10px auto;
     border: none;
     border-top: 1px solid #393E47;
 }
 
 .graph {
-    width: 100%; /* Занять всю доступную ширину */
-    height: 500px; /* Установить высоту графика */
+    width: 100%;
+    height: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .graph-chart{
-    width: 100%; /* Занять всю доступную ширину */
-    height: 300px; /* Установить высоту графика */
+    width: 100%;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Стиль для контейнера загрузки */
 .loading-container {
     display: flex;
     justify-content: center;
@@ -146,7 +137,6 @@
     position: relative;
 }
 
-/* Стиль спиннера */
 .spinner {
     width: 100px;
     height: 100px;
@@ -166,7 +156,6 @@
     margin-left: 100px;
 }
 
-/* Анимация вращения */
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -176,7 +165,6 @@
     }
 }
 
-/* Стиль для контейнера с отсутствием данных */
 .no-data-container {
     display: flex;
     justify-content: center;
@@ -187,11 +175,11 @@
 }
 
 .react-tooltip {
-    z-index: 9999; /* Установите высокий z-index */
+    z-index: 9999;
 }
 
 .flow-option-header-container {
-    overflow: visible; /* Убедитесь, что тултипы не обрезаются */
+    overflow: visible;
 }
 
 

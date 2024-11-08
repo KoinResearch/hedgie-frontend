@@ -1,7 +1,5 @@
-// src/components/ForMetricsPage/Overview.jsx
 import React from 'react';
 import BTCETHOptionFlow from '../components/ForMetricsPage/ForOverview/BTCETHOptionFlow.jsx';
-import BTCETHBlockTrades from '../components/ForMetricsPage/ForForBlockTrades/BTCETHBlockTrades.jsx';
 import MaxPainByExpiration from '../components/ForMetricsPage/ForOverview/MaxPainByExpiration.jsx';
 import OptionVolumeChart from '../components/ForMetricsPage/ForOverview/OptionVolumeChart.jsx';
 import StrikeActivityChart from "../components/ForMetricsPage/ForOverview/StrikeActivityChart.jsx";

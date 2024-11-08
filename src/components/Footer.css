@@ -3,12 +3,12 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin: 0 auto; /* Центрируем футер */
+    margin: 0 auto;
     background-color: #ffffff;
     border-top: 1px solid #e0e0e0;
     font-size: 14px;
     height: 68px;
-    box-sizing: border-box; /* Учитываем padding при вычислении ширины */
+    box-sizing: border-box;
 }
 
 .footer-text {
@@ -16,8 +16,8 @@
 }
 
 .footer-links a {
-    font-weight: bold; /* Жирный шрифт */
-    font-family: 'YourFontFamily', sans-serif; /* Используйте свой шрифт, если нужно */
+    font-weight: bold;
+    font-family: 'YourFontFamily', sans-serif;
     margin: 0 10px;
     text-decoration: none;
     color: #A9A9A9;
@@ -27,6 +27,6 @@
 }
 
 .footer-links a:hover {
-    background-color: white; /* Фон становится белым при наведении */
-    color: black; /* Текст становится чёрным при наведении */
+    background-color: white;
+    color: black;
 }

@@ -13,7 +13,6 @@ const Register = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        // Логируем введённые значения
         console.log("Registering user with the following details:");
         console.log("Email:", email);
         console.log("Username:", username);
@@ -33,12 +32,11 @@ const Register = () => {
                 password
             });
 
-            // Логируем ответ от сервера
             console.log("Server response:", response.data);
 
             if (response.data.success) {
                 console.log("Registration successful, navigating to sign in page.");
-                navigate('/signin'); // Перенаправление на страницу логина после успешной регистрации
+                navigate('/signin');
             } else {
                 console.warn("Registration failed:", response.data.message);
                 alert(response.data.message);

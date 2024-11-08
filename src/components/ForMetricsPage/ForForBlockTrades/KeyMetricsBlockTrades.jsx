@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Tooltip } from 'react-tooltip';
-import 'react-tooltip/dist/react-tooltip.css'; // Обязательно подключите CSS для отображения тултипов
+import 'react-tooltip/dist/react-tooltip.css';
 import './KeyMetricsBlockTrades.css';
 
 const KeyMetricsBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [metrics, setMetrics] = useState({
         avg_price: 0,
         total_nominal_volume: 0,
@@ -13,14 +14,14 @@ const KeyMetricsBlockTrades = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+    const [timeRange, setTimeRange] = useState('24h');
 
     useEffect(() => {
         const fetchMetrics = async () => {
             setLoading(true);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/key-metrics/${asset.toLowerCase()}`, {
-                    params: { timeRange } // Передаем временной интервал в запрос
+                    params: { timeRange }
                 });
                 const data = response.data;
 
@@ -36,7 +37,7 @@ const KeyMetricsBlockTrades = () => {
             }
         };
         fetchMetrics();
-    }, [asset, timeRange]); // Добавляем timeRange в зависимости
+    }, [asset, timeRange]);
 
     return (
         <div className="metrics-key-container">
@@ -51,7 +52,7 @@ const KeyMetricsBlockTrades = () => {
                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
-                                  stroke-linecap="round" stroke-linejoin="round" />
+                                  stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </span>
                 </div>
@@ -63,7 +64,19 @@ const KeyMetricsBlockTrades = () => {
                     <span className="custom-arrow">
                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667" stroke-linecap="round"
-                                  stroke-linejoin="round" />
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </div>
+                <div className="asset-option-buttons">
+                    <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                        <option value="DER">Deribit</option>
+                        {/*<option value="OKX">OKX</option>*/}
+                    </select>
+                    <span className="custom-arrow">
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                                  strokeLinejoin="round"/>
                         </svg>
                     </span>
                 </div>

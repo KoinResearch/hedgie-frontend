@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './OpenInterestByExpirationChart.css'; // Подключение CSS
+import './OpenInterestByExpirationChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 
 const OpenInterestByExpirationChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [strike, setStrike] = useState('All Strikes');
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [strikes, setStrikes] = useState([]); // Для хранения доступных страйков
-    const chartRef = useRef(null); // Ref для диаграммы ECharts
-    const chartInstanceRef = useRef(null); // Ref для инстанса диаграммы
+    const [strikes, setStrikes] = useState([]);
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
-    // Получение доступных страйков при смене актива
     useEffect(() => {
         const fetchStrikes = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/strikes/${asset.toLowerCase()}`);
-                setStrikes(['All Strikes', ...response.data]); // Добавляем "All Strikes" в начало списка
+                setStrikes(['All Strikes', ...response.data]);
             } catch (err) {
                 console.error('Error fetching strikes:', err);
                 setError(err.message);
@@ -30,15 +30,16 @@ const OpenInterestByExpirationChart = () => {
         fetchStrikes();
     }, [asset]);
 
-    // Получение данных об открытых интересах по экспирации
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
-                // Используем "all" для запроса всех страйков
                 const strikeParam = strike === 'All Strikes' ? 'all' : strike;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`);
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/open-interest/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`,
+                    { params: { exchange } }
+                );
                 setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
@@ -49,14 +50,13 @@ const OpenInterestByExpirationChart = () => {
         };
 
         fetchData();
-    }, [asset, strike]);
+    }, [asset, exchange, strike]);
 
     useEffect(() => {
         if (Object.keys(data).length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
-            // Преобразование данных для отображения с округлением до 2 знаков после запятой
             const expirationDates = Object.keys(data);
             const putsOtm = expirationDates.map(date => parseFloat(data[date].puts_otm).toFixed(2));
             const callsOtm = expirationDates.map(date => parseFloat(data[date].calls_otm).toFixed(2));
@@ -71,15 +71,15 @@ const OpenInterestByExpirationChart = () => {
                     axisPointer: {
                         type: 'cross',
                         label: {
-                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
-                            color: '#000000', // Черный текст в метке
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток axisPointer
+                            backgroundColor: '#FFFFFF',
+                            color: '#000000',
+                            fontFamily: 'JetBrains Mono',
                         },
                     },
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
-                        color: '#000000', // Черный текст в тултипе
-                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                        color: '#000000',
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 legend: {
@@ -89,7 +89,7 @@ const OpenInterestByExpirationChart = () => {
                     ],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -99,9 +99,9 @@ const OpenInterestByExpirationChart = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот меток для читаемости
-                        interval: 0, // Показывать все метки
-                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
+                        rotate: 45,
+                        interval: 0,
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 yAxis: [
@@ -111,7 +111,7 @@ const OpenInterestByExpirationChart = () => {
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
                         axisLabel: {
                             color: '#7E838D',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
@@ -121,7 +121,7 @@ const OpenInterestByExpirationChart = () => {
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
                         axisLabel: {
                             color: '#7E838D',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         splitLine: { lineStyle: { color: '#151518' } },
                         position: 'right',
@@ -132,21 +132,21 @@ const OpenInterestByExpirationChart = () => {
                         name: 'Puts OTM',
                         type: 'bar',
                         data: putsOtm,
-                        itemStyle: { color: '#ff3e3e' }, // Красный для Puts OTM
+                        itemStyle: { color: '#ff3e3e' },
                         barWidth: '25%',
                     },
                     {
                         name: 'Calls OTM',
                         type: 'bar',
                         data: callsOtm,
-                        itemStyle: { color: '#00cc96' }, // Зелёный для Calls OTM
+                        itemStyle: { color: '#00cc96' },
                         barWidth: '25%',
                     },
                     {
                         name: 'Puts Market Value [$]',
                         type: 'line',
                         data: putsMarketValue,
-                        yAxisIndex: 1, // Привязываем к второй оси
+                        yAxisIndex: 1,
                         lineStyle: {
                             color: '#ff3e3e',
                             type: 'dotted',
@@ -205,11 +205,11 @@ const OpenInterestByExpirationChart = () => {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `open_interest_chart_${asset}.png`; // Имя файла
+            a.download = `open_interest_chart_${asset}.png`;
             a.click();
         }
     };
@@ -223,7 +223,7 @@ const OpenInterestByExpirationChart = () => {
                         🤟 Open Interest By Expiration
                     </h2>
                     <Camera className="icon" id="interestCamera"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="interestCamera" html={true}/>
                     <ShieldAlert className="icon" id="interestInfo"
@@ -247,6 +247,19 @@ const OpenInterestByExpirationChart = () => {
                             {strikes.map((s) => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

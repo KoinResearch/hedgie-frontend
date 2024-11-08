@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './OpenInterestByStrikeChart.css'; // Подключение CSS
+import './OpenInterestByStrikeChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
@@ -9,15 +9,15 @@ import { ShieldAlert, Camera } from 'lucide-react';
 
 const OpenInterestByStrikeChart = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [expiration, setExpiration] = useState('All Expirations');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expirations, setExpirations] = useState([]);
-    const chartRef = useRef(null); // Ref для ECharts
-    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
-    // Получаем доступные даты экспирации для выбранного актива
     useEffect(() => {
         const fetchExpirations = async () => {
             try {
@@ -31,15 +31,17 @@ const OpenInterestByStrikeChart = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Получение данных открытого интереса по страйку с учётом рыночной стоимости в долларах
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
                 const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/open-interest/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`);
-                setData(response.data); // Данные уже сконвертированы в доллары на сервере
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/open-interest/open-interest-by-strike/${asset.toLowerCase()}/${expirationParam}`,
+                    { params: { exchange } }
+                );
+                setData(response.data);
             } catch (err) {
                 console.error('Error fetching open interest data:', err);
                 setError(err.message);
@@ -49,20 +51,18 @@ const OpenInterestByStrikeChart = () => {
         };
 
         fetchData();
-    }, [asset, expiration]);
+    }, [asset, exchange, expiration]);
 
-    // Отрисовка диаграммы с обновлёнными данными
     useEffect(() => {
         if (!loading && chartRef.current && data.length > 0) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
-            // Преобразование данных для отображения
             const strikePrices = data.map(d => d.strike);
             const puts = data.map(d => parseFloat(d.puts).toFixed(2));
             const calls = data.map(d => parseFloat(d.calls).toFixed(2));
-            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2)); // Рыночная стоимость в долларах
-            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2)); // Рыночная стоимость в долларах
+            const putsMarketValue = data.map(d => parseFloat(d.puts_market_value).toFixed(2));
+            const callsMarketValue = data.map(d => parseFloat(d.calls_market_value).toFixed(2));
 
             const option = {
                 backgroundColor: '#151518',
@@ -73,20 +73,20 @@ const OpenInterestByStrikeChart = () => {
                         label: {
                             backgroundColor: '#FFFFFF',
                             color: '#000000',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток axisPointer
+                            fontFamily: 'JetBrains Mono',
                         },
                     },
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000000',
-                        fontFamily: 'JetBrains Mono', // Шрифт для текста тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 legend: {
                     data: ['Puts', 'Calls', 'Puts Market Value [$]', 'Calls Market Value [$]'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono', // Шрифт для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -97,7 +97,7 @@ const OpenInterestByStrikeChart = () => {
                     axisLabel: {
                         color: '#7E838D',
                         rotate: 45,
-                        fontFamily: 'JetBrains Mono', // Шрифт для меток оси X
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 yAxis: [
@@ -107,7 +107,7 @@ const OpenInterestByStrikeChart = () => {
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
                         axisLabel: {
                             color: '#7E838D',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
@@ -117,7 +117,7 @@ const OpenInterestByStrikeChart = () => {
                         axisLine: { lineStyle: { color: '#A9A9A9' } },
                         axisLabel: {
                             color: '#7E838D',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         position: 'right',
                         splitLine: { lineStyle: { color: '#393E47' } },
@@ -185,17 +185,16 @@ const OpenInterestByStrikeChart = () => {
         }
     }, [data, loading]);
 
-    // Обработчик для скачивания изображения диаграммы
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `open_interest_by_strike_${asset}.png`; // Имя файла
+            a.download = `open_interest_by_strike_${asset}.png`;
             a.click();
         }
     };
@@ -208,7 +207,7 @@ const OpenInterestByStrikeChart = () => {
                         😬 Open Interest By Strike Price
                     </h2>
                     <Camera className="icon" id="strikeCamera"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="strikeCamera" html={true}/>
                     <ShieldAlert className="icon" id="strikeInfo"
@@ -234,6 +233,19 @@ const OpenInterestByStrikeChart = () => {
                                     {exp}
                                 </option>
                             ))}
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

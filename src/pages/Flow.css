@@ -1,8 +1,8 @@
 .flow-container {
     margin-top: 72px;
     padding: 20px;
-    background-color: black; /* Темный фон страницы */
-    color: #F2F2F2; /* Белый цвет текста */
+    background-color: black;
+    color: #F2F2F2;
     font-family: 'Paloseco', sans-serif;
 }
 
@@ -30,7 +30,6 @@
     margin-bottom: 20px;
 }
 
-/* Стили для select */
 .flow-filters select {
     width: 100%;
     height: 100%;
@@ -44,22 +43,18 @@
     transition: border-color 0.3s ease;
 }
 
-/* Изменение бордюра при наведении */
 .flow-filters select:hover {
     border-color: white;
 }
 
-/* Убираем синий контур при фокусе */
 .flow-filters select:focus {
     border-color: white;
 }
 
-/* Также можно убрать эффект при активном состоянии кнопки */
 .flow-filters select:active {
     border-color: white;
 }
 
-/* Стили для button */
 .flow-filters button {
     padding: 10px;
     background-color: #0E0E11;
@@ -71,20 +66,17 @@
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Изменение фона и текста при наведении */
 .flow-filters button:hover {
     background-color: white;
     color: black;
     border-color: white;
 }
 
-/* Убираем синий контур при фокусе */
 .flow-filters button:focus {
     outline: none;
     border-color: #393E47;
 }
 
-/* Также можно убрать эффект при активном состоянии кнопки */
 .flow-filters button:active {
     outline: none;
     border-color: #393E47;
@@ -95,13 +87,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 40px; /* Увеличенный зазор между элементами для лучшей читаемости */
+    gap: 40px;
     padding: 20px;
-    background-color: #151518; /* Темный фон для контраста с диаграммами */
+    background-color: #151518;
     border-radius: 12px;
     border: 1px solid #393E47;
     color: white;
-    margin-bottom: 20px; /* Отступ снизу */
+    margin-bottom: 20px;
 }
 
 .metric {
@@ -110,15 +102,15 @@
     align-items: center;
     justify-content: space-between;
     width: 220px;
-    padding: 20px; /* Отступы внутри для более "воздушного" вида */
-    border-radius: 12px; /* Закругляем углы */
+    padding: 20px;
+    border-radius: 12px;
     text-align: center;
-    transition: transform 0.3s ease; /* Добавляем эффект при наведении */
+    transition: transform 0.3s ease;
 }
 
 .metric canvas {
-    width: 70px !important; /* Устанавливаем фиксированные размеры для canvas */
-    height: 70px !important; /* Устанавливаем фиксированные размеры для canvas */
+    width: 70px !important;
+    height: 70px !important;
 }
 
 .metric-data{
@@ -129,7 +121,7 @@
 }
 
 .metric-value {
-    font-size: 24px; /* Увеличенный размер для большей заметности */
+    font-size: 24px;
     font-weight: bold;
     color: white;
     font-family: 'JetBrains Mono', sans-serif;
@@ -140,14 +132,14 @@
     font-size: 16px;
     font-family: 'Paloseco', sans-serif;
     color: #C2C2C2;
-    font-weight: 500; /* Немного увеличим жирность текста */
+    font-weight: 500;
 }
 
 .dedicate-metric {
-    width: 1px; /* Увеличиваем ширину для более заметного разделителя */
+    width: 1px;
     height: 80px;
     background-color: #494949;
-    border-radius: 4px; /* Немного закругляем края разделителя */
+    border-radius: 4px;
 }
 
 
@@ -173,7 +165,6 @@
 
 .flow-table th {
     background-color: #151518;
-    /*color: #9CA3AF;*/
     font-size: 12px;
     color: #F2F2F2;
 }

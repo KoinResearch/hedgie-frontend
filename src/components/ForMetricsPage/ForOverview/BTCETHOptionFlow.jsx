@@ -3,12 +3,13 @@ import axios from 'axios';
 import * as echarts from 'echarts';
 import './BTCETHOptionFlow.css';
 import { Tooltip } from 'react-tooltip';
-import 'react-tooltip/dist/react-tooltip.css'; // Обязательно подключите CSS для отображения тултипов
+import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 
 
 const BTCETHOptionFlow = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [metrics, setMetrics] = useState({
         Call_Buys: 0,
         Call_Sells: 0,
@@ -19,21 +20,21 @@ const BTCETHOptionFlow = () => {
         Put_Buys_Percent: '0.00',
         Put_Sells_Percent: '0.00',
     });
-    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+    const [timeRange, setTimeRange] = useState('24h');
 
 
-    const chartRef = useRef(null); // Ref для диаграммы
-    const chartInstanceRef = useRef(null); // Ref для сохранения инстанса диаграммы
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/${asset.toLowerCase()}`, {
                     params: {
-                        timeRange: timeRange
+                        timeRange,
+                        exchange
                     }
                 });
-                console.log("Metrics from server:", response.data);
                 setMetrics(response.data);
             } catch (error) {
                 console.error('Error fetching metrics:', error);
@@ -41,21 +42,20 @@ const BTCETHOptionFlow = () => {
         };
 
         fetchMetrics();
-    }, [asset, timeRange]); // Re-fetch data when asset or time range changes
+    }, [asset, exchange, timeRange]);
 
 
     useEffect(() => {
         if (chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
+            chartInstanceRef.current = chartInstance;
 
-            // Опции диаграммы
             const option = {
                 tooltip: {
                     trigger: 'item',
                     formatter: '{b}: {c} ({d}%)',
                     textStyle: {
-                        fontFamily: 'JetBrains Mono', // Шрифт для тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 series: [
@@ -68,10 +68,10 @@ const BTCETHOptionFlow = () => {
                         label: {
                             show: true,
                             position: 'inside',
-                            formatter: (params) => `${Math.round(params.percent)}%`, // Округляем проценты до целого
+                            formatter: (params) => `${Math.round(params.percent)}%`,
                             fontSize: 12,
                             color: '#fff',
-                            fontFamily: 'JetBrains Mono', // Шрифт для меток
+                            fontFamily: 'JetBrains Mono',
                         },
                         itemStyle: {
                             borderRadius: 10,
@@ -132,17 +132,16 @@ const BTCETHOptionFlow = () => {
         }
     }, [metrics]);
 
-    // Функция для скачивания графика
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.download = `option_flow_chart_${asset}.png`;
             a.click();
         }
     };
@@ -155,7 +154,7 @@ const BTCETHOptionFlow = () => {
                 <div className="flow-option-header-container">
                     <h2>💸 Options</h2>
                     <Camera className="icon" id="camera"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="camera" html={true}/>
                     <ShieldAlert className="icon" id="optionData"
@@ -188,6 +187,19 @@ const BTCETHOptionFlow = () => {
                             </svg>
                         </span>
                     </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            <option value="OKX">OKX</option>
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
                 <div className="flow-option-dedicated"></div>
             </div>
@@ -205,7 +217,7 @@ const BTCETHOptionFlow = () => {
                     </div>
 
                     <div className="metric-option put-buys">
-                        <p className="metric-option-label">Put Buys</p>
+                    <p className="metric-option-label">Put Buys</p>
                         <div className="metric-option-variable">
                             <p className="metric-option-value">{assetSymbol} {metrics.Put_Buys}</p>
                             <p className="metric-option-percentage"> {metrics.Put_Buys_Percent}% </p>

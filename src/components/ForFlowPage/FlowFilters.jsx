@@ -45,7 +45,6 @@ const FlowFilters = () => {
         fetchExpirations();
     }, [asset]);
 
-    // Логика загрузки метрик (только по активу)
     useEffect(() => {
         const fetchMetrics = async () => {
             setIsLoading(true);
@@ -62,7 +61,7 @@ const FlowFilters = () => {
                     },
                 });
 
-                console.log('Response data:', response.data); // Вывод данных в консоль
+                console.log('Response data:', response.data);
 
                 const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage, totalPages, trades } = response.data;
                 setPutCallRatio(putCallRatio || 0);

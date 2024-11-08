@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as echarts from 'echarts';
-import './ExpirationActivityChartBlockTrades.css'; // Подключение стилей для спиннера и контейнеров
+import './ExpirationActivityChartBlockTrades.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
 
 
 const ExpirationActivityChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
+    const [exchange, setExchange] = useState('DER');
     const [strike, setStrike] = useState('all');
     const [data, setData] = useState({ calls: [], puts: [] });
     const [strikes, setStrikes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const chartRef = useRef(null); // Ref для контейнера диаграммы
-    const chartInstanceRef = useRef(null); // Ref для хранения инстанса диаграммы
-    const [timeRange, setTimeRange] = useState('24h'); // Default is '24h'
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
+    const [timeRange, setTimeRange] = useState('24h');
 
     // Получение доступных страйков при изменении актива
     useEffect(() => {
@@ -32,7 +33,6 @@ const ExpirationActivityChartBlockTrades = () => {
         fetchStrikes();
     }, [asset]);
 
-    // Получение активности по дате истечения и страйку
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -45,19 +45,18 @@ const ExpirationActivityChartBlockTrades = () => {
 
                 const response = await axios.get(url, {
                     params: {
-                        timeRange // Передаем временной интервал в запрос
+                        timeRange
                     }
                 });
 
-                // Разделяем данные на calls и puts
                 const groupedData = {
                     calls: response.data.filter(item => item.option_type === 'call'),
                     puts: response.data.filter(item => item.option_type === 'put')
                 };
 
-                console.log('Data from API:', groupedData); // Логирование данных
+                console.log('Data from API:', groupedData);
 
-                setData(groupedData); // Устанавливаем данные
+                setData(groupedData);
             } catch (err) {
                 console.error('Error fetching expiration activity data:', err);
                 setError(err.message);
@@ -69,11 +68,10 @@ const ExpirationActivityChartBlockTrades = () => {
         fetchData();
     }, [asset, strike, timeRange]);
 
-    // Построение диаграммы
     useEffect(() => {
         if (data && data.calls.length > 0 && data.puts.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы
+            chartInstanceRef.current = chartInstance;
 
             const expirationDates = [...new Set([...data.calls.map(d => d.expiration_date), ...data.puts.map(d => d.expiration_date)])];
 
@@ -97,14 +95,14 @@ const ExpirationActivityChartBlockTrades = () => {
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
                         color: '#000',
-                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для тултипа
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 legend: {
                     data: ['Calls', 'Puts'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -116,9 +114,9 @@ const ExpirationActivityChartBlockTrades = () => {
                     },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот меток для читаемости
-                        interval: 0, // Показывать все метки
-                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для меток X
+                        rotate: 45,
+                        interval: 0,
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 yAxis: {
@@ -129,7 +127,7 @@ const ExpirationActivityChartBlockTrades = () => {
                     },
                     axisLabel: {
                         color: '#7E838D',
-                        fontFamily: 'JetBrains Mono', // Добавляем шрифт для меток Y
+                        fontFamily: 'JetBrains Mono',
                     },
                     splitLine: {
                         lineStyle: { color: '#393E47' }
@@ -142,7 +140,7 @@ const ExpirationActivityChartBlockTrades = () => {
                         data: callCounts,
                         barWidth: '30%',
                         itemStyle: {
-                            color: 'rgba(39,174,96, 0.8)', // Зеленый для Calls
+                            color: 'rgba(39,174,96, 0.8)',
                         },
                     },
                     {
@@ -151,14 +149,14 @@ const ExpirationActivityChartBlockTrades = () => {
                         data: putCounts,
                         barWidth: '30%',
                         itemStyle: {
-                            color: 'rgba(231,76,60, 0.8)', // Красный для Puts
+                            color: 'rgba(231,76,60, 0.8)',
                         },
                     },
                 ],
                 grid: {
                     left: '5%',
                     right: '5%',
-                    bottom: '5%', // Добавляем нижний отступ для меток X
+                    bottom: '5%',
                     top: '10%',
                     containLabel: true,
                 },
@@ -176,17 +174,16 @@ const ExpirationActivityChartBlockTrades = () => {
         }
     }, [data]);
 
-    // Функция для скачивания графика
     const handleDownload = () => {
         if (chartInstanceRef.current) {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `expiration_activity_chart_${asset}.png`; // Имя файла
+            a.download = `expiration_activity_chart_${asset}.png`;
             a.click();
         }
     };
@@ -197,7 +194,7 @@ const ExpirationActivityChartBlockTrades = () => {
                 <div className="flow-option-header-container">
                     <h2>📉 Block Trades by Expiration</h2>
                     <Camera className="icon" id="cameraExp"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraExp" html={true}/>
                     <ShieldAlert className="icon" id="expInfo"
@@ -236,6 +233,19 @@ const ExpirationActivityChartBlockTrades = () => {
                             {strikes.map((s) => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
+                        </select>
+                        <span className="custom-arrow">
+                            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" stroke-width="1.66667"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div className="asset-option-buttons">
+                        <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
+                            <option value="DER">Deribit</option>
+                            {/*<option value="OKX">OKX</option>*/}
                         </select>
                         <span className="custom-arrow">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none"

@@ -1,10 +1,9 @@
 @media (min-width: 1536px) {
   .App {
-    max-width: 1536px; /* Ограничение ширины для больших экранов */
+    max-width: 1536px;
   }
 }
 
-/* Медиа-запрос для небольших экранов */
 @media (max-width: 768px) {
   main {
     padding: 20px 4vw;
@@ -20,24 +19,22 @@ html, body, #root {
   height: 100%;
   width: 100%;
   background-color: black;
-  overflow-x: hidden; /* Скрываем горизонтальную прокрутку */
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
   width: 0;
 }
 
-/* Стиль для всего приложения */
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: black;
-  max-width: 1536px; /* Ограничиваем ширину */
-  margin: 0 auto; /* Центрируем по горизонтали */
+  max-width: 1536px;
+  margin: 0 auto;
 }
 
-/* Основной контент */
 main {
   flex: 1;
   padding: 0 20px 0 20px;
@@ -46,8 +43,8 @@ main {
 }
 
 .footer {
-  position: relative; /* Убираем фиксированное позиционирование */
-  width: 100%; /* Футер на всю ширину */
+  position: relative;
+  width: 100%;
   padding: 10px 0;
   background-color: #151518;
   border-top: 1px solid #393E47;
@@ -60,7 +57,7 @@ main {
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
-  justify-content: center; /* Центрируем содержимое */
+  justify-content: center;
   align-items: center;
 }
 
@@ -69,11 +66,6 @@ main {
   text-align: center;
 }
 
-
-
-
-
-/* Ссылки (если их нужно добавить позже) */
 .footer-links a {
   color: #9CA3AF;
   text-decoration: none;

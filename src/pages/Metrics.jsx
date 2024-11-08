@@ -1,4 +1,3 @@
-// src/pages/Metrics.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from '../components/ForMetricsPage/Sidebar';
@@ -12,7 +11,7 @@ const Metrics = () => {
     return (
         <div className="metrics-page-container">
             <Sidebar />
-            <div className="divider"></div> {/* Разделитель */}
+            <div className="divider"></div>
             <div className="content">
                 <Routes>
                     <Route path="/" element={<Overview />} />

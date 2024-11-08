@@ -34,14 +34,13 @@ const calculateNotionalValue = (intrinsicValues) => {
     return Object.values(intrinsicValues).reduce((acc, val) => acc + val, 0);
 };
 
-// Функция для нахождения оптимального диапазона и шага для осей
 const getOptimalAxisSettings = (values, steps) => {
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
     const range = maxValue - minValue;
     const step = range / steps;
 
-    const roundedStep = Math.ceil(step / 1000) * 1000; // Округляем шаг для Max Pain Price
+    const roundedStep = Math.ceil(step / 1000) * 1000;
     const optimalMin = Math.floor(minValue / roundedStep) * roundedStep;
     const optimalMax = Math.ceil(maxValue / roundedStep) * roundedStep;
 
@@ -53,8 +52,8 @@ const MaxPainByExpirationBlockTrades = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [asset, setAsset] = useState('BTC');
-    const chartRef = useRef(null); // Ref для диаграммы ECharts
-    const chartInstanceRef = useRef(null); // Добавляем ref для хранения инстанса диаграммы
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -80,7 +79,7 @@ const MaxPainByExpirationBlockTrades = () => {
     useEffect(() => {
         if (data && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
-            chartInstanceRef.current = chartInstance; // Сохраняем инстанс диаграммы для использования при скачивании
+            chartInstanceRef.current = chartInstance;
 
             let expirationDates = Object.keys(data);
             expirationDates = expirationDates.sort((a, b) => convertToISODate(a) - convertToISODate(b));
@@ -88,11 +87,9 @@ const MaxPainByExpirationBlockTrades = () => {
             const maxPainValues = expirationDates.map(exp => parseFloat(data[exp].maxPain));
             const notionalValues = expirationDates.map(exp => calculateNotionalValue(data[exp].intrinsicValues));
 
-            // Получение оптимальных настроек осей для Max Pain Price и Notional Value
-            const maxPainSettings = getOptimalAxisSettings(maxPainValues, 6); // 6 шагов для Max Pain Price
-            const notionalSettings = getOptimalAxisSettings(notionalValues, 4); // 4 шага для Notional Value
+            const maxPainSettings = getOptimalAxisSettings(maxPainValues, 6);
+            const notionalSettings = getOptimalAxisSettings(notionalValues, 4);
 
-            // Конфигурация ECharts
             const option = {
                 backgroundColor: '#151518',
                 tooltip: {
@@ -100,22 +97,22 @@ const MaxPainByExpirationBlockTrades = () => {
                     axisPointer: {
                         type: 'cross',
                         label: {
-                            backgroundColor: '#FFFFFF', // Белый фон для метки axisPointer
-                            color: '#000000', // Черный текст в метке
-                            fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono
+                            backgroundColor: '#FFFFFF',
+                            color: '#000000',
+                            fontFamily: 'JetBrains Mono',
                         },
                     },
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Белый фон для тултипа
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     textStyle: {
-                        color: '#000000', // Черный текст в тултипе
-                        fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для тултипа
+                        color: '#000000',
+                        fontFamily: 'JetBrains Mono',
                     },
                 },
                 legend: {
                     data: ['Max Pain Price [$]', 'Notional Value'],
                     textStyle: {
                         color: '#B8B8B8',
-                        fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для легенды
+                        fontFamily: 'JetBrains Mono',
                     },
                     top: 10,
                 },
@@ -125,9 +122,9 @@ const MaxPainByExpirationBlockTrades = () => {
                     axisLine: { lineStyle: { color: '#A9A9A9' } },
                     axisLabel: {
                         color: '#7E838D',
-                        rotate: 45, // Поворот меток для читаемости
-                        interval: 0, // Показывать все метки
-                        fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для меток оси X
+                        rotate: 45,
+                        interval: 0,
+                        fontFamily: 'JetBrains Mono',
                     },
                     splitLine: { show: false },
                 },
@@ -143,7 +140,7 @@ const MaxPainByExpirationBlockTrades = () => {
                         axisLabel: {
                             color: '#7E838D',
                             formatter: value => value.toLocaleString(),
-                            fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         splitLine: { lineStyle: { color: '#393E47' } },
                     },
@@ -158,7 +155,7 @@ const MaxPainByExpirationBlockTrades = () => {
                         axisLabel: {
                             color: '#A9A9A9',
                             formatter: value => `${(value / 1e9).toFixed(1)}b`,
-                            fontFamily: 'JetBrains Mono', // Используем шрифт JetBrains Mono для меток оси Y
+                            fontFamily: 'JetBrains Mono',
                         },
                         splitLine: { show: false },
                     },
@@ -203,13 +200,12 @@ const MaxPainByExpirationBlockTrades = () => {
                     right: '5%',
                     bottom: '5%',
                     top: '10%',
-                    containLabel: true, // Чтобы оси и метки не обрезались
+                    containLabel: true,
                 },
             };
 
             chartInstance.setOption(option);
 
-            // Обработка ресайза
             const handleResize = () => {
                 chartInstance.resize();
             };
@@ -228,11 +224,11 @@ const MaxPainByExpirationBlockTrades = () => {
             const url = chartInstanceRef.current.getDataURL({
                 type: 'png',
                 pixelRatio: 2,
-                backgroundColor: '#FFFFFF', // Белый фон для изображения
+                backgroundColor: '#FFFFFF',
             });
             const a = document.createElement('a');
             a.href = url;
-            a.download = `option_flow_chart_${asset}.png`; // Имя файла
+            a.download = `option_flow_chart_${asset}.png`;
             a.click();
         }
     };
@@ -246,7 +242,7 @@ const MaxPainByExpirationBlockTrades = () => {
                         Max pain by expiration
                     </h2>
                     <Camera className="icon" id="cameraMaxPain"
-                            onClick={handleDownload} // Обработчик нажатия для скачивания изображения
+                            onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraMaxPain" html={true}/>
                     <ShieldAlert className="icon" id="maxPainData"

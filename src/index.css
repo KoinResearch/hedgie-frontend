@@ -31,7 +31,6 @@ body {
 }
 
 
-/* Кнопки */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -46,8 +45,8 @@ button {
 
 button:hover {
   border-color: #646cff;
-  background-color: white; /* При наведении фон становится белым */
-  color: black; /* При наведении текст становится черным */
+  background-color: white;
+  color: black;
 }
 
 button:focus,
@@ -55,7 +54,6 @@ button:focus-visible {
   outline: none;
 }
 
-/* Стили для всех select элементов */
 select {
   width: 100%;
   height: 100%;
@@ -70,7 +68,7 @@ select {
 }
 
 select:hover {
-  border-color: white; /* Бордер становится белым при наведении */
+  border-color: white;
 }
 
 @media (prefers-color-scheme: light) {

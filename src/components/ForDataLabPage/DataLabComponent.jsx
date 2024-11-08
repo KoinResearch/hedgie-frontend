@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import * as XLSX from 'xlsx'; // Импортируем библиотеку для работы с Excel
+import * as XLSX from 'xlsx';
 import "./DataLabComponent.css"
 
 const DataLabComponent = () => {
@@ -11,7 +11,6 @@ const DataLabComponent = () => {
         try {
             setIsLoading(true);
 
-            // Проверка доступности данных на сервере
             const checkResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/datalab/data-download/${encodeURIComponent(dataType)}/${timeRange}?checkOnly=true`, {
                 method: 'GET',
             });
@@ -21,7 +20,6 @@ const DataLabComponent = () => {
                 return;
             }
 
-            // Если данные доступны, получаем их с сервера
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/datalab/data-download/${encodeURIComponent(dataType)}/${timeRange}`, {
                 method: 'GET',
             });
@@ -33,7 +31,6 @@ const DataLabComponent = () => {
 
             const data = await response.json();
 
-            // Преобразование данных в формат Excel
             exportToExcel(data, `${dataType}_${timeRange}.xlsx`);
         } catch (error) {
             console.error('Error downloading data:', error);
@@ -54,12 +51,10 @@ const DataLabComponent = () => {
     };
 
     const exportToExcel = (data, fileName) => {
-        // Преобразование данных в формат Excel
         const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
 
-        // Сохранение файла Excel
         XLSX.writeFile(workbook, fileName);
     };
 

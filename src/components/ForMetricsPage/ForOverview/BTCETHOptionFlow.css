@@ -1,5 +1,4 @@
 
-/* Контейнер всего контента */
 .flow-option-content {
     display: flex;
     justify-content: space-between;
@@ -9,14 +8,12 @@
     padding: 20px;
 }
 
-/* Блоки с метриками */
 .metrics-option {
     display: flex;
     flex-direction: column;
     flex: 1;
 }
 
-/* Общие стили для каждого блока метрик */
 .metric-option {
     display: flex;
     flex-direction: column;
@@ -25,11 +22,11 @@
 }
 
 .metric-option-label {
-    color: #F2F2F2; /* Цвет текста */
-    display: flex; /* Для выравнивания по горизонтали */
-    align-items: center; /* Выравнивание по вертикали */
-    font-family: 'Paloseco', sans-serif; /* Шрифт Paloseco, резервный sans-serif */
-    font-size: 14px; /* Размер текста */
+    color: #F2F2F2;
+    display: flex;
+    align-items: center;
+    font-family: 'Paloseco', sans-serif;
+    font-size: 14px;
     padding-bottom: 0;
 }
 
@@ -43,24 +40,22 @@
     margin-right: 10px;
 }
 
-/* Цветовые индикаторы для каждого типа метрик */
 .call-buys .metric-option-label::before {
-    background-color:  #9D78F1; /* Зеленый градиент для Call Buys */
+    background-color:  #9D78F1;
 }
 
 .call-sells .metric-option-label::before {
-    background-color: #5DDC86; /* Зеленый градиент для Call Buys */
+    background-color: #5DDC86;
 }
 
 .put-buys .metric-option-label::before {
-    background-color: #9B21A2; /* Зеленый градиент для Call Buys */
+    background-color: #9B21A2;
 }
 
 .put-sells .metric-option-label::before {
-    background-color: #DE495A; /* Зеленый градиент для Call Buys */
+    background-color: #DE495A;
 }
 
-/* Стиль для диаграммы */
 .chart-option {
     flex: 2;
     display: flex;
