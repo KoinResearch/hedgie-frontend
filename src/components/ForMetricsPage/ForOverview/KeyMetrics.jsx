@@ -126,7 +126,7 @@ const KeyMetrics = () => {
                             <div className="error-container"><p>Error: {error}</p></div>
                         ) : (
                             <div className="metric-key-content">
-                                <p className="metric-label" id="totalVolume" data-tooltip-content="Nominal volume">
+                                <p className="metric-label" id="totalVolume" data-tooltip-content="Notional volume">
                                     <div className="metric-label-image">📊</div>
                                     Total Volume
                                 </p>

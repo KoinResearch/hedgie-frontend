@@ -41,7 +41,7 @@ const KeyMetricsBlockTrades = () => {
 
     return (
         <div className="metrics-key-container">
-            <div className="asset-key-buttons">
+            <div className="asset-key-buttons-block">
                 <div className="asset-option-buttons">
                     <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
                         <option value="24h">Past 24 Hours</option>
@@ -68,18 +68,18 @@ const KeyMetricsBlockTrades = () => {
                         </svg>
                     </span>
                 </div>
-                <div className="asset-option-buttons">
-                    <select value={exchange} onChange={(e) => setExchange(e.target.value)}>
-                        <option value="DER">Deribit</option>
-                        {/*<option value="OKX">OKX</option>*/}
-                    </select>
-                    <span className="custom-arrow">
-                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
-                                  strokeLinejoin="round"/>
-                        </svg>
-                    </span>
-                </div>
+                {/*<div className="asset-option-buttons">*/}
+                {/*    <select value={exchange} onChange={(e) => setExchange(e.target.value)}>*/}
+                {/*        <option value="DER">Deribit</option>*/}
+                {/*        /!*<option value="OKX">OKX</option>*!/*/}
+                {/*    </select>*/}
+                {/*    <span className="custom-arrow">*/}
+                {/*        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+                {/*            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"*/}
+                {/*                  strokeLinejoin="round"/>*/}
+                {/*        </svg>*/}
+                {/*    </span>*/}
+                {/*</div>*/}
             </div>
             <div className="metrics-key-grid">
                 <div className="metric-key-block">

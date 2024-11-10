@@ -53,7 +53,6 @@ const ExpirationActivityChart = () => {
                     puts: response.data.filter(item => item.option_type === 'put')
                 };
 
-                console.log('Data from API:', groupedData);
 
                 setData(groupedData);
             } catch (err) {
