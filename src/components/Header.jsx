@@ -17,13 +17,18 @@ const Header = () => {
                     </NavLink>
                     <NavLink
                         to="/flow"
-                        className={({isActive}) => isActive ? "nav-link active" : "nav-link new-item"}>
+                        className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
                         Flow
                     </NavLink>
                     <NavLink
                         to="/datalab"
-                        className={({isActive}) => isActive ? "nav-link active" : "nav-link new-item"}>
+                        className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
                         DataLab
+                    </NavLink>
+                    <NavLink
+                        to="/blockflow"
+                        className={({isActive}) => isActive ? "nav-link active" : "nav-link new-item"}>
+                        BlockFlow
                     </NavLink>
                 </nav>
             </div>

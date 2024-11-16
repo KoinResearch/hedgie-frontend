@@ -1,0 +1,200 @@
+.block-flow-filters {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    padding-bottom: 10px;
+}
+
+.filter-button{
+    width: 90px;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(23, 71, 153, 1);
+    border: 1px solid rgba(37, 113, 245, 1);
+}
+
+.stream-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: white;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4a4a4a; /* Розовый цвет переключателя */
+    border-radius: 15px;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: black; /* Черный круг */
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: rgba(23, 71, 153, 1); /* Изменить цвет переключателя при активации */
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px); /* Сдвигаем черный круг вправо */
+}
+
+.size-dropdown{
+    width: 110px;
+    height: 100%;
+}
+
+.filters-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: rgba(21, 21, 24, 1); /* Цвет фона */
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(57, 62, 71, 1); /* Обводка */
+    margin-bottom: 20px;
+}
+
+.filter-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-column label {
+    font-size: 14px;
+    color: #b5b5b5;
+    width: 80px; /* Фиксированная ширина для меток, чтобы они были одинаковыми */
+}
+
+.filter-column input[type="text"],
+.filter-column input[type="number"],
+.filter-column select{
+    padding: 8px;
+    font-size: 14px;
+    color: #b5b5b5;
+    background-color: rgba(14, 14, 17, 1);
+    border: 1px solid rgba(57, 62, 71, 1);
+    border-radius: 4px;
+    width: 140px; /* Одинаковая фиксированная ширина для всех полей */
+}
+
+.filter-column input[type="number"]::placeholder,
+.filter-column input[type="text"]::placeholder {
+    color: #666; /* Цвет для placeholder */
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
+
+.filter-action-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: white;
+    background-color: rgba(23, 71, 153, 1); /* Цвет кнопок */
+    border: 1px solid rgba(37, 113, 245, 1);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-action-button:hover {
+    background-color: rgba(37, 113, 245, 1);
+}
+
+.filter-action-button:active {
+    background-color: rgba(23, 71, 153, 0.8);
+}
+
+.toggle-button {
+    background-color: #1E1E25;
+    border: 1px solid rgba(57, 62, 71, 1);
+}
+
+.trade-side.buy {
+    color: green; /* Зеленый цвет для buy */
+}
+
+.trade-side.sell {
+    color: red; /* Красный цвет для sell */
+}
+
+.trade-side.call {
+    color: green; /* Зеленый цвет для buy */
+}
+
+.trade-side.put {
+    color: red; /* Красный цвет для sell */
+}
+
+td.highlight-column {
+    color: #4B88E1; /* Цвет текста */
+}
+
+
+/* Цвет для буквы d в случае CALL */
+.dte-day.call {
+    color: green; /* Цвет для "CALL" */
+}
+
+/* Цвет для буквы d в случае PUT */
+.dte-day.put {
+    color: red; /* Цвет для "PUT" */
+}
+
+/* Дополнительные стили для числовой части */
+td span:first-child {
+    color: white; /* Цвет для числовой части (черный) */
+}
+

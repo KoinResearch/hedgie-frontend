@@ -9,6 +9,7 @@ import Metrics from './pages/Metrics';
 import Home from './pages/Home';
 import './App.css';
 import DataLab from "./pages/DataLab.jsx";
+import BlockFlow from "./pages/BlockFlow.jsx";
 
 function App() {
     useEffect(() => {
@@ -36,6 +37,7 @@ function App() {
                         <Route path="/metrics/*" element={<Metrics />} />
                         <Route path="/home" element={<Home />} />
                         <Route path="/datalab" element={<DataLab />} />
+                        <Route path="/blockflow" element={<BlockFlow />} />
                     </Routes>
                 </main>
             </div>
