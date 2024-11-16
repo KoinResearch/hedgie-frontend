@@ -26,14 +26,14 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [strikeMin, setStrikeMin] = useState('');
     const [strikeMax, setStrikeMax] = useState('');
     const [selectedExchange, setSelectedExchange] = useState('');
-    const [selectedMaker, setSelectedMaker] = useState('ALL'); // Новое состояние для фильтра Maker
+    const [selectedMaker, setSelectedMaker] = useState('ALL');
     const [selectedOptionType, setSelectedOptionType] = useState('ALL');
     const [ivMin, setIvMin] = useState('');
     const [ivMax, setIvMax] = useState('');
     const [dteMin, setDteMin] = useState('');
     const [dteMax, setDteMax] = useState('');
-    const [pageSize, setPageSize] = useState(15); // Default to 15
-    const [selectedSide, setSelectedSide] = useState('ALL'); // Новое состояние
+    const [pageSize, setPageSize] = useState(15);
+    const [selectedSide, setSelectedSide] = useState('ALL');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,7 +41,6 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
             try {
                 const expiration = expirations[0] || '';
 
-                // Создаем параметры запроса, включая выбранный Maker
                 const params = {
                     asset: selectedAsset,
                     tradeType: selectedTradeType,
@@ -57,20 +56,14 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                     maker: selectedMaker,
                     ivMin: ivMin || '',
                     ivMax: ivMax || '',
-                    dteMin: dteMin || '', // Add DTE Min
-                    dteMax: dteMax || '', // Add DTE Max
+                    dteMin: dteMin || '',
+                    dteMax: dteMax || '',
                     pageSize,
                 };
-
-
-
-                console.log('Request Params:', params);
 
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block/flow/trades`, {
                     params: params,
                 });
-
-                console.log('Response data:', response.data);
 
                 const { putCallRatio, putsPercentage, callsPercentage, totalPages, trades } = response.data;
 
@@ -89,52 +82,24 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         fetchData();
     }, [selectedAsset, selectedTradeType, selectedOptionType, selectedSide, expirations, sizeOrder, premiumOrder, page, selectedExchange, selectedMaker, strikeMin, strikeMax, ivMin, ivMax, dteMin, dteMax, pageSize]);
 
-    const handleSaveFilters = async () => {
-        try {
-            setIsLoading(true);
-
-            setSavedFilters({
-                asset: selectedAsset,
-                tradeType: 'ALL',
-                optionType: selectedOptionType,
-                strikeMin,
-                strikeMax,
-                exchange: selectedExchange,
-            });
-
-            console.log('Saving filters:', {
-                asset: selectedAsset,
-                tradeType: 'ALL',
-                optionType: selectedOptionType,
-                strikeMin,
-                strikeMax,
-                exchange: selectedExchange,
-            });
-        } catch (error) {
-            console.error('Error saving filters:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const handleResetFilters = () => {
-        setSelectedAsset('ALL'); // Сбрасываем Asset
-        setSelectedTradeType('ALL'); // Сбрасываем Trade Type
-        setSelectedOptionType('ALL'); // Сбрасываем Option Type
-        setStrikeMin(''); // Сбрасываем минимальный Strike
-        setStrikeMax(''); // Сбрасываем максимальный Strike
-        setSelectedExchange(''); // Сбрасываем Exchange
-        setSelectedMaker('ALL'); // Сбрасываем Maker
-        setIvMin(''); // Сбрасываем минимальный IV
-        setIvMax(''); // Сбрасываем максимальный IV
-        setDteMin(''); // Сбрасываем минимальный DTE
-        setDteMax(''); // Сбрасываем максимальный DTE
-        setPage(1); // Сбрасываем номер страницы на первую
-        setPageSize(15); // Устанавливаем размер страницы по умолчанию
+        setSelectedAsset('ALL');
+        setSelectedTradeType('ALL');
+        setSelectedOptionType('ALL');
+        setStrikeMin('');
+        setStrikeMax('');
+        setSelectedExchange('');
+        setSelectedMaker('ALL');
+        setIvMin('');
+        setIvMax('');
+        setDteMin('');
+        setDteMax('');
+        setPage(1);
+        setPageSize(15);
     };
 
     const handleMakerChange = (e) => {
-        setSelectedMaker(e.target.value); // Обработчик для изменения значения Maker
+        setSelectedMaker(e.target.value);
     };
 
     const handleToggle = () => setIsChecked(!isChecked);
