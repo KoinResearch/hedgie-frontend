@@ -3,13 +3,39 @@ import axios from 'axios';
 import {
     Chart as ChartJS,
     ArcElement,
-    Tooltip,
+    Tooltip as ChartTooltip,
     Legend,
 } from 'chart.js';
 import './BlockFlowFilters.css';
+import 'react-tooltip/dist/react-tooltip.css';
+import { Tooltip } from 'react-tooltip'; // Правильный импорт
 
-ChartJS.register(ArcElement, Tooltip, Legend);
 
+ChartJS.register(ArcElement, ChartTooltip, Legend);
+
+const makerDescriptions = {
+    '🐙🦑': 'Shrimp < $250',
+    '🐟🎣': 'Fish < $1,000',
+    '🐡🚣': 'Blowfish < $10,000',
+    '🐬🌊': 'Dolphin < $100,000',
+    '🐋🐳': 'Whale < $1,000,000',
+    '🦈': 'Shark < $10,000,000',
+};
+const getMakerDescription = (makerEmoji) => {
+    return makerDescriptions[makerEmoji] || 'Unknown Tier';
+};
+
+const MakerCell = ({ maker, index }) => {
+    const tooltipId = `maker-tooltip-${index}`;
+    const description = getMakerDescription(maker);
+
+    return (
+        <td id={tooltipId} data-tooltip-content={description}>
+            <span>{maker}</span>
+            <Tooltip anchorId={tooltipId} />
+        </td>
+    );
+};
 const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL', sizeOrder, premiumOrder }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -378,7 +404,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                                     ${trade.premium ? Number(trade.premium).toLocaleString() : 'N/A'}
                                 </td>
                                 <td>{trade.iv || 'N/A'}%</td>
-                                <td>{trade.maker || 'N/A'}</td>
+                                <MakerCell maker={trade.maker} index={index} />
                             </tr>
                         ))}
                         </tbody>
