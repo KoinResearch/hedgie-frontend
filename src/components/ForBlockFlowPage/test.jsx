@@ -9,7 +9,6 @@ import {
 import './BlockFlowFilters.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip'; // Правильный импорт
-import { Doughnut } from 'react-chartjs-2';
 
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
@@ -41,6 +40,9 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [putCallRatio, setPutCallRatio] = useState(0);
+    const [putsPercentage, setPutsPercentage] = useState(0);
+    const [callsPercentage, setCallsPercentage] = useState(0);
     const [showFilters, setShowFilters] = useState(false);
     const [trades, setTrades] = useState([]);
     const [expirations, setExpirations] = useState([]);
@@ -58,35 +60,6 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [dteMax, setDteMax] = useState('');
     const [pageSize, setPageSize] = useState(15);
     const [selectedSide, setSelectedSide] = useState('ALL');
-
-
-    useEffect(() => {
-        const handleMouseEnter = (e) => {
-            const blockTradeId = e.currentTarget.dataset.blockTradeId;
-            if (blockTradeId) {
-                document.querySelectorAll(`[data-block-trade-id="${blockTradeId}"]`)
-                    .forEach(el => el.classList.add('block-trade-active'));
-            }
-        };
-
-        const handleMouseLeave = (e) => {
-            document.querySelectorAll('.block-trade-highlight')
-                .forEach(el => el.classList.remove('block-trade-active'));
-        };
-
-        const rows = document.querySelectorAll('.block-trade-highlight');
-        rows.forEach(row => {
-            row.addEventListener('mouseenter', handleMouseEnter);
-            row.addEventListener('mouseleave', handleMouseLeave);
-        });
-
-        return () => {
-            rows.forEach(row => {
-                row.removeEventListener('mouseenter', handleMouseEnter);
-                row.removeEventListener('mouseleave', handleMouseLeave);
-            });
-        };
-    }, [trades]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -118,17 +91,13 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                     params: params,
                 });
 
-                const { totalPages, trades } = response.data;
+                const { putCallRatio, putsPercentage, callsPercentage, totalPages, trades } = response.data;
 
-                setTrades(response.data.groupedTrades.flatMap(group =>
-                    group.trades.map(trade => ({
-                        ...trade,
-                        blockTradeId: group.blockTradeId // Добавляем blockTradeId к каждой сделке
-                    }))
-                ));
-                setTotalPages(response.data.totalPages || 1);
-
-
+                setPutCallRatio(putCallRatio || 0);
+                setPutsPercentage(putsPercentage || 0);
+                setCallsPercentage(callsPercentage || 0);
+                setTotalPages(totalPages || 1);
+                setTrades(trades || []);
             } catch (error) {
                 console.error('Error fetching metrics:', error);
             } finally {
@@ -138,7 +107,6 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
         fetchData();
     }, [selectedAsset, selectedTradeType, selectedOptionType, selectedSide, expirations, sizeOrder, premiumOrder, page, selectedExchange, selectedMaker, strikeMin, strikeMax, ivMin, ivMax, dteMin, dteMax, pageSize]);
-
 
     const handleResetFilters = () => {
         setSelectedAsset('ALL');
@@ -155,17 +123,23 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         setPage(1);
         setPageSize(15);
     };
+
     const handleMakerChange = (e) => {
         setSelectedMaker(e.target.value);
     };
+
     const handleToggle = () => setIsChecked(!isChecked);
     const toggleFilters = () => setShowFilters(!showFilters);
     const handleNextPage = () => {
         if (page < totalPages) setPage(page + 1);
     };
+
     const handlePreviousPage = () => {
         if (page > 1) setPage(page - 1);
     };
+
+
+
     const getFormattedTime = (timeUtc) => {
         if (!timeUtc) {
             console.error('Invalid timeUtc:', timeUtc);
@@ -397,24 +371,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                         </thead>
                         <tbody>
                         {trades.map((trade, index) => (
-                            <tr
-                                key={`${trade.block_trade_id}-${index}`}
-                                className={`trade-row ${trade.blockTradeId ? 'block-trade-highlight' : ''}`}
-                                data-block-trade-id={trade.blockTradeId}
-                                onMouseEnter={(e) => {
-                                    // Подсветка всех сделок с таким же blockTradeId
-                                    if (trade.blockTradeId) {
-                                        const blockTradeId = trade.blockTradeId;
-                                        document.querySelectorAll(`[data-block-trade-id="${blockTradeId}"]`)
-                                            .forEach(el => el.classList.add('block-trade-active'));
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    // Убираем подсветку
-                                    document.querySelectorAll('.trade-row')
-                                        .forEach(el => el.classList.remove('block-trade-active'));
-                                }}
-                            >
+                            <tr key={index}>
                                 <td>{getFormattedTime(trade.timeutc)}</td>
                                 <td className={`trade-side ${trade.side === 'buy' ? 'buy' : 'sell'}`}>
                                     {trade.side ? trade.side.toUpperCase() : 'N/A'}
