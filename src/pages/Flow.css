@@ -197,3 +197,9 @@
 .show-all-btn:hover {
     background-color: #2457b5;
 }
+
+.utc-number{
+    font-family: inherit;
+    width: 20px;
+    height: 20px;
+}
