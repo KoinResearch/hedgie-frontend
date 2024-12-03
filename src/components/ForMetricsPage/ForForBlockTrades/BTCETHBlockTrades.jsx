@@ -5,6 +5,7 @@ import './BTCETHBlockTrades.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 
 const BTCETHBlockTrades = () => {
@@ -132,16 +133,20 @@ const BTCETHBlockTrades = () => {
     }, [metrics]);
 
     const handleDownload = () => {
-        if (chartInstanceRef.current) {
-            const url = chartInstanceRef.current.getDataURL({
-                type: 'png',
-                pixelRatio: 2,
-                backgroundColor: '#FFFFFF',
+        const elementToCapture = document.querySelector('.flow-option-content'); // Селектор контейнера с диаграммой и метриками
+        if (elementToCapture) {
+            html2canvas(elementToCapture, {
+                backgroundColor: '#000000', // Черный фон
+                scale: 2, // Повышение качества изображения
+            }).then((canvas) => {
+                const url = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `option_flow_chart_with_metrics_${asset}.png`;
+                a.click();
             });
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `option_flow_chart_${asset}.png`;
-            a.click();
+        } else {
+            console.error('Element to capture not found');
         }
     };
 

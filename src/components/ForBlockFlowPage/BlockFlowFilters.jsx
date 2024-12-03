@@ -58,6 +58,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [dteMax, setDteMax] = useState('');
     const [pageSize, setPageSize] = useState(15);
     const [selectedSide, setSelectedSide] = useState('ALL');
+    const [selectedTrade, setSelectedTrade] = useState(null);
 
 
     useEffect(() => {
@@ -181,8 +182,54 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         return dateObj.toLocaleTimeString();
     };
 
+    const TradeModal = ({ trades, onClose }) => {
+        if (!trades || trades.length === 0) return null;
+
+        const totalPremium = trades.reduce((sum, trade) => sum + (parseFloat(trade.premium) || 0), 0);
+        const totalSize = trades.reduce((sum, trade) => sum + (parseFloat(trade.size) || 0), 0);
+        const totalOIChange = trades.reduce((sum, trade) => sum + (parseFloat(trade.oi_change) || 0), 0);
+
+        const formatTradeDetails = (trade) => {
+            const instrumentName = trade.instrument_name || 'N/A';
+            const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
+            const strike = strikeMatch ? Number(strikeMatch[1]).toLocaleString() : 'N/A';
+
+            const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
+            const aboveBelow = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
+
+            const premium = trade.premium ? parseFloat(trade.premium).toFixed(4) : 'N/A';
+            const premiumUSD = trade.price ? parseFloat(trade.price).toLocaleString() : 'N/A';
+
+            return `${side} 🔷 ${instrumentName} 📈 at ${premium}Ξ ($${premiumUSD}) 
+Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${trade.size ? trade.size.toLocaleString() : 'N/A'}Ξ ($${premiumUSD}), IV: ${trade.iv || 'N/A'}% 
+bid: ${trade.bid || 'N/A'} (Size: ${trade.bid_size || 'N/A'}) mark: ${trade.mark || 'N/A'} ask: ${trade.ask || 'N/A'} (Size: ${trade.ask_size || 'N/A'}) 
+${aboveBelow}
+OI Change: ${trade.oi_change || 'N/A'}`;
+        };
+
+        return (
+            <div className="modal-overlay" onClick={onClose}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="modal-close-button" onClick={onClose}>×</button>
+                    <h2>Trade Details</h2>
+                    {trades.map((trade, index) => (
+                        <p key={index}>{formatTradeDetails(trade)}</p>
+                    ))}
+                    <p>
+                        <strong>Net Premium:</strong> {totalPremium.toFixed(4)}Ξ<br />
+                        <strong>Total Size:</strong> {totalSize.toLocaleString()}Ξ<br />
+                        <strong>Total OI Change:</strong> {totalOIChange.toLocaleString()}<br />
+                    </p>
+                    <p>Block Trade ID: {trades[0].blockTradeId}</p>
+                </div>
+            </div>
+        );
+    };
+
+
 
     return (
+
         <div className="flow-main-container">
             {/* Фильтры */}
             <div className="block-flow-filters">
@@ -414,6 +461,12 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                                     document.querySelectorAll('.trade-row')
                                         .forEach(el => el.classList.remove('block-trade-active'));
                                 }}
+                                onClick={() => {
+                                    const groupTrades = trades.filter(t => t.blockTradeId === trade.blockTradeId);
+                                    console.log('Selected group trades:', groupTrades); // Для отладки
+                                    setSelectedTrade(groupTrades); // Устанавливаем группу сделок
+                                }}
+
                             >
                                 <td>{getFormattedTime(trade.timeutc)}</td>
                                 <td className={`trade-side ${trade.side === 'buy' ? 'buy' : 'sell'}`}>
@@ -443,7 +496,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                                 <td className="highlight-column">{trade.exchange || 'N/A'}</td>
                                 <td>{trade.size || 'N/A'}</td>
                                 <td>${trade.price ? Number(trade.price).toLocaleString() : 'N/A'}</td>
-                                <td className={`trade-side ${trade.side === 'C' ? 'put' : 'call'}`}>
+                                <td className={`trade-side ${trade.k === 'C' ? 'call' : 'put'}`}>
                                     ${trade.premium ? Number(trade.premium).toLocaleString() : 'N/A'}
                                 </td>
                                 <td>{trade.iv || 'N/A'}%</td>
@@ -454,6 +507,9 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                     </table>
                 )}
             </div>
+            {selectedTrade && (
+                <TradeModal trades={selectedTrade} onClose={() => setSelectedTrade(null)} />
+            )}
         </div>
     );
 };

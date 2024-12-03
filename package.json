@@ -17,6 +17,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "dayjs": "^1.11.13",
     "echarts": "^5.5.1",
+    "html2canvas": "^1.4.1",
     "lottie-react": "^2.4.0",
     "lucide-react": "^0.446.0",
     "plotly.js": "^2.35.0",
