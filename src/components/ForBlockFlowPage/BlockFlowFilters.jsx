@@ -10,6 +10,7 @@ import './BlockFlowFilters.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip'; // Правильный импорт
 import { Doughnut } from 'react-chartjs-2';
+import { erf } from 'mathjs';
 
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
@@ -37,6 +38,7 @@ const MakerCell = ({ maker, index }) => {
         </td>
     );
 };
+
 const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL', sizeOrder, premiumOrder }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -59,6 +61,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [pageSize, setPageSize] = useState(15);
     const [selectedSide, setSelectedSide] = useState('ALL');
     const [selectedTrade, setSelectedTrade] = useState(null);
+    const [selectedMarkPrice, setSelectedMarkPrice] = useState(null);
 
 
     useEffect(() => {
@@ -113,22 +116,25 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                     dteMin: dteMin || '',
                     dteMax: dteMax || '',
                     pageSize,
+                    markPrice: selectedMarkPrice || '',  // Добавляем параметр markPrice, если нужно
                 };
 
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block/flow/trades`, {
                     params: params,
                 });
 
-                const { totalPages, trades } = response.data;
+                const { totalPages, groupedTrades } = response.data;
 
-                setTrades(response.data.groupedTrades.flatMap(group =>
+                const tradesWithBlockId = groupedTrades.flatMap(group =>
                     group.trades.map(trade => ({
                         ...trade,
-                        blockTradeId: group.blockTradeId // Добавляем blockTradeId к каждой сделке
+                        blockTradeId: group.blockTradeId,  // Добавляем blockTradeId к каждой сделке
+                        markPrice: trade.markPrice || 'N/A', // Добавляем markPrice в каждую сделку
                     }))
-                ));
-                setTotalPages(response.data.totalPages || 1);
+                );
 
+                setTrades(tradesWithBlockId);
+                setTotalPages(totalPages || 1);
 
             } catch (error) {
                 console.error('Error fetching metrics:', error);
@@ -138,7 +144,12 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         };
 
         fetchData();
-    }, [selectedAsset, selectedTradeType, selectedOptionType, selectedSide, expirations, sizeOrder, premiumOrder, page, selectedExchange, selectedMaker, strikeMin, strikeMax, ivMin, ivMax, dteMin, dteMax, pageSize]);
+    }, [
+        selectedAsset, selectedTradeType, selectedOptionType, selectedSide, expirations,
+        sizeOrder, premiumOrder, page, selectedExchange, selectedMaker, strikeMin, strikeMax,
+        ivMin, ivMax, dteMin, dteMax, pageSize, selectedMarkPrice  // Добавляем selectedMarkPrice в зависимости
+    ]);
+
 
 
     const handleResetFilters = () => {
@@ -181,31 +192,262 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         }
         return dateObj.toLocaleTimeString();
     };
+    const calculateNetDebitOrCredit = (trades) => {
+        let totalBought = 0; // Общая сумма премий для покупок
+        let totalSold = 0; // Общая сумма премий для продаж
 
+        trades.forEach(trade => {
+            // Высчитываем премию в базовом активе
+            const premiumAllInBaseAsset = trade.premium && trade.spot
+                ? parseFloat(trade.premium) / parseFloat(trade.spot)
+                : 0; // Если премия или spot отсутствуют, используем 0
+
+            if (trade.side === 'buy') {
+                totalBought += premiumAllInBaseAsset; // Для покупок прибавляем премию
+            } else if (trade.side === 'sell') {
+                totalSold += premiumAllInBaseAsset; // Для продаж прибавляем премию
+            }
+
+        });
+
+
+        if (totalBought > totalSold) {
+            return {
+                type: 'Net Debit',
+                amount: (totalBought - totalSold).toFixed(4),
+                totalBought: totalBought.toFixed(4),
+                totalSold: totalSold.toFixed(4),
+            };
+        } else {
+            return {
+                type: 'Net Credit',
+                amount: (totalSold - totalBought).toFixed(4),
+                totalBought: totalBought.toFixed(4),
+                totalSold: totalSold.toFixed(4),
+            };
+        }
+    };
+// Функция для вычисления ошибки (error function)
+    const erf = (x) => {
+        // Коэффициенты для разложения в ряде
+        const a1 =  0.254829592;
+        const a2 = -0.284496736;
+        const a3 =  1.421413741;
+        const a4 = -1.453152027;
+        const a5 =  1.061405429;
+        const p  =  0.3275911;
+
+        // Абсолютное значение x
+        const sign = x < 0 ? -1 : 1;
+        x = Math.abs(x);
+
+        // Ряд Тейлора для расчета ошибки
+        const t = 1.0 / (1.0 + p * x);
+        const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+        return sign * y;
+    };
+
+// Функция для вычисления Греков для опционов
+    const calculateGreeks = (S, X, T, r, sigma, optionType = 'call') => {
+        // Расширенная валидация
+        if (!S || !X || !T || !r || !sigma || S <= 0 || sigma <= 0) {
+            console.warn("Invalid input parameters for Greeks calculation");
+            return { delta: 0, gamma: 0, vega: 0, theta: 0 };
+        }
+
+        const SQRT_2_PI = Math.sqrt(2 * Math.PI);
+        const DAYS_IN_YEAR = 365.25;
+
+        const d1 = (Math.log(S / X) + (r + (sigma ** 2) / 2) * T) / (sigma * Math.sqrt(T));
+        const d2 = d1 - sigma * Math.sqrt(T);
+
+        const normPDF = (x) => Math.exp(-0.5 * x * x) / SQRT_2_PI;
+        const normCDF = (x) => 0.5 * (1 + erf(x / Math.sqrt(2)));
+
+        let delta, gamma, vega, theta;
+
+        if (optionType === 'call') {
+            delta = normCDF(d1);
+
+            // Более точный расчет гаммы
+            gamma = normPDF(d1) / (S * sigma * Math.sqrt(T));
+
+            // Стандартный расчет веги
+            vega = S * Math.sqrt(T) * normPDF(d1);
+
+            theta = -(S * normPDF(d1) * sigma) / (2 * Math.sqrt(T))
+                - r * X * Math.exp(-r * T) * normCDF(d2);
+        } else if (optionType === 'put') {
+            delta = -normCDF(-d1);
+
+            // Более точный расчет гаммы
+            gamma = normPDF(d1) / (S * sigma * Math.sqrt(T));
+
+            // Стандартный расчет веги
+            vega = S * Math.sqrt(T) * normPDF(d1);
+
+            theta = -(S * normPDF(d1) * sigma) / (2 * Math.sqrt(T))
+                + r * X * Math.exp(-r * T) * normCDF(-d2);
+        } else {
+            throw new Error("Invalid option type. Must be 'put' or 'call'.");
+        }
+
+        theta = theta / DAYS_IN_YEAR;
+
+        return { delta, gamma, vega, theta };
+    };
+// Функция для вычисления общих Греков для всех сделок
+    const calculateOverallGreeks = (trades) => {
+        if (!trades || trades.length === 0) {
+            return { delta: 0, gamma: 0, vega: 0, theta: 0 };
+        }
+
+        let totalDelta = 0, totalGamma = 0, totalVega = 0, totalTheta = 0;
+
+        trades.forEach(trade => {
+            const size = parseFloat(trade.size || 1);
+            const optionType = trade.instrument_name.includes('-C') ? 'call' : 'put';
+
+            const greeks = calculateGreeks(
+                parseFloat(trade.spot),
+                parseFloat(trade.strike),
+                parseFloat(trade.dte) / 365.25,  // Используем более точное значение дней в году
+                0.01, // Безрисковая ставка
+                parseFloat(trade.iv) / 100,
+                optionType
+            );
+
+            // Учитываем направление сделки (покупка/продажа)
+            const multiplier = trade.side === 'sell' ? -1 : 1;
+
+            totalDelta += greeks.delta * size * multiplier;
+            totalGamma += greeks.gamma * size * multiplier;
+            totalVega += greeks.vega * size * multiplier;
+            totalTheta += greeks.theta * size * multiplier;
+        });
+
+        return { delta: totalDelta, gamma: totalGamma, vega: totalVega, theta: totalTheta };
+    };
+
+    const calculateCalendarSpreadGreeks = (trades) => {
+        if (trades.length !== 2) {
+            console.error("Expected exactly 2 trades for a calendar spread calculation.");
+            return { delta: 0, gamma: 0, vega: 0, theta: 0 };
+        }
+
+        const [longLeg, shortLeg] = trades;
+        const longOptionType = longLeg.instrument_name.includes('-C') ? 'call' : 'put';
+        const shortOptionType = shortLeg.instrument_name.includes('-C') ? 'call' : 'put';
+
+        const longGreeks = calculateGreeks(
+            parseFloat(longLeg.spot),
+            parseFloat(longLeg.strike),
+            parseFloat(longLeg.dte) / 365,
+            0.01,
+            parseFloat(longLeg.iv) / 100,
+            longOptionType
+        );
+
+        const shortGreeks = calculateGreeks(
+            parseFloat(shortLeg.spot),
+            parseFloat(shortLeg.strike),
+            parseFloat(shortLeg.dte) / 365,
+            0.01,
+            parseFloat(shortLeg.iv) / 100,
+            shortOptionType
+        );
+
+        const size = parseFloat(longLeg.size || 1);
+        const delta = (longGreeks.delta - shortGreeks.delta) * size;
+        const gamma = (longGreeks.gamma - shortGreeks.gamma) * size;
+        const vega = (longGreeks.vega - shortGreeks.vega) * size;
+        const theta = (longGreeks.theta - shortGreeks.theta) * size;
+
+        return { delta, gamma, vega, theta };
+    };
+
+// Компонент для отображения модалки с деталями сделок
     const TradeModal = ({ trades, onClose }) => {
         if (!trades || trades.length === 0) return null;
 
-        const totalPremium = trades.reduce((sum, trade) => sum + (parseFloat(trade.premium) || 0), 0);
-        const totalSize = trades.reduce((sum, trade) => sum + (parseFloat(trade.size) || 0), 0);
-        const totalOIChange = trades.reduce((sum, trade) => sum + (parseFloat(trade.oi_change) || 0), 0);
+        // Вычисляем Net Debit/Credit
+        const { type, amount } = calculateNetDebitOrCredit(trades);
 
+        // Вычисляем общие греки для всей позиции
+        const greekCalculationMethod = trades.length === 2
+            ? calculateCalendarSpreadGreeks
+            : calculateOverallGreeks;
+
+        const { delta: totalDelta, gamma: totalGamma, vega: totalVega, theta: totalTheta } = greekCalculationMethod(trades);
+
+        // Функция для форматирования деталей сделки
         const formatTradeDetails = (trade) => {
             const instrumentName = trade.instrument_name || 'N/A';
             const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
-            const strike = strikeMatch ? Number(strikeMatch[1]).toLocaleString() : 'N/A';
+            const strike = strikeMatch ? Number(strikeMatch[1]) : 0; // Если не найдено, используем 0
 
             const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
             const aboveBelow = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
 
             const premium = trade.premium ? parseFloat(trade.premium).toFixed(4) : 'N/A';
             const premiumUSD = trade.price ? parseFloat(trade.price).toLocaleString() : 'N/A';
+            const premiumInBaseAsset = trade.price && trade.spot ? (parseFloat(trade.price) / trade.spot).toFixed(4) : 'N/A';
+            const premiumAllInBaseAsset = trade.premium && trade.spot ? (parseFloat(trade.premium) / trade.spot).toFixed(4) : 'N/A';
 
-            return `${side} 🔷 ${instrumentName} 📈 at ${premium}Ξ ($${premiumUSD}) 
-Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${trade.size ? trade.size.toLocaleString() : 'N/A'}Ξ ($${premiumUSD}), IV: ${trade.iv || 'N/A'}% 
-bid: ${trade.bid || 'N/A'} (Size: ${trade.bid_size || 'N/A'}) mark: ${trade.mark || 'N/A'} ask: ${trade.ask || 'N/A'} (Size: ${trade.ask_size || 'N/A'}) 
-${aboveBelow}
-OI Change: ${trade.oi_change || 'N/A'}`;
+            return `${side} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
+Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ ($${premium}), IV: ${trade.iv || 'N/A'}%,  mark: ${trade.mark_price}
+ ${aboveBelow}`;
         };
+
+        // Функция для копирования всего содержимого
+        const handleCopy = () => {
+            const tradeDetailsText = trades.map((trade, index) => {
+                const instrumentName = trade.instrument_name || 'N/A';
+                const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
+                const strike = strikeMatch ? Number(strikeMatch[1]) : 0; // Если не найдено, используем 0
+
+                const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
+                const aboveBelow = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
+
+                const premium = trade.premium ? parseFloat(trade.premium).toFixed(4) : 'N/A';
+                const premiumUSD = trade.price ? parseFloat(trade.price).toLocaleString() : 'N/A';
+                const premiumInBaseAsset = trade.price && trade.spot ? (parseFloat(trade.price) / trade.spot).toFixed(4) : 'N/A';
+                const premiumAllInBaseAsset = trade.premium && trade.spot ? (parseFloat(trade.premium) / trade.spot).toFixed(4) : 'N/A';
+
+                return `${side} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
+Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ ($${premium}), IV: ${trade.iv || 'N/A'}%,  mark: ${trade.mark_price}
+ ${aboveBelow}`;
+            }).join('\n');
+
+            const greekDetailsText = `
+---- OVERALL GREEKS ----
+Δ: ${totalDelta.toFixed(4)}, Γ: ${totalGamma.toFixed(6)}, ν: ${totalVega.toFixed(2)}, Θ: ${totalTheta.toFixed(2)}
+
+---- ADDITIONAL INFO ----
+Block Trade ID: ${trades[0]?.blockTradeId}
+
+-------------------------
+
+* Delta (Δ): Represents the option's price change when the underlying asset changes by one unit.
+* Gamma (Γ): Measures the rate of change of Delta as the underlying price changes.
+* Vega (ν): Reflects the sensitivity of the option's price to changes in implied volatility.
+* Theta (Θ): Indicates how the option price decreases over time due to time decay.
+`;
+
+            const copyText = `---- TRADE DETAILS ----\n\n${tradeDetailsText}\n\n${greekDetailsText}`;
+
+            // Копирование в буфер обмена
+            navigator.clipboard.writeText(copyText)
+                .then(() => {
+                    alert('Data copied to clipboard!');
+                })
+                .catch((err) => {
+                    console.error('Error copying to clipboard: ', err);
+                    alert('Failed to copy data');
+                });
+        };
+
 
         return (
             <div className="modal-overlay" onClick={onClose}>
@@ -213,19 +455,21 @@ OI Change: ${trade.oi_change || 'N/A'}`;
                     <button className="modal-close-button" onClick={onClose}>×</button>
                     <h2>Trade Details</h2>
                     {trades.map((trade, index) => (
-                        <p key={index}>{formatTradeDetails(trade)}</p>
+                        <pre key={index}>{formatTradeDetails(trade)}</pre> // используем <pre> для сохранения форматирования
                     ))}
                     <p>
-                        <strong>Net Premium:</strong> {totalPremium.toFixed(4)}Ξ<br />
-                        <strong>Total Size:</strong> {totalSize.toLocaleString()}Ξ<br />
-                        <strong>Total OI Change:</strong> {totalOIChange.toLocaleString()}<br />
+                        <strong>{type}:</strong> {amount} Ξ (${trades[0]?.spot ? (parseFloat(amount) * trades[0].spot).toFixed(2) : 'N/A'})
+                    </p>
+                    <p>
+                        <strong>Overall Greeks:</strong> <br />
+                        Δ: {totalDelta.toFixed(4)}, Γ: {totalGamma.toFixed(6)}, ν: {totalVega.toFixed(2)}, Θ: {totalTheta.toFixed(2)}
                     </p>
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
+                    <button className="block-trades-copy" onClick={handleCopy}>Copy Data</button> {/* Кнопка для копирования */}
                 </div>
             </div>
         );
     };
-
 
 
     return (
@@ -463,7 +707,6 @@ OI Change: ${trade.oi_change || 'N/A'}`;
                                 }}
                                 onClick={() => {
                                     const groupTrades = trades.filter(t => t.blockTradeId === trade.blockTradeId);
-                                    console.log('Selected group trades:', groupTrades); // Для отладки
                                     setSelectedTrade(groupTrades); // Устанавливаем группу сделок
                                 }}
 

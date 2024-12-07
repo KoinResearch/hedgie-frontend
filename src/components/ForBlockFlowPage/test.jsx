@@ -10,6 +10,7 @@ import './BlockFlowFilters.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip'; // Правильный импорт
 import { Doughnut } from 'react-chartjs-2';
+import { erf } from 'mathjs';
 
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
@@ -37,6 +38,7 @@ const MakerCell = ({ maker, index }) => {
         </td>
     );
 };
+
 const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL', sizeOrder, premiumOrder }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -58,6 +60,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [dteMax, setDteMax] = useState('');
     const [pageSize, setPageSize] = useState(15);
     const [selectedSide, setSelectedSide] = useState('ALL');
+    const [selectedTrade, setSelectedTrade] = useState(null);
 
 
     useEffect(() => {
@@ -180,9 +183,122 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         }
         return dateObj.toLocaleTimeString();
     };
+    const calculateGreeks = (S, X, T, r, sigma) => {
+        // Проверка на NaN и установка дефолтных значений, если данные некорректны
+        if (isNaN(S) || isNaN(sigma) || S <= 0 || sigma <= 0) {
+            console.error("Invalid data for Greeks calculation:", { S, X, T, sigma });
+            // Устанавливаем дефолтные значения
+            S = S > 0 ? S : 1;  // Если цена активов некорректна, используем 1
+            sigma = sigma > 0 ? sigma : 0.5;  // Используем дефолтное значение для волатильности
+        }
+
+        const d1 = (Math.log(S / X) + (r + (sigma ** 2) / 2) * T) / (sigma * Math.sqrt(T));
+        const d2 = d1 - sigma * Math.sqrt(T);
+
+        const normCDF = (x) => (1.0 + erf(x / Math.sqrt(2))) / 2;
+        const normPDF = (x) => Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+
+        const delta = normCDF(d1); // Дельта
+        const gamma = normPDF(d1) / (S * sigma * Math.sqrt(T)); // Гамма
+        const vega = S * Math.sqrt(T) * normPDF(d1) * 0.01; // Вега
+        const theta = -(S * normPDF(d1) * sigma) / (2 * Math.sqrt(T)) - r * X * Math.exp(-r * T) * normCDF(d2); // Тета
+
+        console.log("Greeks calculated:", { delta, gamma, vega, theta });
+
+        return { delta, gamma, vega, theta };
+    };
+
+// Функция для расчета совокупных греков для всей позиции
+    const calculateOverallGreeks = (trades) => {
+        let totalDelta = 0;
+        let totalGamma = 0;
+        let totalVega = 0;
+        let totalTheta = 0;
+
+        trades.forEach(trade => {
+            const S = trade.spot || 1; // Цена базового актива (если пусто, используем 1)
+            const X = trade.strike || 100000; // Страйк (обязательно должен быть задан)
+            const T = trade.dte > 0 ? trade.dte / 365 : 0.01; // Время до экспирации
+            const r = 0.01;  // Безрисковая ставка
+            const sigma = trade.iv > 0 ? trade.iv / 100 : 0.5; // Волатильность, по умолчанию 0.5
+
+            const { delta, gamma, vega, theta } = calculateGreeks(S, X, T, r, sigma);
+
+            // Учитываем размер сделки
+            const size = parseFloat(trade.size) || 0;
+            totalDelta += delta * size;
+            totalGamma += gamma * size;
+            totalVega += vega * size;
+            totalTheta += theta * size;
+        });
+
+        return { totalDelta, totalGamma, totalVega, totalTheta };
+    };
+
+// Компонент для отображения модалки с деталями сделок
+    const TradeModal = ({ trades, onClose }) => {
+        if (!trades || trades.length === 0) return null;
+
+        const totalPremium = trades.reduce((sum, trade) => sum + (parseFloat(trade.premium) || 0), 0);
+        const totalSize = trades.reduce((sum, trade) => sum + (parseFloat(trade.size) || 0), 0);
+        const totalOIChange = trades.reduce((sum, trade) => sum + (parseFloat(trade.oi_change) || 0), 0);
+
+        // Вычисляем общие греки для всей позиции
+        const { totalDelta, totalGamma, totalVega, totalTheta } = calculateOverallGreeks(trades);
+
+        const formatTradeDetails = (trade) => {
+            const instrumentName = trade.instrument_name || 'N/A';
+            const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
+            const strike = strikeMatch ? Number(strikeMatch[1]) : 0; // Если не найдено, используем 0
+
+            const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
+            const aboveBelow = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
+
+            const premium = trade.premium ? parseFloat(trade.premium).toFixed(4) : 'N/A';
+            const premiumUSD = trade.price ? parseFloat(trade.price).toLocaleString() : 'N/A';
+            const premiumInBaseAsset = trade.price && trade.spot ? (parseFloat(trade.price) / trade.spot).toFixed(4) : 'N/A';
+            const premiumAllInBaseAsset = trade.premium && trade.spot ? (parseFloat(trade.premium) / trade.spot).toFixed(4) : 'N/A';
+
+            // Данные для расчета греков
+            const S = trade.spot || 1; // Цена базового актива (если пусто, используем 1)
+            const X = strike || 100000; // Страйк (обязательно должен быть задан)
+            const T = trade.dte > 0 ? trade.dte / 365 : 0.01; // Время до экспирации
+            const r = 0.01;  // Безрисковая ставка
+            const sigma = trade.iv > 0 ? trade.iv / 100 : 0.5; // Волатильность, по умолчанию 0.5
+
+            const { delta, gamma, vega, theta } = calculateGreeks(S, X, T, r, sigma);
+
+            return `${side} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
+Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ ($${premium}), IV: ${trade.iv || 'N/A'}% 
+${aboveBelow}, mark: ${trade.mark_price}`
+        };
+
+        return (
+            <div className="modal-overlay" onClick={onClose}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="modal-close-button" onClick={onClose}>×</button>
+                    <h2>Trade Details</h2>
+                    {trades.map((trade, index) => (
+                        <pre key={index}>{formatTradeDetails(trade)}</pre> // используем <pre> для сохранения форматирования
+                    ))}
+                    <p>
+                        <strong>Net Premium:</strong> {totalPremium.toFixed(4)} Ξ<br />
+                        <strong>Total Size:</strong> {totalSize.toLocaleString()} Ξ<br />
+                        <strong>Total OI Change:</strong> {totalOIChange.toLocaleString()}<br />
+                    </p>
+                    <p>
+                        <strong>Overall Greeks:</strong> <br />
+                        Δ: {totalDelta.toFixed(4)}, Γ: {totalGamma.toFixed(6)}, ν: {totalVega.toFixed(2)}, Θ: {totalTheta.toFixed(2)}
+                    </p>
+                    <p>Block Trade ID: {trades[0].blockTradeId}</p>
+                </div>
+            </div>
+        );
+    };
 
 
     return (
+
         <div className="flow-main-container">
             {/* Фильтры */}
             <div className="block-flow-filters">
@@ -414,6 +530,12 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                                     document.querySelectorAll('.trade-row')
                                         .forEach(el => el.classList.remove('block-trade-active'));
                                 }}
+                                onClick={() => {
+                                    const groupTrades = trades.filter(t => t.blockTradeId === trade.blockTradeId);
+                                    console.log('Selected group trades:', groupTrades); // Для отладки
+                                    setSelectedTrade(groupTrades); // Устанавливаем группу сделок
+                                }}
+
                             >
                                 <td>{getFormattedTime(trade.timeutc)}</td>
                                 <td className={`trade-side ${trade.side === 'buy' ? 'buy' : 'sell'}`}>
@@ -443,7 +565,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                                 <td className="highlight-column">{trade.exchange || 'N/A'}</td>
                                 <td>{trade.size || 'N/A'}</td>
                                 <td>${trade.price ? Number(trade.price).toLocaleString() : 'N/A'}</td>
-                                <td className={`trade-side ${trade.side === 'C' ? 'put' : 'call'}`}>
+                                <td className={`trade-side ${trade.k === 'C' ? 'call' : 'put'}`}>
                                     ${trade.premium ? Number(trade.premium).toLocaleString() : 'N/A'}
                                 </td>
                                 <td>{trade.iv || 'N/A'}%</td>
@@ -454,6 +576,9 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                     </table>
                 )}
             </div>
+            {selectedTrade && (
+                <TradeModal trades={selectedTrade} onClose={() => setSelectedTrade(null)} />
+            )}
         </div>
     );
 };
