@@ -242,6 +242,7 @@ td span:first-child {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 20px;
 }
 
 .modal-content {
@@ -280,4 +281,29 @@ pre {
 
 .block-trades-copy{
     color: black;
+    background-color: whitesmoke;
+    width: 120px;
+    height: 40px;
+}
+
+.footer-button{
+    margin-top: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.block-tooltip-title{
+    color: #F2F2F2;
+}
+
+.modal-close-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
 }

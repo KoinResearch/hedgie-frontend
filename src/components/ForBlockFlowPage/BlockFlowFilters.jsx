@@ -367,28 +367,44 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         return { delta, gamma, vega, theta };
     };
 
+
 // Компонент для отображения модалки с деталями сделок
     const TradeModal = ({ trades, onClose }) => {
         if (!trades || trades.length === 0) return null;
 
-        // Вычисляем Net Debit/Credit
         const { type, amount } = calculateNetDebitOrCredit(trades);
 
-        // Вычисляем общие греки для всей позиции
         const greekCalculationMethod = trades.length === 2
             ? calculateCalendarSpreadGreeks
             : calculateOverallGreeks;
 
         const { delta: totalDelta, gamma: totalGamma, vega: totalVega, theta: totalTheta } = greekCalculationMethod(trades);
 
-        // Функция для форматирования деталей сделки
+        const calculateOIChange = (trade) => {
+            const size = trade.size ? parseFloat(trade.size) : 0;
+            // Если это продажа (sell), OI Change равен размеру позиции
+            // Если это покупка (buy), OI Change равен 0
+            return trade.side === 'sell' ? size : 0;
+        };
+
+
+        const getExecutionDetails = (side, executionType) => {
+            if (executionType === 'Below the ask') {
+                return '(Market Maker PREVENTED liquidity by buying cheaper\nthan the market)';
+            } else if (executionType === 'Above the bid') {
+                return '(Market Maker PREVENTED liquidity by selling\nabove the market)';
+            }
+        };
+
         const formatTradeDetails = (trade) => {
             const instrumentName = trade.instrument_name || 'N/A';
             const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
-            const strike = strikeMatch ? Number(strikeMatch[1]) : 0; // Если не найдено, используем 0
+            const strike = strikeMatch ? Number(strikeMatch[1]) : 0;
 
             const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
-            const aboveBelow = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
+            const executionType = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
+            const executionMessage = getExecutionDetails(trade.side, executionType);
+            const oiChange = calculateOIChange(trade);
 
             const premium = trade.premium ? parseFloat(trade.premium).toFixed(4) : 'N/A';
             const premiumUSD = trade.price ? parseFloat(trade.price).toLocaleString() : 'N/A';
@@ -397,28 +413,34 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
             return `${side} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
 Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ ($${premium}), IV: ${trade.iv || 'N/A'}%,  mark: ${trade.mark_price}
- ${aboveBelow}`;
+${executionType} ${executionMessage}
+OI Change: ${oiChange}`;
         };
 
-        // Функция для копирования всего содержимого
+        const formatSize = (trades) => {
+            const size = trades[0]?.size;
+            if (!size) return '';
+
+            const numSize = parseFloat(size);
+            if (isNaN(numSize)) return '';
+
+            return `x${numSize.toFixed(1)}`;
+        };
+
         const handleCopy = () => {
-            const tradeDetailsText = trades.map((trade, index) => {
-                const instrumentName = trade.instrument_name || 'N/A';
-                const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
-                const strike = strikeMatch ? Number(strikeMatch[1]) : 0; // Если не найдено, используем 0
+            const sizeText = formatSize(trades);
+            const tradeDetailsText = trades.map((trade) => formatTradeDetails(trade)).join('\n\n');
 
-                const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
-                const aboveBelow = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
+            const liquidityNote = `
+---- TRADE EXECUTION NOTE ----
+When Market Maker PREVENTS liquidity:
+• Below the ask - buying cheaper than the market
+• Above the bid - selling above the market
 
-                const premium = trade.premium ? parseFloat(trade.premium).toFixed(4) : 'N/A';
-                const premiumUSD = trade.price ? parseFloat(trade.price).toLocaleString() : 'N/A';
-                const premiumInBaseAsset = trade.price && trade.spot ? (parseFloat(trade.price) / trade.spot).toFixed(4) : 'N/A';
-                const premiumAllInBaseAsset = trade.premium && trade.spot ? (parseFloat(trade.premium) / trade.spot).toFixed(4) : 'N/A';
-
-                return `${side} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
-Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ ($${premium}), IV: ${trade.iv || 'N/A'}%,  mark: ${trade.mark_price}
- ${aboveBelow}`;
-            }).join('\n');
+When Market Maker PROVIDES liquidity:
+• Below the ask - offering better prices for buyers
+• Above the bid - offering better prices for sellers
+`;
 
             const greekDetailsText = `
 ---- OVERALL GREEKS ----
@@ -435,9 +457,8 @@ Block Trade ID: ${trades[0]?.blockTradeId}
 * Theta (Θ): Indicates how the option price decreases over time due to time decay.
 `;
 
-            const copyText = `---- TRADE DETAILS ----\n\n${tradeDetailsText}\n\n${greekDetailsText}`;
+            const copyText = `---- TRADE DETAILS ----\n\n${sizeText}\n\n${tradeDetailsText}\n\n${liquidityNote}\n${greekDetailsText}`;
 
-            // Копирование в буфер обмена
             navigator.clipboard.writeText(copyText)
                 .then(() => {
                     alert('Data copied to clipboard!');
@@ -448,24 +469,30 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                 });
         };
 
-
         return (
             <div className="modal-overlay" onClick={onClose}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <button className="modal-close-button" onClick={onClose}>×</button>
-                    <h2>Trade Details</h2>
+                    {/*<div className="block-tooltip-title">Trade Details</div>*/}
+                    <div className="modal-close-title">
+                        <h1>Trade Details</h1>
+                        <button className="block-trades-copy" onClick={handleCopy}>Copy Data</button>
+                    </div>
+                    <div className="flow-option-dedicated"></div>
+                    <pre>{formatSize(trades)}</pre>
                     {trades.map((trade, index) => (
-                        <pre key={index}>{formatTradeDetails(trade)}</pre> // используем <pre> для сохранения форматирования
+                        <pre key={index}>{formatTradeDetails(trade)}</pre>
                     ))}
                     <p>
-                        <strong>{type}:</strong> {amount} Ξ (${trades[0]?.spot ? (parseFloat(amount) * trades[0].spot).toFixed(2) : 'N/A'})
+                        <strong>{type}:</strong> {amount} Ξ
+                        (${trades[0]?.spot ? (parseFloat(amount) * trades[0].spot).toFixed(2) : 'N/A'})
                     </p>
                     <p>
-                        <strong>Overall Greeks:</strong> <br />
-                        Δ: {totalDelta.toFixed(4)}, Γ: {totalGamma.toFixed(6)}, ν: {totalVega.toFixed(2)}, Θ: {totalTheta.toFixed(2)}
+                        <strong>Overall Greeks:</strong> <br/>
+                        Δ: {totalDelta.toFixed(4)}, Γ: {totalGamma.toFixed(6)}, ν: {totalVega.toFixed(2)},
+                        Θ: {totalTheta.toFixed(2)}
                     </p>
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
-                    <button className="block-trades-copy" onClick={handleCopy}>Copy Data</button> {/* Кнопка для копирования */}
                 </div>
             </div>
         );
@@ -473,7 +500,6 @@ Block Trade ID: ${trades[0]?.blockTradeId}
 
 
     return (
-
         <div className="flow-main-container">
             {/* Фильтры */}
             <div className="block-flow-filters">
@@ -743,7 +769,7 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                                     ${trade.premium ? Number(trade.premium).toLocaleString() : 'N/A'}
                                 </td>
                                 <td>{trade.iv || 'N/A'}%</td>
-                                <MakerCell maker={trade.maker} index={index} />
+                                <MakerCell maker={trade.maker} index={index}/>
                             </tr>
                         ))}
                         </tbody>
@@ -751,8 +777,16 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                 )}
             </div>
             {selectedTrade && (
-                <TradeModal trades={selectedTrade} onClose={() => setSelectedTrade(null)} />
+                <TradeModal trades={selectedTrade} onClose={() => setSelectedTrade(null)}/>
             )}
+            <div className="footer-button">
+                <button className="toggle-button" onClick={handlePreviousPage} disabled={page === 1}>
+                    Previous
+                </button>
+                <button className="toggle-button" onClick={handleNextPage} disabled={page === totalPages}>
+                    Next
+                </button>
+            </div>
         </div>
     );
 };
