@@ -45,7 +45,7 @@ const BTCETHOptionFlow = () => {
         fetchMetrics();
     }, [asset, exchange, timeRange]);
 
-
+    // 1 вариант
     useEffect(() => {
         if (chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
@@ -133,22 +133,62 @@ const BTCETHOptionFlow = () => {
         }
     }, [metrics]);
 
+
     const handleDownload = () => {
-        const elementToCapture = document.querySelector('.flow-option-content'); // Селектор контейнера с диаграммой и метриками
-        if (elementToCapture) {
-            html2canvas(elementToCapture, {
-                backgroundColor: '#000000', // Черный фон
-                scale: 2, // Повышение качества изображения
-            }).then((canvas) => {
-                const url = canvas.toDataURL('image/png');
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `option_flow_chart_with_metrics_${asset}.png`;
-                a.click();
-            });
-        } else {
+        const elementToCapture = document.querySelector('.flow-option-content');
+        if (!elementToCapture) {
             console.error('Element to capture not found');
+            return;
         }
+
+        // Создаем водяной знак
+        const watermark = document.createElement('div');
+        watermark.style.position = 'absolute';
+        watermark.style.width = '100%';
+        watermark.style.height = '100%';
+        watermark.style.top = '50%';
+        watermark.style.left = '50%';
+        watermark.style.transform = 'translate(-50%, -50%)';
+        watermark.style.pointerEvents = 'none';
+        watermark.style.zIndex = '1000';
+        watermark.style.display = 'flex';
+        watermark.style.justifyContent = 'center';
+        watermark.style.alignItems = 'center';
+
+        // Создаем текст водяного знака
+        const textElement = document.createElement('div');
+        textElement.textContent = 'hedgie.org';
+        textElement.style.position = 'absolute';
+        textElement.style.color = 'rgba(255, 255, 255, 0.06)';
+        textElement.style.fontSize = '80px';
+        textElement.style.fontFamily = 'JetBrains Mono';
+        textElement.style.fontWeight = 'bold';
+        watermark.appendChild(textElement);
+
+        // Добавляем водяной знак
+        const originalPosition = elementToCapture.style.position;
+        elementToCapture.style.position = 'relative';
+        elementToCapture.appendChild(watermark);
+
+        // Делаем скриншот
+        html2canvas(elementToCapture, {
+            backgroundColor: '#000000',
+            scale: 2,
+        }).then((canvas) => {
+            const url = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `option_flow_chart_with_metrics_${asset}.png`;
+            a.click();
+
+            // Удаляем водяной знак после создания скриншота
+            elementToCapture.removeChild(watermark);
+            elementToCapture.style.position = originalPosition;
+        }).catch((error) => {
+            console.error('Error creating screenshot:', error);
+            elementToCapture.removeChild(watermark);
+            elementToCapture.style.position = originalPosition;
+        });
     };
 
     const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';

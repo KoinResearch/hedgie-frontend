@@ -382,11 +382,8 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
         const calculateOIChange = (trade) => {
             const size = trade.size ? parseFloat(trade.size) : 0;
-            // Если это продажа (sell), OI Change равен размеру позиции
-            // Если это покупка (buy), OI Change равен 0
             return trade.side === 'sell' ? size : 0;
         };
-
 
         const getExecutionDetails = (side, executionType) => {
             if (executionType === 'Below the ask') {
@@ -396,12 +393,27 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
             }
         };
 
+        const formatSize = (trades) => {
+            // Создаем строку с размерами для заголовка
+            const sizes = trades.map(trade => {
+                const size = trade.size ? parseFloat(trade.size).toFixed(1) : '0';
+                const type = trade.instrument_name.endsWith('-C') ? 'C' : 'P';
+                return `x${size}${type}`;
+            });
+
+            // Возвращаем форматированную строку с размерами
+            return `(${sizes.join('/')})`;
+        };
+
         const formatTradeDetails = (trade) => {
             const instrumentName = trade.instrument_name || 'N/A';
-            const strikeMatch = instrumentName.match(/(\d+)-[CP]$/);
-            const strike = strikeMatch ? Number(strikeMatch[1]) : 0;
+            const size = trade.size ? parseFloat(trade.size).toFixed(1) : 'N/A';
 
-            const side = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
+            // Определяем базовую часть side с размером
+            const sideBase = trade.side === 'buy' ? '🟢 Bought' : '🔴 Sold';
+            // Добавляем размер к сделке
+            const sideWithSize = `${sideBase} x${size}`;
+
             const executionType = trade.side === 'buy' ? 'Below the ask' : 'Above the bid';
             const executionMessage = getExecutionDetails(trade.side, executionType);
             const oiChange = calculateOIChange(trade);
@@ -411,20 +423,10 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
             const premiumInBaseAsset = trade.price && trade.spot ? (parseFloat(trade.price) / trade.spot).toFixed(4) : 'N/A';
             const premiumAllInBaseAsset = trade.premium && trade.spot ? (parseFloat(trade.premium) / trade.spot).toFixed(4) : 'N/A';
 
-            return `${side} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
+            return `${sideWithSize} 🔷 ${instrumentName} 📈 at ${premiumInBaseAsset} Ξ ($${premiumUSD}) 
 Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ ($${premium}), IV: ${trade.iv || 'N/A'}%,  mark: ${trade.mark_price}
 ${executionType} ${executionMessage}
 OI Change: ${oiChange}`;
-        };
-
-        const formatSize = (trades) => {
-            const size = trades[0]?.size;
-            if (!size) return '';
-
-            const numSize = parseFloat(size);
-            if (isNaN(numSize)) return '';
-
-            return `x${numSize.toFixed(1)}`;
         };
 
         const handleCopy = () => {
@@ -473,7 +475,6 @@ Block Trade ID: ${trades[0]?.blockTradeId}
             <div className="modal-overlay" onClick={onClose}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <button className="modal-close-button" onClick={onClose}>×</button>
-                    {/*<div className="block-tooltip-title">Trade Details</div>*/}
                     <div className="modal-close-title">
                         <h1>Trade Details</h1>
                         <button className="block-trades-copy" onClick={handleCopy}>Copy Data</button>
