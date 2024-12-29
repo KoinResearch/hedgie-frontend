@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import "./Auth.css";
 import FullName from "../components/icon/FullName.jsx";
+import {useAuth} from "../components/AuthContext.jsx";
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -29,8 +31,11 @@ const Register = () => {
 
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
 
-            // Редирект на профиль
+            // Обновляем глобальное состояние
+            login(response.data.user);
+
             navigate('/profile');
         } catch (error) {
             console.error("Registration error:", error.response?.data?.message || error.message);
