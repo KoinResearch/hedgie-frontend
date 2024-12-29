@@ -11,6 +11,13 @@ import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip } from 'react-tooltip'; // Правильный импорт
 import { Doughnut } from 'react-chartjs-2';
 import { erf } from 'mathjs';
+import OpenAI from 'openai';
+
+
+const openai = new OpenAI({
+    apiKey: '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',
+    dangerouslyAllowBrowser: true
+});
 
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
@@ -370,6 +377,29 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
 // Компонент для отображения модалки с деталями сделок
     const TradeModal = ({ trades, onClose }) => {
+        const [analysis, setAnalysis] = useState('');
+        const [isLoading, setIsLoading] = useState(false);
+
+        const getAnalysis = async (trades) => {
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze`, { trades }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setAnalysis(response.data.choices[0].message.content);
+            } catch (error) {
+                console.error('AI Analysis error:', error);
+                setAnalysis('Failed to get analysis');
+            }
+        };
+
+        useEffect(() => {
+            if (trades) {
+                getAnalysis(trades);
+            }
+        }, [trades]);
+
         if (!trades || trades.length === 0) return null;
 
         const { type, amount } = calculateNetDebitOrCredit(trades);
@@ -494,6 +524,14 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                         Θ: {totalTheta.toFixed(2)}
                     </p>
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
+                </div>
+                <div className="w-96 ml-4 bg-gray-900 p-4 rounded-lg">
+                    <h3 className="text-lg font-bold mb-4">AI Analysis</h3>
+                    {isLoading ? (
+                        <div className="text-center">Analyzing trade...</div>
+                    ) : (
+                        <div className="whitespace-pre-wrap">{analysis}</div>
+                    )}
                 </div>
             </div>
         );

@@ -21,22 +21,55 @@
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding-left: 60px;
+    padding-left: 30px;
+    padding-right: 40px;
     max-width: 1536px;
 }
 
-.logo {
-    font-weight: bold;
-    font-size: 16px;
-    font-family: 'YourFontFamily', sans-serif;
-    color: #F2F2F2;
-    width: 103px;
-    height: 20px;
+.left-side{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
     align-items: center;
+    gap: 20px;
+}
+
+.right-side{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;  /* если нужны отступы */
+}
+
+.logo {
+    height: 24px;  /* фиксированная высота */
+    width: 110px;  /* фиксированная ширина - подберите нужное значение */
+    flex-shrink: 0; /* предотвращает сжатие логотипа */
+    object-fit: contain; /* сохраняет пропорции */
 }
 
 
 .navigation {
+    display: flex;
+    width: 143px;
+    height: 40px;
+    gap: 20px;
+    align-items: center;
+}
+
+.navigation-authorization{
     display: flex;
     width: 143px;
     height: 40px;
@@ -77,6 +110,45 @@
     font-size: 10px;
     padding: 2px 5px;
     border-radius: 9px;
+}
+
+.nav-link-login {
+    width: 82px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background-color: rgba(42, 42, 48, 1);
+    color: rgba(194, 194, 194, 1);
+    text-decoration: none;
+}
+
+.nav-link-login:visited,
+.nav-link-login:hover,
+.nav-link-login:active {
+    color: rgba(255, 255, 255, 1);
+    text-decoration: none;
+}
+
+.nav-link-register {
+    width: 92px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(23, 71, 153, 1);
+    border: 1px solid rgba(37, 113, 245, 1);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 1);
+    text-decoration: none;
+}
+
+.nav-link-register:visited,
+.nav-link-register:hover,
+.nav-link-register:active {
+    color: rgba(194, 194, 194, 1);
+    text-decoration: none;
 }
 
 .user-actions {
