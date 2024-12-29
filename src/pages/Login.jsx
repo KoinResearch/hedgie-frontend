@@ -87,24 +87,32 @@ const Login = () => {
                 </button>
                 <button type="submit">Log in</button>
                 <div className="social-login">
-                    <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={() => {
-                            console.log('Google Login Failed');
-                        }}
-                        useOneTap={false}
-                        cookiePolicy={'single_host_origin'}
-                        text="continue_with"
-                        theme="filled_black"
-                        locale="ru"
-                        type="icon"  // Меняем на icon
-                        shape="rectangular"
-                        width="360"
-                        style={{
-                            background: 'rgb(32, 33, 36)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)'
-                        }}
-                    />
+                    {/* Скрытый оригинальный компонент */}
+                    <div style={{display: 'none'}}>
+                        <GoogleLogin
+                            ref={googleButtonRef}
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => {
+                                console.log('Google Login Failed');
+                            }}
+                            useOneTap={false}
+                            cookiePolicy={'single_host_origin'}
+                        />
+                    </div>
+
+                    {/* Наша кастомная кнопка */}
+                    <button
+                        type="button"
+                        className="google-auth-button"
+                        onClick={handleCustomGoogleClick}
+                    >
+                        <img
+                            src="/google-icon.svg"
+                            alt="Google"
+                            className="google-icon"
+                        />
+                        Войти через аккаунт Google
+                    </button>
                 </div>
             </form>
             <div className="footer-text-login">Don't have an account? <button
