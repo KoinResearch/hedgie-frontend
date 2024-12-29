@@ -92,15 +92,18 @@ const Login = () => {
                         onError={() => {
                             console.log('Google Login Failed');
                         }}
-                        useOneTap={false}          // Отключаем One Tap
-                        auto_select={false}        // Отключаем автовыбор аккаунта
+                        useOneTap={false}
+                        auto_select={false}
                         cookiePolicy={'single_host_origin'}
-                        text="signin_with"         // Меняем текст на "Войти с помощью"
+                        text="signin_with"
                         theme="filled_black"
-                        locale="ru"               // Русский язык
+                        locale="ru"
                         type="standard"
                         shape="rectangular"
                         width="360"
+                        prompt="select_account"        // Добавляем это
+                        cancel_on_tap_outside={false}  // И это
+                        select_account={true}          // И это
                     />
                 </div>
             </form>
