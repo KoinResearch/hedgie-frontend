@@ -87,32 +87,21 @@ const Login = () => {
                 </button>
                 <button type="submit">Log in</button>
                 <div className="social-login">
-                    {/* Скрытый оригинальный компонент */}
-                    <div style={{display: 'none'}}>
-                        <GoogleLogin
-                            ref={googleButtonRef}
-                            onSuccess={handleGoogleSuccess}
-                            onError={() => {
-                                console.log('Google Login Failed');
-                            }}
-                            useOneTap={false}
-                            cookiePolicy={'single_host_origin'}
-                        />
-                    </div>
-
-                    {/* Наша кастомная кнопка */}
-                    <button
-                        type="button"
-                        className="google-auth-button"
-                        onClick={handleCustomGoogleClick}
-                    >
-                        <img
-                            src="/google-icon.svg"
-                            alt="Google"
-                            className="google-icon"
-                        />
-                        Войти через аккаунт Google
-                    </button>
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => {
+                            console.log('Google Login Failed');
+                        }}
+                        useOneTap={false}          // Отключаем One Tap
+                        auto_select={false}        // Отключаем автовыбор аккаунта
+                        cookiePolicy={'single_host_origin'}
+                        text="signin_with"         // Меняем текст на "Войти с помощью"
+                        theme="filled_black"
+                        locale="ru"               // Русский язык
+                        type="standard"
+                        shape="rectangular"
+                        width="360"
+                    />
                 </div>
             </form>
             <div className="footer-text-login">Don't have an account? <button
