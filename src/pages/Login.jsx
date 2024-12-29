@@ -92,9 +92,14 @@ const Login = () => {
                         onError={() => {
                             console.log('Google Login Failed');
                         }}
-                        useOneTap={false}  // Добавьте это
-                        cookiePolicy={'single_host_origin'} // И это
-                        theme="filled_black" // Опционально, для стилизации
+                        useOneTap={false}
+                        cookiePolicy={'single_host_origin'}
+                        text="continue_with"  // Добавляем этот параметр
+                        theme="filled_black"
+                        locale="ru"          // Добавляем для русского текста
+                        type="standard"      // Стандартный тип кнопки
+                        shape="rectangular"  // Прямоугольная форма
+                        width="360"         // Полная ширина
                     />
                 </div>
             </form>
