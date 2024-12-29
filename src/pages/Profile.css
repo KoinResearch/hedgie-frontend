@@ -132,13 +132,13 @@
     background-color: #660000;
 }
 
-.loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #0a0a0a;
-}
+/*.loading-container {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    min-height: 100vh;*/
+/*    background-color: #0a0a0a;*/
+/*}*/
 
 .loading-spinner {
     width: 40px;
