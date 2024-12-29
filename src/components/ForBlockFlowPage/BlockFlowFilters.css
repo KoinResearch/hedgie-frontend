@@ -307,3 +307,30 @@ pre {
     gap: 20px;
     width: 100%;
 }
+
+.analysis-container {
+    width: 360px;
+    margin-left: 16px;
+    background-color: #171717;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #2a2a2a;
+}
+
+.analysis-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.analysis-loading {
+    text-align: center;
+    color: #888;
+}
+
+.analysis-content {
+    white-space: pre-wrap;
+    color: #f2f2f2;
+    line-height: 1.5;
+}

@@ -525,12 +525,12 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                     </p>
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
                 </div>
-                <div className="w-96 ml-4 bg-gray-900 p-4 rounded-lg">
-                    <h3 className="text-lg font-bold mb-4">AI Analysis</h3>
+                <div className="analysis-container">
+                    <h3 className="analysis-title">AI Analysis</h3>
                     {isLoading ? (
-                        <div className="text-center">Analyzing trade...</div>
+                        <div className="analysis-loading">Analyzing trade...</div>
                     ) : (
-                        <div className="whitespace-pre-wrap">{analysis}</div>
+                        <div className="analysis-content">{analysis}</div>
                     )}
                 </div>
             </div>
