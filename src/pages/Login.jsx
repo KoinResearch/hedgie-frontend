@@ -11,6 +11,22 @@ const Login = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
 
+    useEffect(() => {
+        // Очищаем состояние Google Auth при монтировании компонента
+        const clearGoogleSession = () => {
+            // Удаляем куки Google Auth
+            document.cookie.split(";").forEach((c) => {
+                document.cookie = c
+                    .replace(/^ +/, "")
+                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+            // Удаляем локальное хранилище Google
+            localStorage.removeItem('googleOneTapShown');
+        };
+
+        clearGoogleSession();
+    }, []);
+
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -94,16 +110,15 @@ const Login = () => {
                         }}
                         useOneTap={false}
                         auto_select={false}
-                        cookiePolicy={'single_host_origin'}
+                        prompt="select_account"
+                        cookiePolicy={'none'}  // Меняем с 'single_host_origin' на 'none'
                         text="signin_with"
                         theme="filled_black"
                         locale="ru"
                         type="standard"
                         shape="rectangular"
                         width="360"
-                        prompt="select_account"        // Добавляем это
-                        cancel_on_tap_outside={false}  // И это
-                        select_account={true}          // И это
+                        ux_mode="popup"  // Добавляем это
                     />
                 </div>
             </form>
