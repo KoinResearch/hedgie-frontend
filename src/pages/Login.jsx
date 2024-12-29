@@ -11,21 +11,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    useEffect(() => {
-        // Очищаем состояние Google Auth при монтировании компонента
-        const clearGoogleSession = () => {
-            // Удаляем куки Google Auth
-            document.cookie.split(";").forEach((c) => {
-                document.cookie = c
-                    .replace(/^ +/, "")
-                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            });
-            // Удаляем локальное хранилище Google
-            localStorage.removeItem('googleOneTapShown');
-        };
 
-        clearGoogleSession();
-    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
