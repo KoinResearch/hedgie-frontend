@@ -94,12 +94,16 @@ const Login = () => {
                         }}
                         useOneTap={false}
                         cookiePolicy={'single_host_origin'}
-                        text="continue_with"  // Добавляем этот параметр
+                        text="continue_with"
                         theme="filled_black"
-                        locale="ru"          // Добавляем для русского текста
-                        type="standard"      // Стандартный тип кнопки
-                        shape="rectangular"  // Прямоугольная форма
-                        width="360"         // Полная ширина
+                        locale="ru"
+                        type="icon"  // Меняем на icon
+                        shape="rectangular"
+                        width="360"
+                        style={{
+                            background: 'rgb(32, 33, 36)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)'
+                        }}
                     />
                 </div>
             </form>
