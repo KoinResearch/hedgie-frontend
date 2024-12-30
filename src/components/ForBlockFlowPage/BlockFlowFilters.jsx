@@ -382,14 +382,13 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
         const getAnalysis = async (trades) => {
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze`, { trades }, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                setAnalysis(response.data.choices[0].message.content);
+                console.log('Sending trades for analysis:', trades);
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze`, { trades });
+                console.log('AI Analysis response:', response.data);
+                setAnalysis(response.data.analysis || 'No analysis available');
             } catch (error) {
-                console.error('AI Analysis error:', error);
+                console.error('AI Analysis request error:', error);
+                console.error('Error details:', error.response?.data);
                 setAnalysis('Failed to get analysis');
             }
         };

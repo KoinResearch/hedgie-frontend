@@ -20,7 +20,7 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-        return <Navigate to="/signin" />;
+        return <Navigate to="/login" />;
     }
     return children;
 };
