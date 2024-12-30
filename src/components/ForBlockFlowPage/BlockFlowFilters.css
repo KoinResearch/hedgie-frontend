@@ -308,28 +308,30 @@ pre {
     width: 100%;
 }
 
-.analysis-container {
-    width: 360px;
-    margin-left: 16px;
-    background-color: #171717;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #2a2a2a;
-}
-
-.analysis-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 16px;
-}
-
 .analysis-loading {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #888;
 }
 
+.analysis-loading::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border: 2px solid #888;
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .analysis-content {
+    font-family: 'Courier New', monospace;
     white-space: pre-wrap;
     color: #f2f2f2;
     line-height: 1.5;
