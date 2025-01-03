@@ -13,8 +13,12 @@ const KeyMetricsBlockTrades = () => {
         total_premium: 0,
     });
     const [loading, setLoading] = useState(true);
+    const [loadingAI, setLoadingAI] = useState(true);
     const [error, setError] = useState(null);
+    const [errorAI, setErrorAI] = useState(null);
     const [timeRange, setTimeRange] = useState('24h');
+    const [showAnalysis, setShowAnalysis] = useState(false);
+    const [analysis, setAnalysis] = useState('');
 
     useEffect(() => {
         const fetchMetrics = async () => {
@@ -38,6 +42,27 @@ const KeyMetricsBlockTrades = () => {
         };
         fetchMetrics();
     }, [asset, timeRange]);
+
+    const getAIAnalysis = async () => {
+        setLoadingAI(true);
+        setErrorAI(null);
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze-metrics`, {
+                metrics: {
+                    avgPrice: metrics.avg_price,
+                    totalVolume: metrics.total_nominal_volume,
+                    totalPremium: metrics.total_premium,
+                    timeRange,
+                    asset,
+                    exchange
+                }
+            });
+            setAnalysis(response.data.analysis);
+        } catch (errorAI) {
+            setErrorAI('Failed to load analysis');
+        }
+        setLoadingAI(false);
+    };
 
     return (
         <div className="metrics-key-container">
@@ -68,6 +93,15 @@ const KeyMetricsBlockTrades = () => {
                         </svg>
                     </span>
                 </div>
+                <button
+                    className="analyze-button"
+                    onClick={() => {
+                        setShowAnalysis(true);
+                        getAIAnalysis();
+                    }}
+                >
+                    AI Analysis
+                </button>
                 {/*<div className="asset-option-buttons">*/}
                 {/*    <select value={exchange} onChange={(e) => setExchange(e.target.value)}>*/}
                 {/*        <option value="DER">Deribit</option>*/}
@@ -165,6 +199,21 @@ const KeyMetricsBlockTrades = () => {
                         )}
                     </div>
                 </div>
+                {showAnalysis && (
+                    <div className="analysis-modal" onClick={() => setShowAnalysis(false)}>
+                        <div className="analysis-container" onClick={e => e.stopPropagation()}>
+                            <h3 className="analysis-title">AI Analysis</h3>
+                            <button className="close-button" onClick={() => setShowAnalysis(false)}>×</button>
+                            {loadingAI ? (
+                                <div className="analysis-loading">Loading...</div>
+                            ) : errorAI ? (
+                                <div className="analysis-error">{errorAI}</div>
+                            ) : (
+                                <div className="analysis-content">{analysis}</div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -70,23 +70,21 @@
 
 .asset-key-buttons {
     position: relative;
-    width: 500px;
+    width: 100%;
     height: 36px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
 }
 
 .asset-key-buttons-block {
     position: relative;
-    width: 330px;
+    width: 100%;
     height: 36px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
 }
 
@@ -111,7 +109,12 @@
     border-color: #667085;
 }
 
+/*.asset-option-buttons{*/
+/*    padding-left: 100px;*/
+/*}*/
+
 .analyze-button{
+    margin-left: auto;
     width: 170px;
     height: 36px;
     display: flex;
@@ -123,6 +126,13 @@
 }
 
 .analyze-button:focus {
+    outline: none;
+    background-color: #151518;
+    border-color: white;
+    color: #9CA3AF;
+}
+
+.analyze-button:hover {
     outline: none;
     background-color: #151518;
     border-color: white;

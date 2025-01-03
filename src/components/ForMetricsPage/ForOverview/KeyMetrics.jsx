@@ -19,7 +19,6 @@ const KeyMetrics = () => {
     const [timeRange, setTimeRange] = useState('24h');
     const [showAnalysis, setShowAnalysis] = useState(false);
     const [analysis, setAnalysis] = useState('');
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     useEffect(() => {
         const fetchMetrics = async () => {
@@ -202,8 +201,8 @@ const KeyMetrics = () => {
                     </div>
                 </div>
                 {showAnalysis && (
-                    <div className="analysis-modal">
-                        <div className="analysis-container">
+                    <div className="analysis-modal" onClick={() => setShowAnalysis(false)}>
+                        <div className="analysis-container" onClick={e => e.stopPropagation()}>
                             <h3 className="analysis-title">AI Analysis</h3>
                             <button className="close-button" onClick={() => setShowAnalysis(false)}>×</button>
                             {loadingAI ? (
