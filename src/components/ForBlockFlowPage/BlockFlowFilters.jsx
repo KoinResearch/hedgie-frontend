@@ -378,9 +378,12 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 // Компонент для отображения модалки с деталями сделок
     const TradeModal = ({ trades, onClose }) => {
         const [analysis, setAnalysis] = useState('');
+        const [errorAI, setErrorAI] = useState(null);
+        const [loadingAI, setLoadingAI] = useState(true);
         const [isLoading, setIsLoading] = useState(false);
 
         const getAnalysis = async (trades) => {
+            setLoadingAI(true);
             try {
                 console.log('Sending trades for analysis:', trades);
                 const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze`, { trades });
@@ -391,6 +394,8 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
                 console.error('Error details:', error.response?.data);
                 setAnalysis('Failed to get analysis');
             }
+            setLoadingAI(false);
+
         };
 
         useEffect(() => {
@@ -526,7 +531,7 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                 </div>
                 <div className="analysis-container">
                     <h3 className="analysis-title">AI Analysis</h3>
-                    {isLoading ? (
+                    {loadingAI ? (
                         <div className="analysis-loading">Analyzing trade...</div>
                     ) : (
                         <div className="analysis-content">{analysis}</div>

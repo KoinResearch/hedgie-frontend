@@ -13,8 +13,13 @@ const KeyMetrics = () => {
         total_premium: 0,
     });
     const [loading, setLoading] = useState(true);
+    const [loadingAI, setLoadingAI] = useState(true);
     const [error, setError] = useState(null);
+    const [errorAI, setErrorAI] = useState(null);
     const [timeRange, setTimeRange] = useState('24h');
+    const [showAnalysis, setShowAnalysis] = useState(false);
+    const [analysis, setAnalysis] = useState('');
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     useEffect(() => {
         const fetchMetrics = async () => {
@@ -48,6 +53,26 @@ const KeyMetrics = () => {
         fetchMetrics();
     }, [asset, exchange, timeRange]);
 
+    const getAIAnalysis = async () => {
+        setLoadingAI(true);
+        setErrorAI(null);
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/analyze-metrics`, {
+                metrics: {
+                    avgPrice: metrics.avg_price,
+                    totalVolume: metrics.total_nominal_volume,
+                    totalPremium: metrics.total_premium,
+                    timeRange,
+                    asset,
+                    exchange
+                }
+            });
+            setAnalysis(response.data.analysis);
+        } catch (errorAI) {
+            setErrorAI('Failed to load analysis');
+        }
+        setLoadingAI(false);
+    };
     return (
         <div className="metrics-key-container">
             <div className="asset-key-buttons">
@@ -59,7 +84,8 @@ const KeyMetrics = () => {
                     </select>
                     <span className="custom-arrow">
                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                                  strokeLinejoin="round"/>
                         </svg>
                     </span>
                 </div>
@@ -70,7 +96,8 @@ const KeyMetrics = () => {
                     </select>
                     <span className="custom-arrow">
                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                                  strokeLinejoin="round"/>
                         </svg>
                     </span>
                 </div>
@@ -81,10 +108,20 @@ const KeyMetrics = () => {
                     </select>
                     <span className="custom-arrow">
                         <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                                  strokeLinejoin="round"/>
                         </svg>
                     </span>
                 </div>
+                <button
+                    className="analyze-button"
+                    onClick={() => {
+                        setShowAnalysis(true);
+                        getAIAnalysis();
+                    }}
+                >
+                    AI Analysis
+                </button>
             </div>
             <div className="metrics-key-grid">
                 <div className="metric-key-block">
@@ -164,6 +201,21 @@ const KeyMetrics = () => {
                         )}
                     </div>
                 </div>
+                {showAnalysis && (
+                    <div className="analysis-modal">
+                        <div className="analysis-container">
+                            <h3 className="analysis-title">AI Analysis</h3>
+                            <button className="close-button" onClick={() => setShowAnalysis(false)}>×</button>
+                            {loadingAI ? (
+                                <div className="analysis-loading">Loading...</div>
+                            ) : errorAI ? (
+                                <div className="analysis-error">{errorAI}</div>
+                            ) : (
+                                <div className="analysis-content">{analysis}</div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
