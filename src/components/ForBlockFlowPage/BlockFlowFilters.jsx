@@ -12,6 +12,7 @@ import { Tooltip } from 'react-tooltip'; // Правильный импорт
 import { Doughnut } from 'react-chartjs-2';
 import { erf } from 'mathjs';
 import OpenAI from 'openai';
+import {useAuth} from "../AuthContext.jsx";
 
 
 const openai = new OpenAI({
@@ -47,6 +48,7 @@ const MakerCell = ({ maker, index }) => {
 };
 
 const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL', sizeOrder, premiumOrder }) => {
+    const { isAuthenticated } = useAuth(); // Добавить этот хук
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -529,14 +531,16 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                     </p>
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
                 </div>
-                <div className="analysis-container">
-                    <h3 className="analysis-title">AI Analysis</h3>
-                    {loadingAI ? (
-                        <div className="analysis-loading">Analyzing trade...</div>
-                    ) : (
-                        <div className="analysis-content">{analysis}</div>
-                    )}
-                </div>
+                {isAuthenticated && (
+                    <div className="analysis-container">
+                        <h3 className="analysis-title">AI Analysis</h3>
+                        {loadingAI ? (
+                            <div className="analysis-loading">Analyzing trade...</div>
+                        ) : (
+                            <div className="analysis-content">{analysis}</div>
+                        )}
+                    </div>
+                )}
             </div>
         );
     };

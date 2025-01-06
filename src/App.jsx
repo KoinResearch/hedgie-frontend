@@ -64,7 +64,14 @@ function App() {
                         <Route path="/flow" element={<Flow />} />
                         <Route path="/metrics/*" element={<Metrics />} />
                         <Route path="/home" element={<Home />} />
-                        <Route path="/datalab" element={<DataLab />} />
+                        <Route
+                            path="/datalab"
+                            element={
+                                <ProtectedRoute>
+                                    <DataLab />
+                                </ProtectedRoute>
+                            }
+                        />
                         <Route path="/blockflow" element={<BlockFlow />} />
                     </Routes>
                 </main>

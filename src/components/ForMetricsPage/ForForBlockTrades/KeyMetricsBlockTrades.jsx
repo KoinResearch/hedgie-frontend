@@ -3,8 +3,10 @@ import axios from 'axios';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import './KeyMetricsBlockTrades.css';
+import {useAuth} from "../../AuthContext.jsx";
 
 const KeyMetricsBlockTrades = () => {
+    const { isAuthenticated } = useAuth(); // Добавить этот хук
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
     const [metrics, setMetrics] = useState({
@@ -93,15 +95,17 @@ const KeyMetricsBlockTrades = () => {
                         </svg>
                     </span>
                 </div>
-                <button
-                    className="analyze-button"
-                    onClick={() => {
-                        setShowAnalysis(true);
-                        getAIAnalysis();
-                    }}
-                >
-                    AI Analysis
-                </button>
+                {isAuthenticated && (
+                    <button
+                        className="analyze-button"
+                        onClick={() => {
+                            setShowAnalysis(true);
+                            getAIAnalysis();
+                        }}
+                    >
+                        AI Analysis
+                    </button>
+                )}
                 {/*<div className="asset-option-buttons">*/}
                 {/*    <select value={exchange} onChange={(e) => setExchange(e.target.value)}>*/}
                 {/*        <option value="DER">Deribit</option>*/}
