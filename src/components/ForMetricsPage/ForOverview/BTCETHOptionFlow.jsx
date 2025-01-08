@@ -6,12 +6,27 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import { optionsCache, useCachedApiCall, CACHE_TTL } from '../../../utils/cacheService.js';
 
 
 const BTCETHOptionFlow = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
-    const [metrics, setMetrics] = useState({
+    const [timeRange, setTimeRange] = useState('24h');
+
+
+    const chartRef = useRef(null);
+    const chartInstanceRef = useRef(null);
+
+    // Подкачка данных и хеширование
+    const { data: metricsData, loading, error } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/metrics/${asset.toLowerCase()}`,
+        { timeRange, exchange },
+        optionsCache,
+        CACHE_TTL.SHORT // Используем короткий TTL, так как это активные данные
+    );
+    // Инициализация значения по умолчанию для метрик
+    const metrics = metricsData || {
         Call_Buys: 0,
         Call_Sells: 0,
         Put_Buys: 0,
@@ -20,32 +35,9 @@ const BTCETHOptionFlow = () => {
         Call_Sells_Percent: '0.00',
         Put_Buys_Percent: '0.00',
         Put_Sells_Percent: '0.00',
-    });
-    const [timeRange, setTimeRange] = useState('24h');
+    };
 
-
-    const chartRef = useRef(null);
-    const chartInstanceRef = useRef(null);
-
-    useEffect(() => {
-        const fetchMetrics = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/metrics/${asset.toLowerCase()}`, {
-                    params: {
-                        timeRange,
-                        exchange
-                    }
-                });
-                setMetrics(response.data);
-            } catch (error) {
-                console.error('Error fetching metrics:', error);
-            }
-        };
-
-        fetchMetrics();
-    }, [asset, exchange, timeRange]);
-
-    // 1 вариант
+    // Отрисовка диаграммы
     useEffect(() => {
         if (chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
@@ -133,7 +125,7 @@ const BTCETHOptionFlow = () => {
         }
     }, [metrics]);
 
-
+    // Скачивание фотографии диаграммы
     const handleDownload = () => {
         const elementToCapture = document.querySelector('.flow-option-content');
         if (!elementToCapture) {
