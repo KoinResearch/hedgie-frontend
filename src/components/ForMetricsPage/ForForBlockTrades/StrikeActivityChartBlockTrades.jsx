@@ -4,59 +4,53 @@ import * as echarts from 'echarts';
 import './StrikeActivityChartBlockTrades.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
+import { CACHE_TTL, optionsCache, expirationCache, useCachedApiCall } from "../../../utils/cacheService.js";
 
 
 const StrikeActivityChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
     const [expiration, setExpiration] = useState('All Expirations');
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [expirations, setExpirations] = useState([]);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
     const [timeRange, setTimeRange] = useState('24h');
 
-    useEffect(() => {
-        const fetchExpirations = async () => {
-            setLoading(true);
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
-                setExpirations(['All Expirations', ...response.data]);
-            } catch (err) {
-                console.error('Error fetching expirations:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchExpirations();
-    }, [asset]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/strike-activity/${asset.toLowerCase()}`, {
-                    params: {
-                        expiration,
-                        timeRange
-                    }
-                });
-                setData(response.data);
-            } catch (err) {
-                console.error('Error fetching strike activity data:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+// Запрос на получение списка expiration дат (кешируем на длительное время)
+    const {
+        data: expirationsData,
+        loading: expirationsLoading,
+        error: expirationsError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`,
+        null,
+        expirationCache,
+        CACHE_TTL.LONG // Кешируем на 15 минут
+    );
 
-        fetchData();
-    }, [asset, expiration, timeRange]);
+    // Безопасно преобразуем данные expirations
+    const expirations = ['All Expirations', ...(Array.isArray(expirationsData) ? expirationsData : [])];
 
+    // Запрос на получение данных по активности
+    const {
+        data: strikeData,
+        loading: strikeLoading,
+        error: strikeError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/block-trades/strike-activity/${asset.toLowerCase()}`,
+        { expiration, timeRange, exchange },
+        optionsCache,
+        CACHE_TTL.MEDIUM // Кешируем на 5 минут
+    );
+
+    // Безопасно преобразуем данные активности
+    const data = Array.isArray(strikeData) ? strikeData : [];
+
+    // Определяем состояние загрузки и ошибки
+    const loading = expirationsLoading || strikeLoading;
+    const error = expirationsError || strikeError;
+
+    // Генерация графика
     useEffect(() => {
         if (data.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);

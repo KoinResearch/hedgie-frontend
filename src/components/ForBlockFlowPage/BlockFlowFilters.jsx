@@ -13,6 +13,7 @@ import { Doughnut } from 'react-chartjs-2';
 import { erf } from 'mathjs';
 import OpenAI from 'openai';
 import {useAuth} from "../AuthContext.jsx";
+import { CACHE_TTL, optionsCache, expirationCache, useCachedApiCall } from "../../utils/cacheService";
 
 
 const openai = new OpenAI({
@@ -49,12 +50,8 @@ const MakerCell = ({ maker, index }) => {
 
 const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL', sizeOrder, premiumOrder }) => {
     const { isAuthenticated } = useAuth(); // Добавить этот хук
-    const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
-    const [trades, setTrades] = useState([]);
-    const [expirations, setExpirations] = useState([]);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
     const [selectedTradeType, setSelectedTradeType] = useState(tradeType);
@@ -72,6 +69,57 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
     const [selectedTrade, setSelectedTrade] = useState(null);
     const [selectedMarkPrice, setSelectedMarkPrice] = useState(null);
 
+    // Загрузка дат экспирации
+    const {
+        data: expirationsData
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/expirations/${selectedAsset.toLowerCase()}`,
+        null,
+        expirationCache,
+        CACHE_TTL.LONG
+    );
+
+    const expirations = Array.isArray(expirationsData) ? expirationsData : [];
+
+    // Загрузка сделок
+    const {
+        data: tradesData,
+        loading: isLoading
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/block/flow/trades`,
+        {
+            asset: selectedAsset,
+            tradeType: selectedTradeType,
+            optionType: selectedOptionType,
+            side: selectedSide,
+            expiration: expirations[0] || '',
+            sizeOrder,
+            premiumOrder,
+            page,
+            exchange: selectedExchange,
+            minStrike: strikeMin,
+            maxStrike: strikeMax,
+            maker: selectedMaker,
+            ivMin,
+            ivMax,
+            dteMin,
+            dteMax,
+            pageSize
+        },
+        optionsCache,
+        CACHE_TTL.SHORT
+    );
+
+    // Безопасное извлечение данных
+    const groupedTradesData = tradesData?.groupedTrades || [];
+    const trades = groupedTradesData.flatMap(group =>
+        group.trades.map(trade => ({
+            ...trade,
+            blockTradeId: group.blockTradeId,
+            markPrice: trade.markPrice || 'N/A'
+        }))
+    );
+    const totalPages = tradesData?.totalPages || 1;
 
     useEffect(() => {
         const handleMouseEnter = (e) => {
@@ -100,66 +148,6 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
             });
         };
     }, [trades]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const expiration = expirations[0] || '';
-
-                const params = {
-                    asset: selectedAsset,
-                    tradeType: selectedTradeType,
-                    optionType: selectedOptionType,
-                    side: selectedSide,
-                    expiration,
-                    sizeOrder,
-                    premiumOrder,
-                    page,
-                    exchange: selectedExchange,
-                    minStrike: strikeMin || '',
-                    maxStrike: strikeMax || '',
-                    maker: selectedMaker,
-                    ivMin: ivMin || '',
-                    ivMax: ivMax || '',
-                    dteMin: dteMin || '',
-                    dteMax: dteMax || '',
-                    pageSize,
-                    markPrice: selectedMarkPrice || '',  // Добавляем параметр markPrice, если нужно
-                };
-
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block/flow/trades`, {
-                    params: params,
-                });
-
-                const { totalPages, groupedTrades } = response.data;
-
-                const tradesWithBlockId = groupedTrades.flatMap(group =>
-                    group.trades.map(trade => ({
-                        ...trade,
-                        blockTradeId: group.blockTradeId,  // Добавляем blockTradeId к каждой сделке
-                        markPrice: trade.markPrice || 'N/A', // Добавляем markPrice в каждую сделку
-                    }))
-                );
-
-                setTrades(tradesWithBlockId);
-                setTotalPages(totalPages || 1);
-
-            } catch (error) {
-                console.error('Error fetching metrics:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [
-        selectedAsset, selectedTradeType, selectedOptionType, selectedSide, expirations,
-        sizeOrder, premiumOrder, page, selectedExchange, selectedMaker, strikeMin, strikeMax,
-        ivMin, ivMax, dteMin, dteMax, pageSize, selectedMarkPrice  // Добавляем selectedMarkPrice в зависимости
-    ]);
-
-
 
     const handleResetFilters = () => {
         setSelectedAsset('ALL');

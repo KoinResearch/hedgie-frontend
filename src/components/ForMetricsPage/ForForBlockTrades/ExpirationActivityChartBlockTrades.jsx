@@ -4,70 +4,58 @@ import * as echarts from 'echarts';
 import './ExpirationActivityChartBlockTrades.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
+import { CACHE_TTL, optionsCache, strikeCache, useCachedApiCall } from "../../../utils/cacheService.js";
 
 
 const ExpirationActivityChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
     const [strike, setStrike] = useState('all');
-    const [data, setData] = useState({ calls: [], puts: [] });
-    const [strikes, setStrikes] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
     const [timeRange, setTimeRange] = useState('24h');
 
-    // Получение доступных страйков при изменении актива
-    useEffect(() => {
-        const fetchStrikes = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/strikes/${asset.toLowerCase()}`);
-                setStrikes(response.data);
-            } catch (err) {
-                console.error('Error fetching strikes:', err);
-                setError(err.message);
-            }
-        };
+    // Запрос на получение списка strikes (кешируем на длительное время)
+    const {
+        data: strikesData,
+        loading: strikesLoading,
+        error: strikesError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/strikes/${asset.toLowerCase()}`,
+        null,
+        strikeCache,
+        CACHE_TTL.LONG // Кешируем на 15 минут
+    );
 
-        fetchStrikes();
-    }, [asset]);
+    // Безопасно преобразуем данные strikes
+    const strikes = Array.isArray(strikesData) ? strikesData : [];
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                let url = `${import.meta.env.VITE_API_URL}/api/block-trades/expiration-activity/${asset.toLowerCase()}`;
-                if (strike && strike !== 'all') {
-                    url += `/${strike}`;
-                }
+    // Формируем URL для activity данных
+    const activityUrl = `${import.meta.env.VITE_API_URL}/api/block-trades/expiration-activity/${asset.toLowerCase()}${strike !== 'all' ? `/${strike}` : ''}`;
 
-                const response = await axios.get(url, {
-                    params: {
-                        timeRange
-                    }
-                });
+    // Запрос на получение данных активности
+    const {
+        data: activityData,
+        loading: activityLoading,
+        error: activityError
+    } = useCachedApiCall(
+        activityUrl,
+        { timeRange, exchange },
+        optionsCache,
+        CACHE_TTL.MEDIUM // Кешируем на 5 минут
+    );
 
-                const groupedData = {
-                    calls: response.data.filter(item => item.option_type === 'call'),
-                    puts: response.data.filter(item => item.option_type === 'put')
-                };
+    // Безопасно преобразуем и группируем данные активности
+    const data = {
+        calls: Array.isArray(activityData) ? activityData.filter(item => item.option_type === 'call') : [],
+        puts: Array.isArray(activityData) ? activityData.filter(item => item.option_type === 'put') : []
+    };
 
-                console.log('Data from API:', groupedData);
+    // Определяем общее состояние загрузки и ошибки
+    const loading = strikesLoading || activityLoading;
+    const error = strikesError || activityError;
 
-                setData(groupedData);
-            } catch (err) {
-                console.error('Error fetching expiration activity data:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [asset, strike, timeRange]);
-
+    // Генерация графика
     useEffect(() => {
         if (data && data.calls.length > 0 && data.puts.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);

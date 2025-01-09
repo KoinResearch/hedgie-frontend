@@ -4,38 +4,28 @@ import * as echarts from 'echarts';
 import './TopTradesByVolumeBlockTrades.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
+import {CACHE_TTL, optionsCache, useCachedApiCall} from "../../../utils/cacheService.js"; // Добавить импорт
 
 const TopTradesByVolumeBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
-    const [volumes, setVolumes] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
     const [timeRange, setTimeRange] = useState('24h');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
 
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/option-volumes/${asset.toLowerCase()}`, {
-                    params: { timeRange }
-                });
-                setVolumes(response.data);
-            } catch (error) {
-                console.error('Error fetching option volumes data:', error);
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Используем кешированный API-запрос
+    const { data, loading, error } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/block-trades/option-volumes/${asset.toLowerCase()}`,
+        { timeRange, exchange },
+        optionsCache,
+        CACHE_TTL.MEDIUM
+    );
 
-        fetchData();
-    }, [asset, timeRange]);
+    // Безопасно преобразуем данные в volumes
+    const volumes = Array.isArray(data) ? data : [];
 
+    // Генерация графика
     useEffect(() => {
         if (volumes.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);

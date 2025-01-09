@@ -5,54 +5,48 @@ import './VolumeByOptionKindChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
+import { CACHE_TTL, optionsCache, expirationCache, useCachedApiCall } from "../../../utils/cacheService";
 
 
 const VolumeByOptionKindChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
     const [expiration, setExpiration] = useState('All Expirations');
-    const [data, setData] = useState({ Calls: 0, Puts: 0 });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [expirations, setExpirations] = useState([]);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
 
-    useEffect(() => {
-        const fetchExpirations = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
-                setExpirations(['All Expirations', ...response.data]);
-            } catch (err) {
-                console.error('Error fetching expirations:', err);
-                setError(err.message);
-            }
-        };
-        fetchExpirations();
-    }, [asset]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const expirationParam = expiration === 'All Expirations' ? 'all' : expiration;
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/volume/open-interest/${asset.toLowerCase()}/${expirationParam}`,
-                    { params: { exchange } }
-                );
-                setData(response.data);
-            } catch (err) {
-                console.error('Error fetching open interest data:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Запрос списка expirations с длительным кешем
+    const {
+        data: expirationsData,
+        loading: expirationsLoading,
+        error: expirationsError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`,
+        null,
+        expirationCache,
+        CACHE_TTL.LONG
+    );
 
-        fetchData();
-    }, [asset, exchange, expiration]);
+    const expirations = ['All Expirations', ...(Array.isArray(expirationsData) ? expirationsData : [])];
 
+    // Запрос данных открытого интереса с коротким кешем
+    const {
+        data: interestData,
+        loading: dataLoading,
+        error: dataError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/volume/open-interest/${asset.toLowerCase()}/${expiration === 'All Expirations' ? 'all' : expiration}`,
+        { exchange },
+        optionsCache,
+        CACHE_TTL.SHORT
+    );
+
+    const data = interestData || { Calls: 0, Puts: 0 };
+    const loading = expirationsLoading || dataLoading;
+    const error = expirationsError || dataError;
+
+    // Генерация графика
     useEffect(() => {
         if (!loading && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);

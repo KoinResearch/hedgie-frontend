@@ -8,6 +8,7 @@ import {
     Legend,
 } from 'chart.js';
 import './FlowFilters.css';
+import { CACHE_TTL, optionsCache, expirationCache, useCachedApiCall } from "../../utils/cacheService";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -16,70 +17,51 @@ const FlowFilters = () => {
     const [tradeType, setTradeType] = useState('Buy/Sell');
     const [optionType, setOptionType] = useState('Call/Put');
     const [expiration, setExpiration] = useState('All Expirations');
-    const [expirations, setExpirations] = useState([]);
-    const [trades, setTrades] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1); // Текущая страница
-    const [totalPages, setTotalPages] = useState(1); // Общее количество страниц
-
-    const [putCallRatio, setPutCallRatio] = useState(0);
-    const [totalPuts, setTotalPuts] = useState(0);
-    const [totalCalls, setTotalCalls] = useState(0);
-    const [putsPercentage, setPutsPercentage] = useState(0);
-    const [callsPercentage, setCallsPercentage] = useState(0);
-
     const [sizeOrder, setSizeOrder] = useState('All Sizes');
     const [premiumOrder, setPremiumOrder] = useState('All Premiums');
 
-    // Загружаем даты экспирации
-    useEffect(() => {
-        const fetchExpirations = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`);
-                setExpirations(response.data);
-            } catch (error) {
-                console.error('Error fetching expiration dates:', error);
-            }
-        };
+    // Загрузка дат экспирации
+    const {
+        data: expirationsData
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/expirations/${asset.toLowerCase()}`,
+        null,
+        expirationCache,
+        CACHE_TTL.LONG
+    );
 
-        fetchExpirations();
-    }, [asset]);
+    const expirations = Array.isArray(expirationsData) ? expirationsData : [];
 
-    useEffect(() => {
-        const fetchMetrics = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/trades`, {
-                    params: {
-                        asset,
-                        tradeType,
-                        optionType,
-                        expiration,
-                        sizeOrder,
-                        premiumOrder,
-                        page,
-                    },
-                });
 
-                console.log('Response data:', response.data);
+    // Загрузка метрик и сделок
+    const {
+        data: metricsData,
+        loading: isLoading
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/trades`,
+        {
+            asset,
+            tradeType,
+            optionType,
+            expiration,
+            sizeOrder,
+            premiumOrder,
+            page,
+        },
+        optionsCache,
+        CACHE_TTL.SHORT
+    );
 
-                const { putCallRatio, totalPuts, totalCalls, putsPercentage, callsPercentage, totalPages, trades } = response.data;
-                setPutCallRatio(putCallRatio || 0);
-                setTotalPuts(totalPuts || 0);
-                setTotalCalls(totalCalls || 0);
-                setPutsPercentage(putsPercentage || 0);
-                setCallsPercentage(callsPercentage || 0);
-                setTotalPages(totalPages || 1);
-                setTrades(trades || []);
-            } catch (error) {
-                console.error('Error fetching metrics:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchMetrics();
-    }, [asset, tradeType, optionType, expiration, sizeOrder, premiumOrder, page]);
+    const {
+        putCallRatio = 0,
+        totalPuts = 0,
+        totalCalls = 0,
+        putsPercentage = 0,
+        callsPercentage = 0,
+        totalPages = 1,
+        trades = []
+    } = metricsData || {};
 
     const handleNextPage = () => {
         if (page < totalPages) {

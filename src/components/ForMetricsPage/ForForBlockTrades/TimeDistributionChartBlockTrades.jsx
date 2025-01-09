@@ -4,41 +4,28 @@ import * as echarts from 'echarts';
 import './TimeDistributionChartBlockTrades.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
+import { CACHE_TTL, optionsCache, useCachedApiCall } from "../../../utils/cacheService.js";
 
 const TimeDistributionChartBlockTrades = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
     const [timeRange, setTimeRange] = useState('24h');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/time-distribution/${asset.toLowerCase()}`, {
-                    params: {
-                        timeRange
-                    }
-                });
-                setData(response.data);
-            } catch (err) {
-                console.error('Error fetching time distribution data:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Используем кешированный API-запрос
+    const { data, loading, error } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/block-trades/time-distribution/${asset.toLowerCase()}`,
+        { timeRange, exchange },
+        optionsCache,
+        CACHE_TTL.SHORT // Используем короткий TTL (1 минута) для временных данных
+    );
 
-        fetchData();
-    }, [asset, timeRange]);
-
+    // Безопасно преобразуем данные
+    const distributionData = Array.isArray(data) ? data : [];
+    // Генерация графика
     useEffect(() => {
-        if (data.length === 0) {
+        if (distributionData.length === 0) {
             return;
         }
 
@@ -50,8 +37,8 @@ const TimeDistributionChartBlockTrades = () => {
 
             const hours = Array.from({ length: 24 }, (_, i) => `${(currentHour - i + 24) % 24}:00`).reverse();
 
-            const callCounts = data.map(hourData => hourData.calls.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
-            const putCounts = data.map(hourData => hourData.puts.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
+            const callCounts = distributionData.map(hourData => hourData.calls.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
+            const putCounts = distributionData.map(hourData => hourData.puts.reduce((acc, trade) => acc + parseInt(trade.trade_count), 0));
 
             const option = {
                 backgroundColor: '#151518',
@@ -130,7 +117,7 @@ const TimeDistributionChartBlockTrades = () => {
                 chartInstance.dispose();
             };
         }
-    }, [data]);
+    }, [distributionData]);
 
     const handleDownload = () => {
         if (chartInstanceRef.current) {

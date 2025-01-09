@@ -4,36 +4,29 @@ import * as echarts from 'echarts';
 import './TopTradedOptionsChart.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from "react-tooltip";
+import { CACHE_TTL, optionsCache, useCachedApiCall } from "../../../utils/cacheService";
 
 const TopTradedOptionsChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
     const [tradeType, setTradeType] = useState('simple');
-    const [trades, setTrades] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
+    const {
+        data,
+        loading,
+        error
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/volume/popular-options/${asset.toLowerCase()}`,
+        { type: tradeType },
+        optionsCache,
+        CACHE_TTL.SHORT
+    );
 
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/volume/popular-options/${asset.toLowerCase()}?type=${tradeType}`);
-                setTrades(response.data);
-            } catch (error) {
-                console.error('Error fetching option volume data:', error);
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const trades = Array.isArray(data) ? data : [];
 
-        fetchData();
-    }, [asset, tradeType]);
-
+    // Генерация графика
     useEffect(() => {
         if (trades.length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);

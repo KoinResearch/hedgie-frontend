@@ -6,56 +6,41 @@ import './HistoricalOpenInterestChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
+import { CACHE_TTL, optionsCache, useCachedApiCall } from "../../../utils/cacheService";
 
 
 const HistoricalOpenInterestChart = () => {
-    const [data, setData] = useState(null);
     const [exchange, setExchange] = useState('DER');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [asset, setAsset] = useState('BTC');
     const [period, setPeriod] = useState('1d');
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
 
+    const {
+        data,
+        loading,
+        error
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/historical-open-interest/${asset.toLowerCase()}/${period}`,
+        { exchange },
+        optionsCache,
+        CACHE_TTL.SHORT
+    );
+
+    // Безопасное сохранение данных
+    const chartData = Array.isArray(data) ? data : [];
+
+
+    // Генерация графика
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/historical-open-interest/${asset.toLowerCase()}/${period}`,
-                    {
-                        params: { exchange }
-                    }
-                );
-
-                if (response.data) {
-                    setData(response.data);
-                } else {
-                    console.warn('Нет доступных данных:', response.data);
-                    setData(null);
-                }
-            } catch (error) {
-                console.error('Ошибка при получении данных Historical Open Interest:', error);
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [asset, exchange, period]);
-
-    useEffect(() => {
-        if (data && chartRef.current) {
+        if (chartData && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
             chartInstanceRef.current = chartInstance;
 
             // Преобразуем данные для отображения на графике
-            const timestamps = data.map(entry => dayjs(entry.timestamp).format('YYYY-MM-DD HH:mm'));
-            const totalContracts = data.map(entry => Number(entry.total_contracts || 0).toFixed(2));
-            const avgIndexPrices = data.map(entry => Number(entry.avg_index_price || 0).toFixed(2));
+            const timestamps = chartData.map(entry => dayjs(entry.timestamp).format('YYYY-MM-DD HH:mm'));
+            const totalContracts = chartData.map(entry => Number(entry.total_contracts || 0).toFixed(2));
+            const avgIndexPrices = chartData.map(entry => Number(entry.avg_index_price || 0).toFixed(2));
 
             const option = {
                 backgroundColor: '#151518',
@@ -169,7 +154,7 @@ const HistoricalOpenInterestChart = () => {
                 chartInstance.dispose();
             };
         }
-    }, [data]);
+    }, [chartData]);
 
     const handleDownload = () => {
         if (chartInstanceRef.current) {

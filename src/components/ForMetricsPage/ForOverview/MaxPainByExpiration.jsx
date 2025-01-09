@@ -5,6 +5,7 @@ import './MaxPainByExpiration.css';
 import { ShieldAlert, Camera } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
+import {CACHE_TTL, metricsCache, useCachedApiCall} from "../../../utils/cacheService.js"; // Добавить импорт
 
 const convertToISODate = (dateStr) => {
     const year = `20${dateStr.slice(-2)}`;
@@ -29,11 +30,9 @@ const convertToISODate = (dateStr) => {
     const isoDate = `${year}-${month}-${day}`;
     return new Date(isoDate);
 };
-
 const calculateNotionalValue = (intrinsicValues) => {
     return Object.values(intrinsicValues).reduce((acc, val) => acc + val, 0);
 };
-
 const getOptimalAxisSettings = (values, steps) => {
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
@@ -48,34 +47,22 @@ const getOptimalAxisSettings = (values, steps) => {
 };
 
 const MaxPainByExpiration = () => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [asset, setAsset] = useState('BTC');
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/max-pain-data?currency=${asset.toLowerCase()}`);
-                if (response.data && response.data.maxPainByExpiration) {
-                    setData(response.data.maxPainByExpiration);
-                } else {
-                    console.warn('Нет доступных данных:', response.data);
-                    setData(null);
-                }
-                setLoading(false);
-            } catch (error) {
-                console.error('Ошибка при получении данных Max Pain:', error);
-                setError(error.message);
-                setLoading(false);
-            }
-        };
+    // Используем кешированный API-запрос
+    const { data: maxPainData, loading, error } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/max-pain-data`,
+        { currency: asset.toLowerCase() },
+        metricsCache,
+        CACHE_TTL.MEDIUM // Используем средний TTL (5 минут) для данных max pain
+    );
 
-        fetchData();
-    }, [asset]);
+    // Обработанные данные
+    const data = maxPainData?.maxPainByExpiration || null;
 
+    // Генерация графика
     useEffect(() => {
         if (data && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);

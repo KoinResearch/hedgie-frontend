@@ -4,47 +4,32 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import './KeyMetricsBlockTrades.css';
 import {useAuth} from "../../AuthContext.jsx";
+import {CACHE_TTL, metricsCache, useCachedApiCall} from "../../../utils/cacheService.js"; // Добавить импорт
 
 const KeyMetricsBlockTrades = () => {
     const { isAuthenticated } = useAuth(); // Добавить этот хук
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
-    const [metrics, setMetrics] = useState({
-        avg_price: 0,
-        total_nominal_volume: 0,
-        total_premium: 0,
-    });
-    const [loading, setLoading] = useState(true);
     const [loadingAI, setLoadingAI] = useState(true);
-    const [error, setError] = useState(null);
     const [errorAI, setErrorAI] = useState(null);
     const [timeRange, setTimeRange] = useState('24h');
     const [showAnalysis, setShowAnalysis] = useState(false);
     const [analysis, setAnalysis] = useState('');
 
-    useEffect(() => {
-        const fetchMetrics = async () => {
-            setLoading(true);
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/block-trades/key-metrics/${asset.toLowerCase()}`, {
-                    params: { timeRange }
-                });
-                const data = response.data;
+    // Используем кешированный API-запрос вместо обычного useEffect
+    const { data: metricsData, loading, error } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/block-trades/key-metrics/${asset.toLowerCase()}`,
+        { timeRange, exchange },
+        metricsCache,
+        CACHE_TTL.MEDIUM // Используем средний TTL (5 минут) для метрик
+    );
 
-                setMetrics({
-                    avg_price: Number(data.avg_price) || 0,
-                    total_nominal_volume: Number(data.total_nominal_volume) || 0,
-                    total_premium: Number(data.total_premium) || 0,
-                });
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-        fetchMetrics();
-    }, [asset, timeRange]);
-
+    // Используем данные из кеша или значения по умолчанию
+    const metrics = metricsData || {
+        avg_price: 0,
+        total_nominal_volume: 0,
+        total_premium: 0,
+    };
     const getAIAnalysis = async () => {
         setLoadingAI(true);
         setErrorAI(null);

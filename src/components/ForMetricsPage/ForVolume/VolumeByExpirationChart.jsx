@@ -5,53 +5,46 @@ import './VolumeByExpirationChart.css';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import { ShieldAlert, Camera } from 'lucide-react';
+import { CACHE_TTL, optionsCache, strikeCache, useCachedApiCall } from "../../../utils/cacheService";
 
 const VolumeByExpirationChart = () => {
     const [asset, setAsset] = useState('BTC');
     const [exchange, setExchange] = useState('DER');
     const [strike, setStrike] = useState('All Strikes');
-    const [data, setData] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [strikes, setStrikes] = useState([]);
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
 
-    useEffect(() => {
-        const fetchStrikes = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/strikes/${asset.toLowerCase()}`);
-                setStrikes(['All Strikes', ...response.data]);
-            } catch (err) {
-                console.error('Error fetching strikes:', err);
-                setError(err.message);
-            }
-        };
-        fetchStrikes();
-    }, [asset]);
+    // Запрос списка strikes
+    const {
+        data: strikesData,
+        loading: strikesLoading,
+        error: strikesError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/strikes/${asset.toLowerCase()}`,
+        null,
+        strikeCache,
+        CACHE_TTL.LONG
+    );
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const strikeParam = strike === 'All Strikes' ? 'all' : strike;
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/volume/open-interest-by-expiration/${asset.toLowerCase()}/${strikeParam}`,
-                    { params: { exchange } }
-                );
-                setData(response.data);
-            } catch (err) {
-                console.error('Error fetching open interest data:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const strikes = ['All Strikes', ...(Array.isArray(strikesData) ? strikesData : [])];
 
-        fetchData();
-    }, [asset, exchange, strike]);
+    // Запрос данных open interest
+    const {
+        data: openInterestData,
+        loading: dataLoading,
+        error: dataError
+    } = useCachedApiCall(
+        `${import.meta.env.VITE_API_URL}/api/volume/open-interest-by-expiration/${asset.toLowerCase()}/${strike === 'All Strikes' ? 'all' : strike}`,
+        { exchange },
+        optionsCache,
+        CACHE_TTL.SHORT
+    );
 
+    const data = openInterestData || {};
+    const loading = strikesLoading || dataLoading;
+    const error = strikesError || dataError;
+
+    // Генерация графика
     useEffect(() => {
         if (Object.keys(data).length > 0 && chartRef.current) {
             const chartInstance = echarts.init(chartRef.current);
