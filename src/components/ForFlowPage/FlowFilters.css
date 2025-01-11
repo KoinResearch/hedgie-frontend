@@ -1,0 +1,35 @@
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 30px; /* Место для стрелки */
+}
+
+.custom-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Для Firefox */
+.select-wrapper select::-ms-expand {
+    display: none;
+}
+
+/* Для IE */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .select-wrapper select::-ms-expand {
+        display: none;
+    }
+    .select-wrapper select {
+        padding-right: 30px;
+    }
+}

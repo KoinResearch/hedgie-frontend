@@ -124,40 +124,93 @@ const FlowFilters = () => {
         <div className="flow-main-container">
             {/* Фильтры */}
             <div className="flow-filters">
-                <select value={asset} onChange={(e) => setAsset(e.target.value)}>
-                    <option value="BTC">BTC</option>
-                    <option value="ETH">ETH</option>
-                </select>
-                <select value={tradeType} onChange={(e) => setTradeType(e.target.value)}>
-                    <option value="Buy/Sell">Buy/Sell</option>
-                    <option value="Buy">Buy</option>
-                    <option value="Sell">Sell</option>
-                </select>
-                <select value={optionType} onChange={(e) => setOptionType(e.target.value)}>
-                    <option value="Call/Put">Call/Put</option>
-                    <option value="Call">Call</option>
-                    <option value="Put">Put</option>
-                </select>
-                <select value={expiration} onChange={(e) => setExpiration(e.target.value)}>
-                    <option value="All Expirations">All Expirations</option>
-                    {expirations.map((exp) => (
-                        <option key={exp} value={exp}>{exp}</option>
-                    ))}
-                </select>
-                <select value={sizeOrder} onChange={(e) => setSizeOrder(e.target.value)}>
-                    <option value="All Sizes">All Sizes</option>
-                    <option value="higher to lower">Higher to Lower</option>
-                    <option value="lesser to greater">Lesser to Greater</option>
-                    <option value="low">Low</option>
-                    <option value="high">High</option>
-                </select>
-                <select value={premiumOrder} onChange={(e) => setPremiumOrder(e.target.value)}>
-                    <option value="All Premiums">All Premiums</option>
-                    <option value="higher to lower">Higher to Lower</option>
-                    <option value="lesser to greater">Lesser to Greater</option>
-                    <option value="low">Low</option>
-                    <option value="high">High</option>
-                </select>
+                <div className="select-wrapper">
+                    <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                        <option value="BTC">BTC</option>
+                        <option value="ETH">ETH</option>
+                    </select>
+                    <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                  strokeLinejoin="round"/>
+        </svg>
+    </span>
+                </div>
+
+                <div className="select-wrapper">
+                    <select value={tradeType} onChange={(e) => setTradeType(e.target.value)}>
+                        <option value="Buy/Sell">Buy/Sell</option>
+                        <option value="Buy">Buy</option>
+                        <option value="Sell">Sell</option>
+                    </select>
+                    <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                  strokeLinejoin="round"/>
+        </svg>
+    </span>
+                </div>
+
+                <div className="select-wrapper">
+                    <select value={optionType} onChange={(e) => setOptionType(e.target.value)}>
+                        <option value="Call/Put">Call/Put</option>
+                        <option value="Call">Call</option>
+                        <option value="Put">Put</option>
+                    </select>
+                    <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                  strokeLinejoin="round"/>
+        </svg>
+    </span>
+                </div>
+
+                <div className="select-wrapper">
+                    <select value={expiration} onChange={(e) => setExpiration(e.target.value)}>
+                        <option value="All Expirations">All Expirations</option>
+                        {expirations.map((exp) => (
+                            <option key={exp} value={exp}>{exp}</option>
+                        ))}
+                    </select>
+                    <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                  strokeLinejoin="round"/>
+        </svg>
+    </span>
+                </div>
+
+                <div className="select-wrapper">
+                    <select value={sizeOrder} onChange={(e) => setSizeOrder(e.target.value)}>
+                        <option value="All Sizes">All Sizes</option>
+                        <option value="higher to lower">Higher to Lower</option>
+                        <option value="lesser to greater">Lesser to Greater</option>
+                        <option value="low">Low</option>
+                        <option value="high">High</option>
+                    </select>
+                    <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                  strokeLinejoin="round"/>
+        </svg>
+    </span>
+                </div>
+
+                <div className="select-wrapper">
+                    <select value={premiumOrder} onChange={(e) => setPremiumOrder(e.target.value)}>
+                        <option value="All Premiums">All Premiums</option>
+                        <option value="higher to lower">Higher to Lower</option>
+                        <option value="lesser to greater">Lesser to Greater</option>
+                        <option value="low">Low</option>
+                        <option value="high">High</option>
+                    </select>
+                    <span className="custom-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1.5L6 6.5L11 1.5" stroke="#667085" strokeWidth="1.66667" strokeLinecap="round"
+                  strokeLinejoin="round"/>
+        </svg>
+    </span>
+                </div>
                 <button onClick={handlePreviousPage} disabled={page === 1}>
                     Previous
                 </button>
@@ -198,10 +251,10 @@ const FlowFilters = () => {
                         <span className="metric-label">Total Puts</span>
                         <span className="metric-value">
                 {typeof totalPuts === 'string' && !isNaN(parseFloat(totalPuts)) ?
-                    parseFloat(totalPuts).toLocaleString(undefined, { minimumFractionDigits: 0 }) : '0'}
+                    parseFloat(totalPuts).toLocaleString(undefined, {minimumFractionDigits: 0}) : '0'}
             </span>
                     </div>
-                    <Doughnut data={totalPutsData} options={options} />
+                    <Doughnut data={totalPutsData} options={options}/>
                 </div>
             </div>
 

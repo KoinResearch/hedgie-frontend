@@ -85,3 +85,183 @@ select:hover {
     background-color: #f9f9f9;
   }
 }
+
+
+
+/*============================== cross-browser css ===================================*/
+
+:root {
+  /* Расширенный список системных шрифтов для лучшей совместимости */
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  -webkit-place-items: center;
+  -ms-place-items: center;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #242424;
+  /* Предотвращение горизонтального скролла на мобильных устройствах */
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+button {
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  -webkit-transition: all 0.25s ease;
+  -moz-transition: all 0.25s ease;
+  -ms-transition: all 0.25s ease;
+  -o-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  /* Предотвращение выделения текста */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Убираем стандартные стили на мобильных */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+button:hover {
+  border-color: #646cff;
+  background-color: white;
+  color: black;
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+  /* Добавляем кастомный outline для доступности */
+  -webkit-box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.4);
+  -moz-box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.4);
+}
+
+select {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: #0E0E11;
+  color: #ABAFB8;
+  border: 1px solid #393E47;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  -webkit-transition: border-color 0.25s;
+  -moz-transition: border-color 0.25s;
+  -ms-transition: border-color 0.25s;
+  -o-transition: border-color 0.25s;
+  transition: border-color 0.25s;
+  /* Убираем стандартные стили */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+}
+
+select:hover {
+  border-color: white;
+}
+
+/* Поддержка Firefox */
+@-moz-document url-prefix() {
+  select {
+    text-indent: 0.01px;
+    text-overflow: '';
+    padding-right: 30px;
+  }
+}
+
+/* Поддержка IE */
+select::-ms-expand {
+  display: none;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* Поддержка мобильных устройств */
+@media (max-width: 768px) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+
+  button {
+    padding: 0.8em 1.6em; /* Увеличиваем область нажатия для мобильных */
+  }
+
+  select {
+    font-size: 16px; /* Предотвращаем зум на iOS при фокусе */
+  }
+}
+
+/* Поддержка сенсорных устройств */
+@media (hover: hover) {
+  button:hover {
+    border-color: #646cff;
+    background-color: white;
+    color: black;
+  }
+}
+
+/* Поддержка высокого DPI */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  :root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
