@@ -219,8 +219,40 @@ const VolumeByExpirationChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="interestCamera" html={true}/>
-                    <ShieldAlert className="icon" id="interestInfo"
-                                 data-tooltip-html="The amount of option contracts traded in<br> the last 24h sorted by expiration date"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="interestInfo"
+                        data-tooltip-html={`
+        <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Open Interest By Expiration (24h)</b> shows distribution</br> of options trading activity from the last 24 hours across</br> different expiration dates, including both volume and value.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                Chart components:
+                <div style="margin-top: 5px;">• Bars show Out of The Money (OTM) contracts</div>
+                <div>• Red bars - Put OTM contracts traded in last 24h</div>
+                <div>• Green bars - Call OTM contracts traded in last 24h</div>
+                <div>• Dotted lines show 24h market value in USD</div>
+                <div style="margin-bottom: 5px;">• Yellow dots show total 24h notional value</div>
+            </div>
+
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                Value metrics (24h period):
+                <div style="margin-top: 5px;">• Left axis - Number of contracts traded</div>
+                <div>• Right axis - Current market value in USD</div>
+                <div style="margin-bottom: 5px;">• Hover for detailed values per expiration</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Applications:</b>
+                <div style="margin-top: 5px;">• Monitor daily options flow by expiration</div>
+                <div>• Track 24h Put/Call distribution trends</div>
+                <div style="margin-bottom: 5px;">• Analyze daily market positioning changes</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="interestInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

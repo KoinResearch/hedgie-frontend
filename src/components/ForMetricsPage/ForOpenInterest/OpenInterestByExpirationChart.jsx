@@ -265,8 +265,34 @@ const OpenInterestByExpirationChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="interestCamera" html={true}/>
-                    <ShieldAlert className="icon" id="interestInfo"
-                                 data-tooltip-html="The amount of option contracts and their dollar<br> equivalent held in active positions sorted<br> by expiration date."/>
+                    <ShieldAlert
+                        className="icon"
+                        id="interestInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Open Interest By Expiration</b> displays both the number</br> of contracts and their monetary value across different</br> expiration dates.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               How to read:
+               <div style="margin-top: 5px;">• Bar chart shows number of open contracts (left axis)</div>
+               <div>• Red bars - Put options OTM (Out of The Money)</div>
+               <div>• Green bars - Call options OTM (Out of The Money)</div>
+               <div>• Red dotted line - Put options market value</div>
+               <div>• Green dotted line - Call options market value</div>
+               <div style="margin-bottom: 5px;">• Yellow dots - Total notional value (right axis)</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Insights:</b>
+               <div style="margin-top: 5px;">• Shows concentration of market exposure by date</div>
+               <div>• Helps identify significant option expiration dates</div>
+               <div style="margin-bottom: 5px;">• Reveals potential market pressure points</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="interestInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

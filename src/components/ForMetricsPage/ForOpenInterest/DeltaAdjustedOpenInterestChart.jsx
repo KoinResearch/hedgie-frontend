@@ -213,8 +213,39 @@ const DeltaAdjustedOpenInterestChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="deltaCamera" html={true}/>
-                    <ShieldAlert className="icon" id="deltaInfo"
-                                 data-tooltip-html="The amount of option contracts in active positions<br> multiplied by their delta value. Delta-adjusted<br> open interest can tell us the amount of the underlying asset<br> option writers need to buy or sell in order to remain<br> delta neutral"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="deltaInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Delta-Adjusted Open Interest</b> shows the potential</br> market impact of options positions when dealers need</br> to maintain delta neutrality.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               How to read:
+               <div style="margin-top: 5px;">• Green bars - Call options (positive delta exposure)</div>
+               <div>• Red bars - Put options (negative delta exposure)</div>
+               <div>• Bar height - Number of contracts × Delta value</div>
+               <div style="margin-bottom: 5px;">• X-axis shows strike prices in ascending order</div>
+           </div>
+
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Key concepts:
+               <div style="margin-top: 5px;">• Delta measures option's sensitivity to price changes</div>
+               <div>• Positive values indicate potential buying pressure</div>
+               <div style="margin-bottom: 5px;">• Negative values indicate potential selling pressure</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Applications:</b>
+               <div style="margin-top: 5px;">• Reveals potential dealer hedging flows</div>
+               <div>• Shows market maker positioning pressure</div>
+               <div style="margin-bottom: 5px;">• Helps predict price movement catalysts</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="deltaInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

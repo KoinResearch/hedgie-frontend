@@ -182,8 +182,32 @@ const OpenInterestChart = () => {
                     <h2>🦾 Open Interest By Option Kind</h2>
                     <Camera className="icon" id="OpenCamera" onClick={handleDownload} data-tooltip-html="Export image"/>
                     <Tooltip anchorId="OpenCamera" html={true}/>
-                    <ShieldAlert className="icon" id="openInfo"
-                                 data-tooltip-html="The amount of option contracts held<br> in active positions by type"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="openInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Open Interest By Option Type</b> shows the total number</br> of outstanding option contracts that are currently</br> held by traders.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               How to read:
+               <div style="margin-top: 5px;">• Green bar shows total open Call option positions</div>
+               <div>• Red bar shows total open Put option positions</div>
+               <div>• Length represents number of active contracts</div>
+               <div style="margin-bottom: 5px;">• Each contract represents underlying asset quantity</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Insights:</b>
+               <div style="margin-top: 5px;">• Higher open interest indicates more market liquidity</div>
+               <div>• Call/Put ratio shows market directional bias</div>
+               <div style="margin-bottom: 5px;">• Useful for gauging market participation levels</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="openInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

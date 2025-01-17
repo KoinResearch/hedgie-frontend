@@ -248,8 +248,41 @@ const OpenInterestByStrikeChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="strikeCamera" html={true}/>
-                    <ShieldAlert className="icon" id="strikeInfo"
-                                 data-tooltip-html="The amount of option contracts and their dollar<br> equivalent held in active positions sorted by<br> strike price. The max pain price represents the strike<br> price where most options will expire worthless.<br> More info on this can be found"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="strikeInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Open Interest By Strike Price</b> visualizes distribution</br> of options positions and their value across different</br> strike prices.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               How to read:
+               <div style="margin-top: 5px;">• Bar chart shows number of open contracts (left axis)</div>
+               <div>• Red bars - Put options contracts</div>
+               <div>• Green bars - Call options contracts</div>
+               <div>• Red dotted line - Put options market value</div>
+               <div>• Green dotted line - Call options market value</div>
+               <div style="margin-bottom: 5px;">• Vertical scale shows contracts (left) and USD value (right)</div>
+           </div>
+
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Market insights:
+               <div style="margin-top: 5px;">• Clustering of contracts shows key price levels</div>
+               <div>• Higher bars indicate stronger support/resistance</div>
+               <div style="margin-bottom: 5px;">• Put/Call balance shows market sentiment at each strike</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Applications:</b>
+               <div style="margin-top: 5px;">• Identifies potential price barriers</div>
+               <div>• Shows strikes with highest market exposure</div>
+               <div style="margin-bottom: 5px;">• Helps understand options market structure</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="strikeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

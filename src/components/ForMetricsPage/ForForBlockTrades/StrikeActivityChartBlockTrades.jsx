@@ -225,8 +225,32 @@ const StrikeActivityChartBlockTrades = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraStr" html={true}/>
-                    <ShieldAlert className="icon" id="strikeInfo"
-                                 data-tooltip-html="The amount of option contracts<br> sorted by strike price"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="strikeInfo"
+                        data-tooltip-html={`
+        <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Volume By Strike Price</b> visualizes the distribution of option</br> trading activity across different strike prices, separated</br> into Calls and Puts.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                How to read:
+                <div style="margin-top: 5px;">• X-axis shows strike prices in ascending order</div>
+                <div>• Green bars represent Call option activity</div>
+                <div>• Red bars represent Put option activity</div>
+                <div style="margin-bottom: 5px;">• Bar height shows number of trades at each strike</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Applications:</b>
+                <div style="margin-top: 5px;">• Identifies most active strike prices</div>
+                <div>• Shows market sentiment at different price levels</div>
+                <div style="margin-bottom: 5px;">• Helps spot potential support/resistance zones</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="strikeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

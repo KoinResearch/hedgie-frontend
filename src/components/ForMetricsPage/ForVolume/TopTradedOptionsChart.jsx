@@ -138,8 +138,39 @@ const TopTradedOptionsChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraVol" html={true}/>
-                    <ShieldAlert className="icon" id="optionChartInfo"
-                                 data-tooltip-html="The top traded options in the last 24h"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="optionChartInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Top Traded Options (24h)</b> ranks the most actively</br> traded option contracts over the last 24 hours, with the</br> ability to filter by trade type.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Chart details:
+               <div style="margin-top: 5px;">• Blue bars show number of trades per contract</div>
+               <div>• X-axis format: DDMMYY-STRIKE-TYPE (P/C)</div>
+               <div>• Y-axis shows trade count</div>
+               <div style="margin-bottom: 5px;">• Sorted by highest to lowest trade volume</div>
+           </div>
+
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Trade type filters:
+               <div style="margin-top: 5px;">• Simple Trades: Regular market transactions</div>
+               <div>• Block Trades: Large institutional trades</div>
+               <div style="margin-bottom: 5px;">• Select filter in top menu to switch view</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Applications:</b>
+               <div style="margin-top: 5px;">• Identify most liquid options</div>
+               <div>• Track institutional activity via block trades</div>
+               <div style="margin-bottom: 5px;">• Monitor market focus on specific strikes</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="optionChartInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={tradeType} onChange={(e) => setTradeType(e.target.value)}>

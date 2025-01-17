@@ -225,8 +225,39 @@ const HistoricalOpenInterestChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="historyCamera" html={true}/>
-                    <ShieldAlert className="icon" id="historyInfo"
-                                 data-tooltip-html="Number of option contracts sold,<br> sorted by different periods"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="historyInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Historical Open Interest Chart</b> shows the evolution</br> of total open contracts over time in relation to the</br> underlying asset price.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               How to read:
+               <div style="margin-top: 5px;">• Red line - Total number of open contracts (left axis)</div>
+               <div>• Green line - Price of the underlying asset (right axis)</div>
+               <div>• X-axis shows time periods (selectable timeframes)</div>
+               <div style="margin-bottom: 5px;">• Area shows the relationship between price and interest</div>
+           </div>
+
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Time periods available:
+               <div style="margin-top: 5px;">• 1d: Last 24 hours data</div>
+               <div>• 7d: Weekly trend analysis</div>
+               <div style="margin-bottom: 5px;">• 1m: Monthly historical view</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Applications:</b>
+               <div style="margin-top: 5px;">• Track changes in market participation</div>
+               <div>• Identify trends in options activity</div>
+               <div style="margin-bottom: 5px;">• Compare price movement with options interest</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="historyInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

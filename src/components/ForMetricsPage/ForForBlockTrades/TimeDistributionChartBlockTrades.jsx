@@ -189,8 +189,39 @@ const TimeDistributionChartBlockTrades = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="camerDis" html={true}/>
-                    <ShieldAlert className="icon" id="timeInfo"
-                                 data-tooltip-html="The amount of option contracts sold,<br>sorted by hour range"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="timeInfo"
+                        data-tooltip-html={`
+        <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Historical Volume (24h)</b> shows the hourly distribution</br> of options trading activity. Data can be aggregated from:</br> past 24 hours, last week, or last month.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                How to read:
+                <div style="margin-top: 5px;">• X-axis shows daily 24-hour cycle in hourly intervals</div>
+                <div>• Green bars represent Call option trades</div>
+                <div>• Red bars represent Put option trades</div>
+                <div style="margin-bottom: 5px;">• Bar height shows average number of contracts per hour</div>
+            </div>
+
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                Time range options:
+                <div style="margin-top: 5px;">• Past 24h: Shows raw hourly data</div>
+                <div>• Last Week: Shows average hourly pattern over 7 days</div>
+                <div style="margin-bottom: 5px;">• Last Month: Shows average hourly pattern over 30 days</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Insights:</b>
+                <div style="margin-top: 5px;">• Identifies consistent peak trading hours</div>
+                <div>• Shows reliable intraday patterns</div>
+                <div style="margin-bottom: 5px;">• Helps optimize trade execution timing</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="timeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

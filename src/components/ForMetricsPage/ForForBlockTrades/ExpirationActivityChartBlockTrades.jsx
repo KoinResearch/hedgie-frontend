@@ -231,8 +231,32 @@ const ExpirationActivityChartBlockTrades = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraExp" html={true}/>
-                    <ShieldAlert className="icon" id="expInfo"
-                                 data-tooltip-html="The amount of option block trades<br> sorted by expiration date"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="expInfo"
+                        data-tooltip-html={`
+        <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Volume By Expiration</b> displays the distribution of option</br> trading activity across different expiration dates,</br> separated into Calls and Puts.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                How to read:
+                <div style="margin-top: 5px;">• X-axis shows expiration dates chronologically</div>
+                <div>• Green bars show Call options trading volume</div>
+                <div>• Red bars show Put options trading volume</div>
+                <div style="margin-bottom: 5px;">• Bar height represents number of contracts traded</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Applications:</b>
+                <div style="margin-top: 5px;">• Shows which expiration dates are most liquid</div>
+                <div>• Helps identify market's time-based expectations</div>
+                <div style="margin-bottom: 5px;">• Reveals temporal distribution of trading activity</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="expInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

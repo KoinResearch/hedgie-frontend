@@ -277,8 +277,32 @@ const MaxPainByExpiration = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraMaxPain" html={true}/>
-                    <ShieldAlert className="icon" id="maxPainData"
-                                 data-tooltip-html="The max pain price across all expiration"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="maxPainData"
+                        data-tooltip-html={`
+        <div style="  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+, monospace; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Max Pain</b> represents the price level where option holders</br> experience maximum collective losses while option</br> writers gain maximum profit.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                Key characteristics:
+                <div style="margin-top: 5px;">• Calculated for each expiration date</div>
+                <div>• Considers all open options (puts and calls)</div>
+                <div style="margin-bottom: 5px;">• Often acts as price magnet near expiration</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Applications:</b>
+                <div style="margin-top: 5px;">• Helps identify potential support/resistance levels</div>
+                <div>• Used to assess price movement towards expiration</div>
+                <div style="margin-bottom: 5px;">• Shows balance between option buyers and sellers</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="maxPainData" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

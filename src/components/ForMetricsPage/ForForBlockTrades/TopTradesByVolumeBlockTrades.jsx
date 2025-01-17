@@ -191,8 +191,31 @@ const TopTradesByVolumeBlockTrades = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraTop" html={true}/>
-                    <ShieldAlert className="icon" id="optionTopInfo"
-                                 data-tooltip-html="The top traded options by volume"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="optionTopInfo"
+                        data-tooltip-html={`
+        <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Top Options by Volume</b> shows the most actively traded</br> option contracts measured in USD value.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                How to read:
+                <div style="margin-top: 5px;">• Each bar represents trading volume for a specific contract</div>
+                <div>• Contract format: DDMMYY-STRIKE-TYPE (P/C)</div>
+                <div style="margin-bottom: 5px;">• Bar height shows total transaction value in USD</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Insights:</b>
+                <div style="margin-top: 5px;">• Large volume often indicates institutional activity</div>
+                <div>• Helps identify most significant price levels</div>
+                <div style="margin-bottom: 5px;">• Shows real market interest in specific strikes</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="optionTopInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

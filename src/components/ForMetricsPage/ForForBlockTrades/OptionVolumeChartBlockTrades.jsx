@@ -190,8 +190,31 @@ const OptionVolumeChartBlockTrades = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="cameraVol" html={true}/>
-                    <ShieldAlert className="icon" id="optionChartInfo"
-                                 data-tooltip-html="The top traded options by count"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="optionChartInfo"
+                        data-tooltip-html={`
+        <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Top Traded Options</b> shows the most actively traded options</br> contracts ranked by number of trades.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                How to read:
+                <div style="margin-top: 5px;">• Each bar represents a specific option contract</div>
+                <div>• Format: DDMMYY-STRIKE-TYPE (P for Put, C for Call)</div>
+                <div style="margin-bottom: 5px;">• Height shows number of trades executed</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Trading Insights:</b>
+                <div style="margin-top: 5px;">• High trade count indicates strong market interest</div>
+                <div>• Popular strikes often become key price levels</div>
+                <div style="margin-bottom: 5px;">• Helps identify most liquid option contracts</div>
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="optionChartInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

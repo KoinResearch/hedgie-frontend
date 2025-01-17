@@ -201,8 +201,41 @@ const VolumeByStrikePriceChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="strikeCamera" html={true}/>
-                    <ShieldAlert className="icon" id="strikeInfo"
-                                 data-tooltip-html="The amount of option contracts traded in<br> the last 24h sorted by strike price"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="strikeInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Open Interest By Strike Price (24h)</b> visualizes the</br> distribution of options trading activity from the last 24</br> hours across different strike prices.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Chart elements:
+               <div style="margin-top: 5px;">• Bar chart shows contracts traded in last 24h</div>
+               <div>• Red bars - Put options volume</div>
+               <div>• Green bars - Call options volume</div>
+               <div>• Red dotted line - Put options market value</div>
+               <div style="margin-bottom: 5px;">• Green dotted line - Call options market value</div>
+           </div>
+
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               Reading the axes:
+               <div style="margin-top: 5px;">• Left axis - Number of contracts (24h volume)</div>
+               <div>• Right axis - Market value in USD</div>
+               <div>• Bottom axis - Strike prices</div>
+               <div style="margin-bottom: 5px;">• Hover over bars for detailed values</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Insights:</b>
+               <div style="margin-top: 5px;">• Popular strike prices show market expectations</div>
+               <div>• Put/Call ratio per strike indicates local sentiment</div>
+               <div style="margin-bottom: 5px;">• Volume clusters suggest key price levels</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="strikeInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>

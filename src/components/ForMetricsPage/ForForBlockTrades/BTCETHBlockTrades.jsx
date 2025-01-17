@@ -194,8 +194,34 @@ const BTCETHBlockTrades = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="camera" html={true}/>
-                    <ShieldAlert className="icon" id="optionData"
-                                 data-tooltip-html="It provides information on Call<br> and Put block trades"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="optionData"
+                        data-tooltip-html={`
+        <div style="  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+, monospace; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                This chart shows the distribution of options trading activity for ${asset}:
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                <div style="margin-bottom: 5px;">• <b>Call Buys (${metrics.Call_Buys_Percent}%)</b>: Buying the right to purchase - bullish sentiment, expecting price increase</div>
+                <div style="margin-bottom: 5px;">• <b>Call Sells (${metrics.Call_Sells_Percent}%)</b>: Selling the right to purchase - neutral/bearish sentiment or premium collection</div>
+                <div style="margin-bottom: 5px;">• <b>Put Buys (${metrics.Put_Buys_Percent}%)</b>: Buying the right to sell - bearish sentiment or position hedging</div>
+                <div style="margin-bottom: 5px;">• <b>Put Sells (${metrics.Put_Sells_Percent}%)</b>: Selling the right to sell - neutral/bullish sentiment or premium collection</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                Volume ratio: Call (<b>${(Number(metrics.Call_Buys_Percent) + Number(metrics.Call_Sells_Percent)).toFixed(2)}%</b>) 
+                to Put (<b>${(Number(metrics.Put_Buys_Percent) + Number(metrics.Put_Sells_Percent)).toFixed(2)}%</b>)<br/>
+                ${(Number(metrics.Call_Buys_Percent) + Number(metrics.Call_Sells_Percent)).toFixed(2) >
+                        (Number(metrics.Put_Buys_Percent) + Number(metrics.Put_Sells_Percent)).toFixed(2)
+                            ? "Dominance of Call options indicates prevailing bullish sentiment and expectations of price increase."
+                            : "Dominance of Put options indicates prevailing bearish sentiment and expectations of price decrease."}
+            </div>
+        </div>
+    `}
+                    />
                     <Tooltip anchorId="optionData" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>

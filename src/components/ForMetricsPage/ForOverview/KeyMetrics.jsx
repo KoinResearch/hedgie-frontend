@@ -117,8 +117,31 @@ const KeyMetrics = () => {
                             <div className="error-container"><p>Error: {error}</p></div>
                         ) : (
                             <div className="metric-key-content">
-                                <p className="metric-label" id="avgPrice" data-tooltip-content="Average price of transactions">
-                                    <div className="metric-label-image">🤑</div>
+                                <p
+                                    className="metric-label"
+                                    id="avgPrice"
+                                    data-tooltip-html={`
+        <div style="  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;, monospace; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Average Transaction Price</b> shows the weighted average</br> cost of all trades during the selected period.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                This metric helps to:
+                <div style="margin-top: 5px;">• Identify most active price levels</div>
+                <div >• Reveal trading concentration zones</div>
+                <div style="margin-bottom: 5px;">• Understand overall price trend</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Market Insights:</b>
+                <div style="margin-top: 5px;">• Price above market: buyers dominate</div>
+                <div style="margin-bottom: 5px;">• Price below market: sellers dominate</div>
+            </div>
+        </div>
+    `}
+                                >
+                                <div className="metric-label-image">🤑</div>
                                     Average Price
                                 </p>
                                 <Tooltip anchorId="avgPrice" />
@@ -143,7 +166,32 @@ const KeyMetrics = () => {
                             <div className="error-container"><p>Error: {error}</p></div>
                         ) : (
                             <div className="metric-key-content">
-                                <p className="metric-label" id="totalVolume" data-tooltip-content="Notional volume">
+                                <p
+                                    className="metric-label"
+                                    id="totalVolume"
+                                    data-tooltip-html={`
+        <div style="  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+, monospace; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Total Trading Volume</b> represents the cumulative value of all</br> executed trades during the selected period.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                This metric helps to:
+                <div style="margin-top: 5px;">• Assess current market liquidity</div>
+                <div>• Determine trader activity levels</div>
+                <div style="margin-bottom: 5px;">• Identify periods of increased market interest</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Market Insights:</b>
+                <div style="margin-top: 5px;">• High volume often accompanies significant price movements</div>
+                <div>• Low volume may indicate consolidation periods</div>
+                <div style="margin-bottom: 5px;">• Sudden volume spikes can signal potential trend changes</div>
+            </div>
+        </div>
+    `}
+                                >
                                     <div className="metric-label-image">📊</div>
                                     Total Volume
                                 </p>
@@ -169,34 +217,61 @@ const KeyMetrics = () => {
                             <div className="error-container"><p>Error: {error}</p></div>
                         ) : (
                             <div className="metric-key-content">
-                                <p className="metric-label" id="totalPremium" data-tooltip-content="Premium paid">
-                                    <div className="metric-label-image">📈</div>
-                                    Total Premium
-                                </p>
-                                <Tooltip anchorId="totalPremium" />
-                                <p className="metric-value">
-                                    {Number(metrics.total_premium).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} $
-                                </p>
-                            </div>
-                        )}
-                    </div>
+                                <p
+                                    className="metric-label"
+                                    id="totalPremium"
+                                    data-tooltip-html={`
+        <div style="  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+, monospace; padding: 10px;">
+            <div style="margin-bottom: 10px;">
+                <b>Total Premium</b> represents the cumulative value of all option</br> premiums paid during the selected period.
+            </div>
+            
+            <div style="margin-left: 10px; margin-bottom: 10px;">
+                Premium is:
+                <div style="margin-top: 5px;">• The price paid by option buyers to sellers</div>
+                <div>• Payment for the right (not obligation) to buy/sell the asset</div>
+                <div style="margin-bottom: 5px;">• Income source for option sellers</div>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <b>Market Insights:</b>
+                <div style="margin-top: 5px;">• High premiums indicate increased volatility expectations</div>
+                <div>• Growing total premium shows rising interest in options trading</div>
+                <div style="margin-bottom: 5px;">• Premium size reflects market's volatility expectations</div>
+            </div>
+        </div>
+    `}
+                                >
+                                <div className="metric-label-image">📈</div>
+                                Total Premium
+                            </p>
+                            <Tooltip anchorId="totalPremium" />
+                            <p className="metric-value">
+                        {Number(metrics.total_premium).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})} $
+                    </p>
                 </div>
-                {showAnalysis && (
-                    <div className="analysis-modal" onClick={() => setShowAnalysis(false)}>
-                        <div className="analysis-container" onClick={e => e.stopPropagation()}>
-                            <h3 className="analysis-title">AI Analysis</h3>
-                            <button className="close-button" onClick={() => setShowAnalysis(false)}>×</button>
-                            {loadingAI ? (
-                                <div className="analysis-loading">Loading...</div>
-                            ) : errorAI ? (
-                                <div className="analysis-error">{errorAI}</div>
-                            ) : (
-                                <div className="analysis-content">{analysis}</div>
-                            )}
-                        </div>
-                    </div>
                 )}
             </div>
+        </div>
+{
+    showAnalysis && (
+        <div className="analysis-modal" onClick={() => setShowAnalysis(false)}>
+            <div className="analysis-container" onClick={e => e.stopPropagation()}>
+                <h3 className="analysis-title">AI Analysis</h3>
+                <button className="close-button" onClick={() => setShowAnalysis(false)}>×</button>
+                {loadingAI ? (
+                    <div className="analysis-loading">Loading...</div>
+                ) : errorAI ? (
+                    <div className="analysis-error">{errorAI}</div>
+                ) : (
+                    <div className="analysis-content">{analysis}</div>
+                )}
+            </div>
+        </div>
+    )
+}
+</div>
         </div>
     );
 };

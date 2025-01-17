@@ -143,8 +143,32 @@ const VolumeByOptionKindChart = () => {
                             onClick={handleDownload}
                             data-tooltip-html="Export image"/>
                     <Tooltip anchorId="OpenCamera" html={true}/>
-                    <ShieldAlert className="icon" id="openInfo"
-                                 data-tooltip-html="The amount of option contracts traded in<br> the last 24h by option type"/>
+                    <ShieldAlert
+                        className="icon"
+                        id="openInfo"
+                        data-tooltip-html={`
+       <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
+           <div style="margin-bottom: 10px;">
+               <b>Open Interest By Option Type</b> shows the distribution</br> of options activity between Calls and Puts over the last</br> 24 hours of trading.
+           </div>
+           
+           <div style="margin-left: 10px; margin-bottom: 10px;">
+               How to read:
+               <div style="margin-top: 5px;">• Green bar - Total Call option contracts</div>
+               <div>• Red bar - Total Put option contracts</div>
+               <div>• Bar length shows number of contracts</div>
+               <div style="margin-bottom: 5px;">• Compare Call vs Put volume to gauge market sentiment</div>
+           </div>
+
+           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+               <b>Trading Applications:</b>
+               <div style="margin-top: 5px;">• Higher Call volume suggests bullish sentiment</div>
+               <div>• Higher Put volume suggests bearish sentiment</div>
+               <div style="margin-bottom: 5px;">• Balance between Calls/Puts shows market conviction</div>
+           </div>
+       </div>
+   `}
+                    />
                     <Tooltip anchorId="openInfo" html={true}/>
                     <div className="asset-option-buttons">
                         <select value={asset} onChange={(e) => setAsset(e.target.value)}>
