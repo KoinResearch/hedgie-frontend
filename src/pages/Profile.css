@@ -182,3 +182,26 @@
         width: 100%;
     }
 }
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #4A5568;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.nav-link-profile {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link-profile:hover .user-avatar {
+    background-color: #2D3748;
+}

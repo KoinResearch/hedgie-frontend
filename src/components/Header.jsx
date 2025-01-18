@@ -9,6 +9,15 @@ const Header = () => {
     // Проверяем наличие токена для определения статуса аутентификации
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
 
+    const UserAvatar = ({ email }) => {
+        const firstLetter = email ? email[0].toUpperCase() : '?';
+        return (
+            <div className="user-avatar">
+                {firstLetter}
+            </div>
+        );
+    };
+
     return (
         <header className="header-navigation">
             <div className="header-container">
@@ -45,7 +54,7 @@ const Header = () => {
                         <NavLink
                             to="/profile"
                             className="nav-link-profile">
-                            Profile {userData.email ? `(${userData.email})` : ''}
+                            <UserAvatar email={userData.email} />
                         </NavLink>
                     ) : (
                         // Если пользователь не авторизован

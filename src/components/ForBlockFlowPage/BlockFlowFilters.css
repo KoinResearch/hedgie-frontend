@@ -352,3 +352,18 @@ pre {
     line-height: 1.6;
     font-size: 14px;
 }
+
+.block-analyze-button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.block-analyze-button:hover {
+    background-color: #45a049;
+}

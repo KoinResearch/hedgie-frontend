@@ -371,6 +371,7 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
         const [errorAI, setErrorAI] = useState(null);
         const [loadingAI, setLoadingAI] = useState(true);
         const [isLoading, setIsLoading] = useState(false);
+        const [showAnalysis, setShowAnalysis] = useState(false); // новое состояние
 
         const getAnalysis = async (trades) => {
             setLoadingAI(true);
@@ -388,11 +389,17 @@ const BlockFlowFilters = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
         };
 
-        useEffect(() => {
-            if (trades) {
-                getAnalysis(trades);
-            }
-        }, [trades]);
+        // useEffect(() => {
+        //     if (trades) {
+        //         getAnalysis(trades);
+        //     }
+        // }, [trades]);
+
+        // Добавляем функцию обработки нажатия кнопки
+        const handleAnalyzeClick = () => {
+            setShowAnalysis(true);
+            getAnalysis(trades);
+        };
 
         if (!trades || trades.length === 0) return null;
 
@@ -520,9 +527,19 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
                 </div>
                 {isAuthenticated && (
-                    <div className="analysis-container">
+                    <div className="analysis-container" onClick={(e) => e.stopPropagation()}>  {/* Добавляем stopPropagation здесь */}
                         <h3 className="analysis-title">AI Analysis</h3>
-                        {loadingAI ? (
+                        {!showAnalysis ? (
+                            <button
+                                className="block-analyze-button"
+                                onClick={(e) => {
+                                    e.stopPropagation();  // Останавливаем всплытие события
+                                    handleAnalyzeClick();
+                                }}
+                            >
+                                Analyze Trade
+                            </button>
+                        ) : loadingAI ? (
                             <div className="analysis-loading">Analyzing trade...</div>
                         ) : (
                             <div className="analysis-content">{analysis}</div>
