@@ -509,6 +509,17 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                     <div className="modal-close-title">
                         <h1>Trade Details</h1>
                         <button className="block-trades-copy" onClick={handleCopy}>Copy Data</button>
+                        {isAuthenticated && !showAnalysis && (
+                            <button
+                            className="block-trades-analize"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleAnalyzeClick();
+                            }}
+                        >
+                           AI Analyze
+                        </button>
+                        )}
                     </div>
                     <div className="flow-option-dedicated"></div>
                     <pre>{formatSize(trades)}</pre>
@@ -526,20 +537,10 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                     </p>
                     <p>Block Trade ID: {trades[0].blockTradeId}</p>
                 </div>
-                {isAuthenticated && (
-                    <div className="analysis-container" onClick={(e) => e.stopPropagation()}>  {/* Добавляем stopPropagation здесь */}
+                {isAuthenticated && showAnalysis && (
+                    <div className="analysis-container" onClick={(e) => e.stopPropagation()}>
                         <h3 className="analysis-title">AI Analysis</h3>
-                        {!showAnalysis ? (
-                            <button
-                                className="block-analyze-button"
-                                onClick={(e) => {
-                                    e.stopPropagation();  // Останавливаем всплытие события
-                                    handleAnalyzeClick();
-                                }}
-                            >
-                                Analyze Trade
-                            </button>
-                        ) : loadingAI ? (
+                        {loadingAI ? (
                             <div className="analysis-loading">Analyzing trade...</div>
                         ) : (
                             <div className="analysis-content">{analysis}</div>
@@ -829,7 +830,11 @@ Block Trade ID: ${trades[0]?.blockTradeId}
                 )}
             </div>
             {selectedTrade && (
-                <TradeModal trades={selectedTrade} onClose={() => setSelectedTrade(null)}/>
+                <TradeModal
+                    trades={selectedTrade}
+                    onClose={() => setSelectedTrade(null)}
+                    isAuthenticated={isAuthenticated}
+                />
             )}
             <div className="footer-button">
                 <button className="toggle-button" onClick={handlePreviousPage} disabled={page === 1}>

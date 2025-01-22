@@ -284,6 +284,15 @@ pre {
     background-color: whitesmoke;
     width: 120px;
     height: 40px;
+    margin-left: auto;
+}
+
+.block-trades-analize{
+    color: black;
+    background-color: whitesmoke;
+    width: 120px;
+    height: 40px;
+    margin-left: 10px;
 }
 
 .footer-button{
@@ -303,8 +312,6 @@ pre {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
     width: 100%;
 }
 
