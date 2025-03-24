@@ -54,7 +54,7 @@ const MaxPainByExpiration = () => {
     // Используем кешированный API-запрос
     const { data: maxPainData, loading, error } = useCachedApiCall(
         `${import.meta.env.VITE_API_URL}/api/max-pain-data`,
-        { currency: asset.toLowerCase() },
+        { currency: asset.toLowerCase(), forceUpdate: 'true' }, // Добавляем параметр forceUpdate
         metricsCache,
         CACHE_TTL.MEDIUM // Используем средний TTL (5 минут) для данных max pain
     );
