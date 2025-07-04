@@ -1,0 +1,132 @@
+.flow__metrics-desktop {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 40px;
+	padding: 20px;
+	background-color: rgba(21, 21, 24, 1);
+	border-radius: 12px;
+	border: 1px solid rgba(57, 62, 71, 1);
+	color: white;
+	margin-bottom: 20px;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
+.flow__metric {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	width: 220px;
+	padding: 20px;
+	border-radius: 12px;
+	text-align: center;
+	transition: transform 0.3s ease;
+}
+
+.flow__metric-data {
+	padding-top: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.flow__metric-label {
+	font-size: 16px;
+	font-family: 'Paloseco', sans-serif;
+	color: #c2c2c2;
+	font-weight: 500;
+}
+
+.flow__metric-value {
+	font-size: 24px;
+	font-weight: bold;
+	color: white;
+	font-family: 'JetBrains Mono', sans-serif;
+	margin-bottom: 10px;
+}
+
+.flow__dedicate {
+	width: 1px;
+	height: 80px;
+	background-color: #494949;
+	border-radius: 4px;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
+.flow__metrics-mobile canvas {
+	max-width: 36px !important;
+	max-height: 36px !important;
+}
+
+.flow__metrics-mobile {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	align-items: center;
+	background-color: rgba(21, 21, 24, 1);
+	border-radius: 12px;
+	border: 1px solid rgba(57, 62, 71, 1);
+	color: white;
+	margin-bottom: 20px;
+	padding: 0px 16px 18px 16px;
+
+	@media (min-width: 768px) {
+		display: none;
+	}
+}
+
+.flow__metric-mobile {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	border-radius: 12px;
+	text-align: left;
+	transition: transform 0.3s ease;
+	padding-top: 21.5px;
+}
+
+.flow__metric-data-mobile-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+}
+
+.flow__metric-data-mobile {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 8.5px;
+	border-bottom: 1px solid rgba(57, 62, 71, 1);
+}
+
+.flow__metric-mobile:last-child .flow__metric-data-mobile {
+	border-bottom: none;
+}
+
+.flow__metric-label-mobile {
+	font-family: JetBrains Mono;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 100%;
+	letter-spacing: 0%;
+}
+
+.flow__metric-value-mobile {
+	font-family: JetBrains Mono;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 100%;
+	letter-spacing: 0%;
+}

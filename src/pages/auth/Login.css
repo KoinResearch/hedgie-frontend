@@ -1,0 +1,164 @@
+.login {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	min-height: 100vh;
+	box-sizing: border-box;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	@media (max-width: 768px) {
+		align-items: center;
+		padding: 44px 16px 210px 16px;
+	}
+}
+
+.login__container {
+	width: 100%;
+	max-width: 400px;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	justify-content: center;
+
+	@media (max-width: 768px) {
+		justify-content: flex-start;
+	}
+}
+
+.login__logo {
+	height: 27px;
+	color: rgba(242, 242, 242, 1);
+	display: flex;
+	align-items: flex-start;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
+.login__title {
+	color: rgba(242, 242, 242, 1);
+	font-size: 36px;
+	font-weight: 600;
+	line-height: 44px;
+	letter-spacing: -0.02em;
+	text-align: left;
+	margin-top: 80px;
+	margin-bottom: 10px;
+
+	@media (max-width: 768px) {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+}
+
+.login__description {
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 24px;
+	text-align: left;
+	color: rgba(242, 242, 242, 1);
+	margin-bottom: 40px;
+
+	@media (max-width: 768px) {
+		margin-top: 10px;
+		margin-bottom: 59px;
+	}
+}
+
+.login__form {
+	display: flex;
+	flex-direction: column;
+}
+
+.login__forgot-container {
+	display: flex;
+	justify-content: flex-start;
+	margin-top: 15px;
+	margin-bottom: 15px;
+
+	@media (max-width: 768px) {
+		justify-content: center;
+		margin-top: 15.5px;
+		margin-bottom: 15.5px;
+	}
+}
+
+.login__forgot-link {
+	background: none;
+	border: none;
+	color: #0088ff;
+	font-size: 14px;
+	text-align: left;
+	padding: 0;
+	cursor: pointer;
+	transition: color 0.2s;
+
+	@media (max-width: 768px) {
+		text-align: center;
+		color: rgba(37, 113, 245, 1);
+		font-weight: 600;
+		font-size: 14px;
+		line-height: 100%;
+		letter-spacing: 0%;
+	}
+}
+
+.login__forgot-link:hover {
+	color: rgba(37, 113, 245, 1);
+}
+
+.login__submit-btn {
+	padding: 15px;
+	border-radius: 8px;
+	background-color: rgba(23, 71, 153, 1);
+	border: 2px solid rgba(37, 113, 245, 1);
+	color: white;
+	font-size: 16px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	@media (max-width: 768px) {
+		margin-top: 8px;
+	}
+}
+
+.login__social {
+	margin-top: 16px;
+	display: flex;
+	justify-content: center;
+}
+
+.login__footer {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 30px;
+	gap: 5px;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		margin-top: 59px;
+	}
+}
+
+.login__footer-text {
+	color: rgba(157, 166, 181, 1);
+}
+
+.login__signup-link {
+	background-color: transparent;
+	color: rgba(47, 109, 217, 1);
+	border: none;
+	cursor: pointer;
+	outline: none;
+	transition: color 0.2s;
+	padding-top: 15.5px;
+	padding-bottom: 15.5px;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 100%;
+	letter-spacing: 0%;
+}

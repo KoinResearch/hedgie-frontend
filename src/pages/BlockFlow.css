@@ -1,0 +1,35 @@
+.block-flow {
+	padding: 20px;
+	background-color: black;
+	color: #f2f2f2;
+	font-family: 'Paloseco', sans-serif;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding-bottom: 100px;
+
+	@media (max-width: 768px) {
+		padding: 12.5px;
+	}
+}
+
+.block-flow__title {
+	padding-left: 20px;
+	font-size: 30px;
+	margin-bottom: 10px;
+	color: #f2f2f2;
+
+	@media (max-width: 768px) {
+		padding: 0px;
+	}
+}
+
+.block-flow__description {
+	padding-left: 20px;
+	font-size: 16px;
+	color: #abafb8;
+	margin-bottom: 20px;
+
+	@media (max-width: 768px) {
+		padding: 0px;
+	}
+}

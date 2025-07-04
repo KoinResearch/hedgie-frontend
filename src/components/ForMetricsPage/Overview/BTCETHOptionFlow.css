@@ -1,0 +1,154 @@
+.flow-option__content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 20px;
+	width: 100%;
+	padding: 20px;
+}
+
+.metrics-option {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.metrics-option--call {
+	/* Call metrics specific styles */
+}
+
+.metrics-option--put {
+	/* Put metrics specific styles */
+}
+
+.metric-option {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 15px;
+
+	@media (max-width: 768px) {
+		align-items: flex-start;
+	}
+}
+
+.metric-option--call-buys {
+	/* Call buys specific styles */
+}
+
+.metric-option--call-sells {
+	padding-right: 150px;
+
+	@media (max-width: 768px) {
+		padding-right: 0px;
+	}
+}
+
+.metric-option--put-buys {
+	/* Put buys specific styles */
+}
+
+.metric-option--put-sells {
+	padding-right: 150px;
+
+	@media (max-width: 768px) {
+		padding-right: 0px;
+	}
+}
+
+.metric-option__label {
+	color: #f2f2f2;
+	display: flex;
+	align-items: center;
+	font-family: 'Paloseco', sans-serif;
+	font-size: 14px;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
+.metric-option__label::before {
+	content: '';
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.metric-option--call-buys .metric-option__label::before {
+	background-color: #9d78f1;
+}
+
+.metric-option--call-sells .metric-option__label::before {
+	background-color: #5ddc86;
+}
+
+.metric-option--put-buys .metric-option__label::before {
+	background-color: #9b21a2;
+}
+
+.metric-option--put-sells .metric-option__label::before {
+	background-color: #de495a;
+}
+
+.flow-option__chart-container-desktop {
+	flex: 2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	background-color: transparent;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
+.flow-option__chart-container-mobile {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 194px;
+	width: 100%;
+
+	@media (min-width: 768px) {
+		display: none;
+	}
+}
+
+.metric-option__variable {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	padding-left: 90px;
+	width: 100%;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+
+	@media (max-width: 768px) {
+		gap: 0px;
+		padding-left: 0px;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.metric-option__value {
+	font-size: 11px;
+	font-weight: bold;
+	font-family: 'JetBrains Mono', monospace;
+	color: #a2a2a2;
+}
+
+.metric-option__percentage {
+	font-size: 12px;
+	font-weight: bold;
+	font-family: 'JetBrains Mono', monospace;
+	color: #beebd8;
+	background-color: #508d69;
+	border: 1px solid #1f5535;
+	border-radius: 5px;
+	padding: 3px;
+}

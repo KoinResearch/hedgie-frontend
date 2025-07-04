@@ -1,0 +1,128 @@
+.flow-content {
+	padding: 20px;
+
+	@media (max-width: 768px) {
+		padding: 0px;
+		padding-bottom: 160px;
+	}
+}
+
+.flow-content__pagination-controls {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 20px;
+	margin-bottom: 20px;
+
+	@media (max-width: 768px) {
+		width: 100%;
+	}
+}
+
+.flow-content__toggle-button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px 20px;
+	background-color: #0e0e11;
+	color: #abafb8;
+	border: 1px solid #393e47;
+	border-radius: 8px;
+	font-size: 14px;
+	font-family: 'JetBrains Mono', sans-serif;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+	@media (max-width: 768px) {
+		width: 100%;
+	}
+}
+
+.flow-content__toggle-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.flow__table {
+	border-radius: 12px;
+	overflow: hidden;
+	border: 1px solid #393e47;
+	margin-bottom: 20px;
+}
+
+.flow__table table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.flow__table th,
+.flow__table td {
+	font-family: sans-serif;
+	padding: 12px 15px;
+	text-align: left;
+	color: white;
+	border-bottom: 1px solid #393e47;
+}
+
+.flow__table th {
+	background-color: rgba(0, 0, 0, 1);
+	font-size: 12px;
+	color: rgba(157, 166, 181, 1);
+}
+
+.flow__table tbody tr:nth-child(even) {
+	background-color: rgba(21, 21, 24, 1);
+}
+
+.flow__table tbody tr:nth-child(odd) {
+	background-color: rgba(30, 30, 37, 1);
+}
+
+.flow__table tbody tr {
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.flow__table tbody tr:hover {
+	background-color: #2a2a35;
+}
+
+@media (max-width: 768px) {
+	.flow__table {
+		overflow-x: auto;
+		width: 100%;
+		display: block;
+	}
+	.flow__table table {
+		min-width: 700px;
+	}
+	.flow__table th:first-child {
+		position: sticky;
+		left: 0;
+		z-index: 3;
+		background: rgba(0, 0, 0, 1);
+		border-right: 1px solid #393e47;
+		box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.1);
+		min-width: 120px;
+		max-width: 160px;
+		white-space: nowrap;
+	}
+	.flow__table td:first-child {
+		position: sticky;
+		left: 0;
+		z-index: 2;
+		background-color: rgba(0, 0, 0, 1);
+		border-right: 1px solid #393e47;
+		box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.1);
+		min-width: 120px;
+		max-width: 160px;
+		white-space: nowrap;
+	}
+	.flow__table tr:nth-child(even) td:first-child {
+		background: rgba(21, 21, 24, 1);
+	}
+	.flow__table tr:nth-child(odd) td:first-child {
+		background: rgba(30, 30, 37, 1);
+	}
+}

@@ -1,0 +1,31 @@
+.input-control {
+	position: relative;
+	width: 100%;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.input-control__input {
+	width: 100%;
+	height: 100%;
+	padding: 0 14px 0 6px;
+	color: rgba(157, 166, 181, 0.6);
+	background-color: rgba(14, 14, 17, 1);
+	border: 1px solid rgba(57, 62, 71, 1);
+	border-radius: 6px;
+	box-sizing: border-box;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 24px;
+	letter-spacing: 0%;
+}
+
+.input-control__arrow {
+	position: absolute;
+	right: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}

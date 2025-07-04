@@ -1,0 +1,84 @@
+.input-field {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.input__label {
+	color: rgba(157, 166, 181, 1);
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 8px;
+	font-size: 14px;
+	padding-left: 8px;
+}
+
+.input__container {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.input__field {
+	width: 100%;
+	padding: 15px;
+	border-radius: 8px;
+	background-color: rgba(21, 21, 24, 1);
+	color: white;
+	font-size: 16px;
+	box-sizing: border-box;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.input__field::placeholder {
+	color: rgba(255, 255, 255, 0.4);
+}
+
+.input__field:focus {
+	outline: none;
+	border-color: rgba(37, 113, 245, 1);
+}
+
+.input__field--error {
+	border-color: rgba(244, 0, 0, 1);
+}
+
+.input__field--error:focus {
+	border-color: rgba(244, 0, 0, 1);
+}
+
+.input__toggle-password {
+	position: absolute;
+	height: 24px;
+	width: 24px;
+	right: 15px;
+	cursor: pointer;
+	font-size: 18px;
+	color: rgba(255, 255, 255, 0.6);
+	background: none;
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.input__toggle-password:hover {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.input__error {
+	color: rgba(244, 0, 0, 1);
+	font-size: 12px;
+	margin-top: 6px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding-left: 5px;
+	line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+	.input-field {
+		margin-bottom: 16px;
+	}
+}

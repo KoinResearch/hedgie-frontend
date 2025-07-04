@@ -1,233 +1,25 @@
-@media (min-width: 1536px) {
-  .App {
-    max-width: 1536px;
-  }
+.content {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 100vw;
+	background-color: black;
+	max-width: 1536px;
+	margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-  main {
-    padding: 20px 4vw;
-  }
-  .footer {
-    padding: 10px 4vw;
-  }
+.mobile {
+	display: none;
+
+	@media (max-width: 768px) {
+		display: inline;
+	}
 }
 
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color: black;
-  overflow-x: hidden;
-}
+.desktop {
+	display: inline;
 
-::-webkit-scrollbar {
-  width: 0;
-}
-
-.App {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: black;
-  max-width: 1536px;
-  margin: 0 auto;
-}
-
-main {
-  flex: 1;
-  padding: 0 20px 0 20px;
-  box-sizing: border-box;
-  background-color: black;
-}
-
-.footer {
-  position: relative;
-  width: 100%;
-  padding: 10px 0;
-  background-color: #151518;
-  border-top: 1px solid #393E47;
-  box-sizing: border-box;
-  z-index: 1000;
-}
-
-.footer-container {
-  max-width: 1536px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer-text {
-  color: #fff;
-  text-align: center;
-}
-
-.footer-links a {
-  color: #9CA3AF;
-  text-decoration: none;
-  margin: 0 15px;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-}
-
-
-/*============================== cross-browser css ===================================*/
-
-
-/* Медиа-запросы с поддержкой различных устройств */
-@media screen and (min-width: 1536px) {
-  .App {
-    max-width: 1536px;
-    -webkit-max-width: 1536px;
-    -moz-max-width: 1536px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  main {
-    padding: 20px 4vw;
-    -webkit-padding: 20px 4vw;
-    -moz-padding: 20px 4vw;
-  }
-  .footer {
-    padding: 10px 4vw;
-    -webkit-padding: 10px 4vw;
-    -moz-padding: 10px 4vw;
-  }
-}
-
-/* Базовые стили с префиксами */
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color: black;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  -ms-overflow-style: none; /* IE и Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* Скроллбар для разных браузеров */
-::-webkit-scrollbar {
-  width: 0;
-}
-
-::-moz-scrollbar {
-  width: 0;
-}
-
-.App {
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: flex;
-  -webkit-flex-direction: column;
-  -moz-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-height: 100vh;
-  min-height: -webkit-fill-available; /* для iOS Safari */
-  background-color: black;
-  max-width: 1536px;
-  margin: 0 auto;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-main {
-  -webkit-flex: 1;
-  -moz-flex: 1;
-  -ms-flex: 1;
-  flex: 1;
-  padding: 0 20px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  background-color: black;
-}
-
-.footer {
-  position: relative;
-  width: 100%;
-  padding: 10px 0;
-  background-color: #151518;
-  border-top: 1px solid #393E47;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  z-index: 1000;
-}
-
-.footer-container {
-  max-width: 1536px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: flex;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  align-items: center;
-}
-
-.footer-text {
-  color: #fff;
-  text-align: center;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.footer-links a {
-  color: #9CA3AF;
-  text-decoration: none;
-  margin: 0 15px;
-  -webkit-transition: all 0.3s ease;
-  -moz-transition: all 0.3s ease;
-  -ms-transition: all 0.3s ease;
-  transition: all 0.3s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-  color: #fff;
-}
-
-/* Поддержка мобильных устройств */
-@media (hover: none) {
-  .footer-links a:hover {
-    text-decoration: none; /* Отключаем hover эффекты на мобильных */
-  }
-}
-
-/* Поддержка Safari на iOS */
-@supports (-webkit-touch-callout: none) {
-  .App {
-    min-height: -webkit-fill-available;
-  }
-}
-
-/* Поддержка высокого DPI */
-@media (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
-  .footer-text,
-  .footer-links a {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+	@media (max-width: 768px) {
+		display: none;
+	}
 }
