@@ -10,8 +10,14 @@ const ChartContainer = ({
 	noDataMessage = 'No data available',
 	errorMessage = 'Error loading data',
 }) => {
+	const containerHeight = height === 'auto' ? 'auto' : height;
+	const chartHeight = height === 'auto' ? '100%' : height;
+
 	return (
-		<div className="flow-option__graph">
+		<div
+			className="flow-option__graph"
+			style={{ height: containerHeight }}
+		>
 			{loading && (
 				<div className="loading">
 					<div className="loading__spinner"></div>
@@ -36,7 +42,7 @@ const ChartContainer = ({
 				<div className="chart-wrapper">
 					<div
 						ref={chartRef}
-						style={{ width: '100%', height }}
+						style={{ width: '100%', height: chartHeight }}
 					></div>
 				</div>
 			)}

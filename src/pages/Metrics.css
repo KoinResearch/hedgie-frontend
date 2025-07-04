@@ -22,7 +22,9 @@
 	overflow-x: hidden;
 
 	@media (max-width: 768px) {
-		padding: 20px;
+		padding-top: 20px;
+		padding-left: 16.5px;
+		padding-right: 16.5px;
 		padding-bottom: 270px;
 		overflow: visible;
 		height: auto;
@@ -49,9 +51,11 @@
 
 .metrics__title {
 	color: #f2f2f2;
-	font-size: 30px;
-	text-align: left;
-	font-family: Paloseco, sans-serif;
+	font-family: JetBrains Mono;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 100%;
+	letter-spacing: 0%;
 	margin-bottom: 32px;
 }
 

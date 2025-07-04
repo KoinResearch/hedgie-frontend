@@ -5,6 +5,7 @@
 	gap: 20px;
 	width: 100%;
 	padding: 20px;
+	padding-top: 0;
 }
 
 .metrics-option {
@@ -13,13 +14,6 @@
 	flex: 1;
 }
 
-.metrics-option--call {
-	/* Call metrics specific styles */
-}
-
-.metrics-option--put {
-	/* Put metrics specific styles */
-}
 
 .metric-option {
 	display: flex;
@@ -32,20 +26,12 @@
 	}
 }
 
-.metric-option--call-buys {
-	/* Call buys specific styles */
-}
-
 .metric-option--call-sells {
 	padding-right: 150px;
 
 	@media (max-width: 768px) {
 		padding-right: 0px;
 	}
-}
-
-.metric-option--put-buys {
-	/* Put buys specific styles */
 }
 
 .metric-option--put-sells {
@@ -151,4 +137,117 @@
 	border: 1px solid #1f5535;
 	border-radius: 5px;
 	padding: 3px;
+}
+
+.btceth-option-flow__graph {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	padding: 0;
+	margin: 0;
+}
+
+.btceth-option-flow__loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.btceth-option-flow__loading--mobile {
+	width: 294px;
+	height: 294px;
+}
+
+.btceth-option-flow__loading--desktop {
+	width: 490px;
+	height: 490px;
+}
+
+.btceth-option-flow__spinner {
+	width: 50px;
+	height: 50px;
+	border: 3px solid rgba(255, 255, 255, 0.3);
+	border-top: 3px solid #ffffff;
+	border-radius: 50%;
+	animation: btceth-spin 1s linear infinite;
+}
+
+.btceth-option-flow__spinner--small {
+	width: 50px;
+	height: 50px;
+	border: 3px solid rgba(255, 255, 255, 0.3);
+	border-top: 3px solid #ffffff;
+	border-radius: 50%;
+	animation: btceth-spin 1s linear infinite;
+}
+
+@keyframes btceth-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.btceth-option-flow__no-data {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	text-align: center;
+}
+
+.btceth-option-flow__no-data--mobile {
+	width: 294px;
+	height: 294px;
+	font-size: 14px;
+}
+
+.btceth-option-flow__no-data--desktop {
+	width: 490px;
+	height: 490px;
+	font-size: 18px;
+}
+
+.btceth-option-flow__error {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #ff6b6b;
+	text-align: center;
+}
+
+.btceth-option-flow__error--mobile {
+	width: 294px;
+	height: 294px;
+	font-size: 14px;
+}
+
+.btceth-option-flow__error--desktop {
+	width: 490px;
+	height: 490px;
+	font-size: 18px;
+}
+
+.btceth-option-flow__chart-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	padding: 0;
+	margin: 0;
+}
+
+.btceth-option-flow__chart-wrapper--mobile {
+	width: 294px;
+	height: 294px;
+}
+
+.btceth-option-flow__chart-wrapper--desktop {
+	width: 490px;
+	height: 490px;
 }

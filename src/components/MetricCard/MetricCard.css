@@ -10,7 +10,11 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	color: white;
-	max-height: 164px;
+	height: 164px;
+
+	@media (max-width: 768px) {
+		max-height: 64px;
+	}
 }
 
 .metric-card__icon {
@@ -31,9 +35,12 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	font-size: 1rem;
 	color: #f2f2f2;
-	font-family: 'Paloseco', sans-serif;
+	font-family: JetBrains Mono;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 100%;
+	letter-spacing: 0%;
 }
 
 .metric-card__label-icon {

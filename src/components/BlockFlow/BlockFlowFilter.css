@@ -46,7 +46,7 @@
 
 .filter-panel__action-button {
 	height: 100%;
-	width: 100%;
+	width: 109px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -54,6 +54,10 @@
 	color: rgba(255, 255, 255, 1);
 	border-radius: 8px;
 	cursor: pointer;
+
+	@media (max-width: 768px) {
+		width: 100%;
+	}
 }
 
 .filter-panel__action-button--apply {

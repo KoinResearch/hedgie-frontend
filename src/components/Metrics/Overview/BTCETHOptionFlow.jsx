@@ -5,8 +5,8 @@ import { useChart } from '../../../hooks/useChart.js';
 import { useChartExport } from '../../../hooks/useChartExport.js';
 import FlowOptionBase from '../../Chart/FlowOptionBase.jsx';
 import SelectControl from '../../SelectControl/SelectControl.jsx';
-import ChartContainer from '../../Chart/ChartContainer.jsx';
 import { TIME_RANGE_OPTIONS, ASSET_OPTIONS, EXCHANGE_OPTIONS } from '../../../constants/chartOptions.js';
+import './BTCETHOptionFlow.css';
 
 const BTCETHOptionFlow = () => {
 	const [asset, setAsset] = useState('BTC');
@@ -35,7 +35,6 @@ const BTCETHOptionFlow = () => {
 		Put_Sells_Percent: '0.00',
 	};
 
-	// Chart options
 	const chartOptions = useMemo(() => {
 		return {
 			tooltip: {
@@ -112,16 +111,13 @@ const BTCETHOptionFlow = () => {
 		};
 	}, [metrics]);
 
-	// Chart hooks for desktop and mobile
 	const { chartRef: chartRefDesktop, chartInstanceRef: chartInstanceRefDesktop } = useChart(chartOptions, [
 		chartOptions,
 	]);
 	const { chartRef: chartRefMobile, chartInstanceRef: chartInstanceRefMobile } = useChart(chartOptions, [chartOptions]);
 
-	// Export hook (используем десктопную версию для экспорта)
 	const handleDownload = useChartExport(chartInstanceRefDesktop, asset, `option_flow_chart_with_metrics_${asset}.png`);
 
-	// Tooltip content
 	const tooltipContent = `
         <div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
             <div style="margin-bottom: 10px;">
@@ -160,7 +156,6 @@ const BTCETHOptionFlow = () => {
         </div>
     `;
 
-	// Controls
 	const controls = [
 		<SelectControl
 			key="timeRange"
@@ -184,6 +179,47 @@ const BTCETHOptionFlow = () => {
 
 	const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
 
+	const renderChart = (chartRef, isMobile = false) => {
+		const chartSize = isMobile ? '294px' : '490px';
+		const chartWrapperClass = isMobile
+			? 'btceth-option-flow__chart-wrapper--mobile'
+			: 'btceth-option-flow__chart-wrapper--desktop';
+		const loadingClass = isMobile ? 'btceth-option-flow__loading--mobile' : 'btceth-option-flow__loading--desktop';
+		const errorClass = isMobile ? 'btceth-option-flow__error--mobile' : 'btceth-option-flow__error--desktop';
+		const noDataClass = isMobile ? 'btceth-option-flow__no-data--mobile' : 'btceth-option-flow__no-data--desktop';
+
+		return (
+			<div className="btceth-option-flow__graph">
+				{loading && (
+					<div className={`btceth-option-flow__loading ${loadingClass}`}>
+						<div className="btceth-option-flow__spinner"></div>
+					</div>
+				)}
+
+				{!loading && error && (
+					<div className={`btceth-option-flow__error ${errorClass}`}>
+						<p>Error loading data: {error}</p>
+					</div>
+				)}
+
+				{!loading && !error && (!metrics || Object.keys(metrics).length === 0) && (
+					<div className={`btceth-option-flow__no-data ${noDataClass}`}>
+						<p>No data available</p>
+					</div>
+				)}
+
+				{!loading && !error && metrics && Object.keys(metrics).length > 0 && (
+					<div className={`btceth-option-flow__chart-wrapper ${chartWrapperClass}`}>
+						<div
+							ref={chartRef}
+							style={{ width: chartSize, height: chartSize }}
+						></div>
+					</div>
+				)}
+			</div>
+		);
+	};
+
 	return (
 		<FlowOptionBase
 			title="Options"
@@ -194,14 +230,7 @@ const BTCETHOptionFlow = () => {
 			downloadId="camera"
 			tooltipId="optionData"
 		>
-			<div className="flow-option__chart-container-mobile">
-				<ChartContainer
-					loading={loading}
-					// error={error}
-					data={metrics}
-					chartRef={chartRefMobile}
-				/>
-			</div>
+			<div className="flow-option__chart-container-mobile">{renderChart(chartRefMobile, true)}</div>
 
 			<div className="flow-option__content">
 				<div className="metrics-option metrics-option--call">
@@ -226,14 +255,7 @@ const BTCETHOptionFlow = () => {
 					</div>
 				</div>
 
-				<div className="flow-option__chart-container-desktop">
-					<ChartContainer
-						loading={loading}
-						// error={error}
-						data={metrics}
-						chartRef={chartRefDesktop}
-					/>
-				</div>
+				<div className="flow-option__chart-container-desktop">{renderChart(chartRefDesktop, false)}</div>
 
 				<div className="metrics-option metrics-option--put">
 					<div className="metric-option metric-option--call-sells">

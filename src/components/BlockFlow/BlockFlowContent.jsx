@@ -272,9 +272,6 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 					>
 						<Arrow direction="left" /> Previous
 					</button>
-					<span className="block-flow-filters__page-info">
-						Page {page} of {apiTotalPages || 1}
-					</span>
 					<button
 						className="block-flow-filters__toggle-button"
 						onClick={handleNextPage}

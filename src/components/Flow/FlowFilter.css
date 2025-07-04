@@ -1,3 +1,26 @@
+.flow-filter-panel {
+	flex-direction: column;
+	gap: 20px;
+	background-color: rgba(21, 21, 24, 1);
+	padding: 20px;
+	border-radius: 8px;
+	border: 1px solid rgba(57, 62, 71, 1);
+	margin-bottom: 20px;
+
+	@media (max-width: 768px) {
+		overflow-y: auto;
+		position: relative;
+	}
+}
+
+.flow-filter-panel__grid {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 20px;
+}
+
 .flow-filter__header {
 	display: flex;
 	justify-content: flex-end;
@@ -66,30 +89,6 @@
 	line-height: 1;
 }
 
-.flow-filter-panel {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	background-color: rgba(21, 21, 24, 1);
-	padding: 20px;
-	border-radius: 8px;
-	border: 1px solid rgba(57, 62, 71, 1);
-	margin-bottom: 20px;
-
-	@media (max-width: 768px) {
-		overflow-y: auto;
-		position: relative;
-	}
-}
-
-.flow-filter-panel__grid {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 20px;
-}
-
 .flow-filter-panel__column {
 	display: flex;
 	flex-direction: column;
@@ -106,7 +105,7 @@
 .flow-filter-panel__actions {
 	display: flex;
 	gap: 13px;
-	justify-content: flex-end;
+	justify-content: space-between;
 	height: 40px;
 	margin-top: 45px;
 	margin-bottom: 16px;
@@ -114,7 +113,7 @@
 
 .flow-filter-panel__action-button {
 	height: 100%;
-	width: 100%;
+	width: 109px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -122,6 +121,10 @@
 	color: rgba(255, 255, 255, 1);
 	border-radius: 8px;
 	cursor: pointer;
+
+	@media (max-width: 768px) {
+		width: 100%;
+	}
 }
 
 .flow-filter-panel__action-button--apply {

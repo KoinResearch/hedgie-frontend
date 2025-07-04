@@ -6,6 +6,7 @@ import MetricCard from '../../MetricCard/MetricCard.jsx';
 import SelectControl from '../../SelectControl/SelectControl.jsx';
 import { metricsConfig } from '../../../config/metricsConfig.js';
 import './KeyMetrics.css';
+import Close from '../../../assets/Close.jsx';
 
 const KeyMetrics = () => {
 	const { isAuthenticated } = useAuth();
@@ -57,7 +58,7 @@ const KeyMetrics = () => {
 
 	const selectOptions = {
 		timeRange: [
-			{ value: '24h', label: 'Past 24 Hours' },
+			{ value: '24h', label: 'Past 24h' },
 			{ value: '7d', label: 'Last Week' },
 			{ value: '30d', label: 'Last Month' },
 		],
@@ -125,7 +126,7 @@ const KeyMetrics = () => {
 								className="key-metrics__modal-close"
 								onClick={() => setShowAnalysis(false)}
 							>
-								×
+								<CloseIcon />
 							</button>
 							{loadingAI ? (
 								<div className="key-metrics__modal-loading">Loading...</div>

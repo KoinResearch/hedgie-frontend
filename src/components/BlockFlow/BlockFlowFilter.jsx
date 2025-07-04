@@ -70,6 +70,7 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 							value={filters.asset || 'ALL'}
 							onChange={(e) => updateFilter('asset', e.target.value)}
 							options={assetOptions}
+							placeholder="Asset: "
 						/>
 					</div>
 					<div className="filter-panel__field">
@@ -86,8 +87,8 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 					<div className="filter-panel__field">
 						<InputControl
 							type="number"
-							placeholder="Strike Min: "
-							value={filters.strikeMin || 0}
+							placeholder="Strike Min: 0"
+							value={filters.strikeMin || ''}
 							onChange={(e) => updateFilter('strikeMin', e.target.value)}
 							min="0"
 						/>
@@ -114,7 +115,7 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 					<div className="filter-panel__field">
 						<InputControl
 							type="number"
-							placeholder="Strike Max: "
+							placeholder="Strike Max: 0"
 							value={filters.strikeMax}
 							onChange={(e) => updateFilter('strikeMax', e.target.value)}
 							min="0"
@@ -131,7 +132,7 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 					<div className="filter-panel__field">
 						<InputControl
 							type="number"
-							placeholder="IV Min: "
+							placeholder="IV Min: 0"
 							value={filters.ivMin}
 							onChange={(e) => updateFilter('ivMin', e.target.value)}
 							min="0"
@@ -144,7 +145,7 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 					<div className="filter-panel__field">
 						<InputControl
 							type="number"
-							placeholder="DTE Min: "
+							placeholder="DTE Min: 0"
 							value={filters.dteMin}
 							onChange={(e) => updateFilter('dteMin', e.target.value)}
 							min="0"
@@ -162,7 +163,7 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 					<div className="filter-panel__field">
 						<InputControl
 							type="number"
-							placeholder="IV Max: "
+							placeholder="IV Max: 0"
 							value={filters.ivMax}
 							onChange={(e) => updateFilter('ivMax', e.target.value)}
 							min="0"
@@ -176,7 +177,7 @@ const BlockFlowFilter = ({ isMobile = false, onApply }) => {
 						<div className="filter-panel__field">
 							<InputControl
 								type="number"
-								placeholder="DTE Max: "
+								placeholder="DTE Max: 0"
 								value={filters.dteMax}
 								onChange={(e) => updateFilter('dteMax', e.target.value)}
 								min="0"

@@ -22,7 +22,7 @@ select.select-control__select {
 	color: rgba(157, 166, 181, 0.6);
 	border: none;
 	appearance: none;
-	font-family: 'Paloseco', Arial, sans-serif;
+	font-family: JetBrains Mono;
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 24px;

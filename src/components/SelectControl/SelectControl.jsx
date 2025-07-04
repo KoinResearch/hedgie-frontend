@@ -15,7 +15,7 @@ const SelectControl = ({ value, onChange, options, placeholder }) => {
 						key={option.value}
 						value={option.value}
 					>
-						{option.label || option.value}
+						{placeholder} {option.label || option.value}
 					</option>
 				))}
 			</select>

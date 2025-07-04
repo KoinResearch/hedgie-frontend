@@ -43,7 +43,7 @@ const Sidebar = ({ items = [] }) => {
 								<span className="sidebar__icon">
 									<IconComponent />
 								</span>
-								{item.title.replace(' Dashboard', '')}
+								{item.name}
 							</NavLink>
 						</li>
 					);

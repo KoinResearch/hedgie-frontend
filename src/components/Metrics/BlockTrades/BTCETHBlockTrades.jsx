@@ -1,13 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import * as echarts from 'echarts';
-import './BTCETHBlockTrades.css';
 import { CACHE_TTL, optionsCache, useCachedApiCall } from '../../../utils/cacheService.js';
 import { useChart } from '../../../hooks/useChart.js';
 import { useChartExport } from '../../../hooks/useChartExport.js';
 import FlowOptionBase from '../../Chart/FlowOptionBase.jsx';
 import SelectControl from '../../SelectControl/SelectControl.jsx';
-import ChartContainer from '../../Chart/ChartContainer.jsx';
 import { TIME_RANGE_OPTIONS, ASSET_OPTIONS, EXCHANGE_OPTIONS } from '../../../constants/chartOptions.js';
+import './BTCETHBlockTrades.css';
 
 const BTCETHBlockTrades = () => {
 	const [asset, setAsset] = useState('BTC');
@@ -176,6 +175,47 @@ const BTCETHBlockTrades = () => {
 
 	const assetSymbol = asset === 'BTC' ? 'BTC' : 'ETH';
 
+	const renderChart = (chartRef, isMobile = false) => {
+		const chartSize = isMobile ? '294px' : '490px';
+		const chartWrapperClass = isMobile
+			? 'btceth-block-trades__chart-wrapper--mobile'
+			: 'btceth-block-trades__chart-wrapper--desktop';
+		const loadingClass = isMobile ? 'btceth-block-trades__loading--mobile' : 'btceth-block-trades__loading--desktop';
+		const errorClass = isMobile ? 'btceth-block-trades__error--mobile' : 'btceth-block-trades__error--desktop';
+		const noDataClass = isMobile ? 'btceth-block-trades__no-data--mobile' : 'btceth-block-trades__no-data--desktop';
+
+		return (
+			<div className="btceth-block-trades__graph">
+				{loading && (
+					<div className={`btceth-block-trades__loading ${loadingClass}`}>
+						<div className="btceth-block-trades__spinner"></div>
+					</div>
+				)}
+
+				{!loading && error && (
+					<div className={`btceth-block-trades__error ${errorClass}`}>
+						<p>Error loading data: {error}</p>
+					</div>
+				)}
+
+				{!loading && !error && (!metrics || Object.keys(metrics).length === 0) && (
+					<div className={`btceth-block-trades__no-data ${noDataClass}`}>
+						<p>No data available</p>
+					</div>
+				)}
+
+				{!loading && !error && metrics && Object.keys(metrics).length > 0 && (
+					<div className={`btceth-block-trades__chart-wrapper ${chartWrapperClass}`}>
+						<div
+							ref={chartRef}
+							style={{ width: chartSize, height: chartSize }}
+						></div>
+					</div>
+				)}
+			</div>
+		);
+	};
+
 	return (
 		<FlowOptionBase
 			title="Options"
@@ -186,63 +226,51 @@ const BTCETHBlockTrades = () => {
 			downloadId="camera"
 			tooltipId="optionData"
 		>
-			<div className="flow-option__chart-container-mobile">
-				<ChartContainer
-					loading={loading}
-					data={metrics}
-					chartRef={chartRefMobile}
-				/>
-			</div>
+			<div className="btceth-block-trades__chart-container-mobile">{renderChart(chartRefMobile, true)}</div>
 
-			<div className="flow-option__content">
-				<div className="metrics-option metrics-option--call">
-					<div className="metric-option metric-option--call-buys">
-						<p className="metric-option__label">Call Buys</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
+			<div className="btceth-block-trades__content">
+				<div className="btceth-block-trades__metrics-option btceth-block-trades__metrics-option--call">
+					<div className="btceth-block-trades__metric-option btceth-block-trades__metric-option--call-buys">
+						<p className="btceth-block-trades__metric-option__label">Call Buys</p>
+						<div className="btceth-block-trades__metric-option__variable">
+							<p className="btceth-block-trades__metric-option__value">
 								{assetSymbol} {metrics.Call_Buys}
 							</p>
-							<p className="metric-option__percentage"> {metrics.Call_Buys_Percent}% </p>
+							<p className="btceth-block-trades__metric-option__percentage"> {metrics.Call_Buys_Percent}% </p>
 						</div>
 					</div>
 
-					<div className="metric-option metric-option--put-buys">
-						<p className="metric-option__label">Put Buys</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
+					<div className="btceth-block-trades__metric-option btceth-block-trades__metric-option--put-buys">
+						<p className="btceth-block-trades__metric-option__label">Put Buys</p>
+						<div className="btceth-block-trades__metric-option__variable">
+							<p className="btceth-block-trades__metric-option__value">
 								{assetSymbol} {metrics.Put_Buys}
 							</p>
-							<p className="metric-option__percentage"> {metrics.Put_Buys_Percent}% </p>
+							<p className="btceth-block-trades__metric-option__percentage"> {metrics.Put_Buys_Percent}% </p>
 						</div>
 					</div>
 				</div>
 
-				<div className="flow-option__chart-container-desktop">
-					<ChartContainer
-						loading={loading}
-						data={metrics}
-						chartRef={chartRefDesktop}
-					/>
-				</div>
+				<div className="btceth-block-trades__chart-container-desktop">{renderChart(chartRefDesktop, false)}</div>
 
-				<div className="metrics-option metrics-option--put">
-					<div className="metric-option metric-option--call-sells">
-						<p className="metric-option__label">Call Sells</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
+				<div className="btceth-block-trades__metrics-option btceth-block-trades__metrics-option--put">
+					<div className="btceth-block-trades__metric-option btceth-block-trades__metric-option--call-sells">
+						<p className="btceth-block-trades__metric-option__label">Call Sells</p>
+						<div className="btceth-block-trades__metric-option__variable">
+							<p className="btceth-block-trades__metric-option__value">
 								{assetSymbol} {metrics.Call_Sells}
 							</p>
-							<p className="metric-option__percentage"> {metrics.Call_Sells_Percent}% </p>
+							<p className="btceth-block-trades__metric-option__percentage"> {metrics.Call_Sells_Percent}% </p>
 						</div>
 					</div>
 
-					<div className="metric-option metric-option--put-sells">
-						<p className="metric-option__label">Put Sells</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
+					<div className="btceth-block-trades__metric-option btceth-block-trades__metric-option--put-sells">
+						<p className="btceth-block-trades__metric-option__label">Put Sells</p>
+						<div className="btceth-block-trades__metric-option__variable">
+							<p className="btceth-block-trades__metric-option__value">
 								{assetSymbol} {metrics.Put_Sells}
 							</p>
-							<p className="metric-option__percentage"> {metrics.Put_Sells_Percent}% </p>
+							<p className="btceth-block-trades__metric-option__percentage"> {metrics.Put_Sells_Percent}% </p>
 						</div>
 					</div>
 				</div>

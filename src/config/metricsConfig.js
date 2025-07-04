@@ -4,7 +4,7 @@ export const metricsConfig = [
 		icon: 'fas fa-dollar-sign',
 		labelIcon: '🤑',
 		desktopLabel: 'Average Price',
-		mobileLabel: 'Average\nPrice',
+		mobileLabel: 'Average \nPrice',
 		tooltipId: 'avgPrice',
 		tooltipContent: `
 			<div style="font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; padding: 10px;">
