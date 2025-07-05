@@ -1,25 +1,32 @@
 .datalab {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
 	width: 100%;
 	min-height: 100vh;
 	box-sizing: border-box;
-	padding: 16px 16.5px 16px 16.5px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative;
 
 	@media (max-width: 768px) {
 		align-items: center;
-		justify-content: flex-start;
-		overflow: hidden;
+		padding: 44px 16px 160px 16px;
 	}
 }
 
 .datalab__content {
-    width: 100%;
-    max-width: 768px;
-    display: flex;
+	width: 100%;
+	max-width: 400px;
+	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
+	margin-top: 10vh;
+	justify-content: flex-start;
+
+	@media (max-width: 768px) {
+		margin-top: 0;
+	}
 }
 
 .datalab__title {
