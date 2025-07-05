@@ -159,7 +159,7 @@ const TopTradedOptionsChart = () => {
 
 	return (
 		<FlowOptionBase
-			title="Top Traded Options - Past 24h"
+			title="Top Traded Options"
 			icon="🏆"
 			tooltipContent={tooltipContent}
 			controls={controls}

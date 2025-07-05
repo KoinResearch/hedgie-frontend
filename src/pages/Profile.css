@@ -7,10 +7,11 @@
 	box-sizing: border-box;
 	overflow-y: auto;
 	overflow-x: hidden;
+	position: relative;
 
 	@media (max-width: 768px) {
 		align-items: center;
-		padding: 44px 16px 210px 16px;
+		padding: 44px 16px 160px 16px;
 	}
 }
 
@@ -20,10 +21,11 @@
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
-	justify-content: center;
+	margin-top: 10vh;
+	justify-content: flex-start;
 
 	@media (max-width: 768px) {
-		justify-content: flex-start;
+		margin-top: 0;
 	}
 }
 
@@ -140,10 +142,21 @@
 
 .profile__footer {
 	position: relative;
-	margin-top: auto;
+	margin-top: 20px;
 	margin-bottom: 22.5px;
 	width: 100%;
 	box-sizing: border-box;
+
+	@media (max-width: 768px) {
+		position: fixed;
+		bottom: 80px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: calc(100% - 32px);
+		max-width: 400px;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }
 
 .profile__logout-btn {

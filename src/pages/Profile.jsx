@@ -109,13 +109,13 @@ const Profile = () => {
 						<Arrow />
 					</div>
 				</div>
-			</div>
-			<div className="profile__footer">
-				<div
-					className="profile__logout-btn"
-					onClick={handleLogout}
-				>
-					Log Out
+				<div className="profile__footer">
+					<div
+						className="profile__logout-btn"
+						onClick={handleLogout}
+					>
+						Log Out
+					</div>
 				</div>
 			</div>
 		</div>

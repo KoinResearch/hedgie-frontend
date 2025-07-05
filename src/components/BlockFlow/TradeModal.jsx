@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { calculateNetDebitOrCredit, formatNumber } from '../../utils/tradeCalculations.js';
@@ -6,13 +6,37 @@ import { calculateGreeks } from '../../utils/calculations.js';
 import { useGreeksCalculation } from '../../hooks/useGreeksCalculation.js';
 import './TradeModal.css';
 
-
 const TradeModal = ({ trades, onClose }) => {
 	const { isAuthenticated } = useAuth();
 	const [analysis, setAnalysis] = useState('');
 	const [errorAI, setErrorAI] = useState(null);
 	const [loadingAI, setLoadingAI] = useState(false);
 	const [showAnalysis, setShowAnalysis] = useState(false);
+
+	useEffect(() => {
+		document.body.style.overflow = 'hidden';
+		sessionStorage.setItem('hideMobileNavigation', 'true');
+		window.dispatchEvent(new Event('hideMobileNavigationChange'));
+
+		return () => {
+			document.body.style.overflow = 'unset';
+			sessionStorage.removeItem('hideMobileNavigation');
+			window.dispatchEvent(new Event('hideMobileNavigationChange'));
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleEscape = (e) => {
+			if (e.key === 'Escape') {
+				onClose();
+			}
+		};
+
+		document.addEventListener('keydown', handleEscape);
+		return () => {
+			document.removeEventListener('keydown', handleEscape);
+		};
+	}, [onClose]);
 
 	const { calculateOverallGreeks } = useGreeksCalculation();
 
@@ -31,18 +55,15 @@ const TradeModal = ({ trades, onClose }) => {
 		setLoadingAI(false);
 	};
 
-
 	const handleAnalyzeClick = () => {
 		setShowAnalysis(true);
 		getAnalysis(trades);
 	};
 
-
 	const calculateOIChange = (trade) => {
 		const size = trade.size ? parseFloat(trade.size) : 0;
 		return trade.side === 'sell' ? size : 0;
 	};
-
 
 	const getExecutionDetails = (side, executionType) => {
 		if (executionType === 'Below the ask') {
@@ -53,7 +74,6 @@ const TradeModal = ({ trades, onClose }) => {
 		return '';
 	};
 
-
 	const formatSize = (trades) => {
 		const sizes = trades.map((trade) => {
 			const size = trade.size ? parseFloat(trade.size).toFixed(1) : '0';
@@ -63,7 +83,6 @@ const TradeModal = ({ trades, onClose }) => {
 
 		return `(${sizes.join('/')})`;
 	};
-
 
 	const formatTradeDetails = (trade) => {
 		const instrumentName = trade.instrument_name || 'N/A';
@@ -89,7 +108,6 @@ Total ${trade.side === 'buy' ? 'Bought' : 'Sold'}: ${premiumAllInBaseAsset} Ξ (
 ${executionType} ${executionMessage}
 OI Change: ${oiChange}`;
 	};
-
 
 	const handleCopy = () => {
 		const sizeText = formatSize(trades);
