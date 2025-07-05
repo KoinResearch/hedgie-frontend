@@ -6,6 +6,7 @@ import FlowOptionBase from '../../Chart/FlowOptionBase.jsx';
 import SelectControl from '../../SelectControl/SelectControl.jsx';
 import ChartContainer from '../../Chart/ChartContainer.jsx';
 import { TIME_RANGE_OPTIONS, ASSET_OPTIONS, EXCHANGE_OPTIONS } from '../../../constants/chartOptions.js';
+import * as echarts from 'echarts';
 
 const TopTradesByVolumeBlockTrades = () => {
 	const [asset, setAsset] = useState('BTC');

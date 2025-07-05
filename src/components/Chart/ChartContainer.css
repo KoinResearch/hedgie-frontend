@@ -1,6 +1,6 @@
 .flow-option__graph {
 	width: 100%;
-	min-height: 490px;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
