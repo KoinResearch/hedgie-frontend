@@ -42,7 +42,7 @@ const AppContent = () => {
 					/>
 					<Route
 						path="/login"
-						element={<DataLab />}
+						element={<Login />}
 					/>
 					<Route
 						path="/register"
