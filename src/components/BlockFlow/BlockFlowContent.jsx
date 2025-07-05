@@ -12,6 +12,7 @@ import { usePagination } from '../../hooks/usePagination.js';
 import { calculateNetDebitOrCredit, getFormattedTime } from '../../utils/tradeCalculations.js';
 import FilterPanel from './BlockFlowFilter.jsx';
 import TradeModal from './TradeModal.jsx';
+import SelectControl from '../SelectControl/SelectControl.jsx';
 import './BlockFlowContent.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import Filter from '../../assets/Filter.jsx';
@@ -282,8 +283,7 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 				</div>
 				<div className="block-flow-filters__page-size-control">
 					<label className="block-flow-filters__page-size-label">Show:</label>
-					<select
-						className="block-flow-filters__page-size-select"
+					<SelectControl
 						value={pageSize}
 						onChange={(e) => {
 							setPageSize(parseInt(e.target.value));
@@ -291,12 +291,14 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 								resetPage();
 							}
 						}}
-					>
-						<option value={15}>15</option>
-						<option value={30}>30</option>
-						<option value={50}>50</option>
-						<option value={100}>100</option>
-					</select>
+						options={[
+							{ value: 15, label: '15' },
+							{ value: 30, label: '30' },
+							{ value: 50, label: '50' },
+							{ value: 100, label: '100' },
+						]}
+						placeholder=""
+					/>
 				</div>
 			</div>
 
