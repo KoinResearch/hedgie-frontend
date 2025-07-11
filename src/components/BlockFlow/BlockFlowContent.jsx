@@ -352,14 +352,30 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 									}}
 								>
 									<td>{getFormattedTime(trade.timeutc)}</td>
-									<td
-										className={`block-flow-filters__trade-side block-flow-filters__trade-side--${
-											trade.side === 'buy' ? 'buy' : 'sell'
-										}`}
-									>
-										{trade.side ? trade.side.toUpperCase() : 'N/A'}
+									<td>
+										<span
+											style={{
+												padding: '4px 8px',
+												backgroundColor: trade.side === 'buy' ? 'rgba(58, 165, 108, 1)' : 'rgba(244, 0, 0, 1)',
+												color: 'rgba(255, 255, 255, 1)',
+												borderRadius: '4px',
+												fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+												fontWeight: '500',
+												fontStyle: 'normal',
+												fontSize: '13px',
+												lineHeight: '100%',
+												letterSpacing: '0%',
+												display: 'inline-block',
+											}}
+										>
+											{trade.side ? trade.side.toUpperCase() : 'N/A'}
+										</span>
 									</td>
-									<td className="block-flow-filters__highlight-column">
+									<td
+										style={{
+											color: 'rgba(37, 113, 245, 1)',
+										}}
+									>
 										{trade.instrument_name ? trade.instrument_name.slice(0, 3) : 'N/A'}
 									</td>
 									<td>
@@ -368,23 +384,41 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 											? Number(trade.instrument_name.match(/(\d+)-[CP]$/)[1]).toLocaleString()
 											: 'N/A'}
 									</td>
-									<td
-										className={`block-flow-filters__trade-side block-flow-filters__trade-side--${
-											trade.k === 'C' ? 'call' : trade.k === 'P' ? 'put' : ''
-										}`}
-									>
-										{trade.k === 'C' ? 'CALL' : trade.k === 'P' ? 'PUT' : 'N/A'}
+									<td>
+										<span
+											style={{
+												padding: '4px 8px',
+												backgroundColor: trade.side === 'buy' ? 'rgba(244, 0, 0, 1)' : 'rgba(58, 165, 108, 1)',
+												color: 'rgba(255, 255, 255, 1)',
+												borderRadius: '4px',
+												fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+												fontWeight: '500',
+												fontStyle: 'normal',
+												fontSize: '13px',
+												lineHeight: '100%',
+												letterSpacing: '0%',
+												display: 'inline-block',
+											}}
+										>
+											{trade.k === 'C' ? 'CALL' : trade.k === 'P' ? 'PUT' : 'N/A'}
+										</span>
 									</td>
-									<td className="block-flow-filters__highlight-column">{trade.chain || 'N/A'}</td>
+									<td
+										style={{
+											color: 'rgba(37, 113, 245, 1)',
+										}}
+									>
+										{trade.chain || 'N/A'}
+									</td>
 									<td>${trade.spot ? Number(trade.spot).toLocaleString() : 'N/A'}</td>
 									<td>
 										{trade.dte ? (
 											<>
 												<span>{trade.dte.slice(0, -1)}</span>
 												<span
-													className={`block-flow-filters__dte-day block-flow-filters__dte-day--${
-														trade.k === 'C' ? 'call' : 'put'
-													}`}
+													style={{
+														color: trade.k === 'C' ? '#00ff88' : '#ff4757',
+													}}
 												>
 													d
 												</span>
@@ -393,13 +427,19 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 											'N/A'
 										)}
 									</td>
-									<td className="block-flow-filters__highlight-column">{trade.exchange || 'N/A'}</td>
+									<td
+										style={{
+											color: 'rgba(37, 113, 245, 1)',
+										}}
+									>
+										{trade.exchange || 'N/A'}
+									</td>
 									<td>{trade.size || 'N/A'}</td>
 									<td>${trade.price ? Number(trade.price).toLocaleString() : 'N/A'}</td>
 									<td
-										className={`block-flow-filters__trade-side block-flow-filters__trade-side--${
-											trade.k === 'C' ? 'call' : 'put'
-										}`}
+										style={{
+											color: trade.k === 'C' ? '#00ff88' : '#ff4757',
+										}}
 									>
 										${trade.premium ? Number(trade.premium).toLocaleString() : 'N/A'}
 									</td>

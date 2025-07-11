@@ -114,16 +114,52 @@ const FlowContent = () => {
 							{trades.map((trade, index) => (
 								<tr key={index}>
 									<td>{asset}</td>
-									<td style={{ color: trade.direction.toUpperCase() === 'BUY' ? '#1FA74B' : '#DD3548' }}>
-										{trade.direction.toUpperCase()}
+									<td>
+										<span
+											style={{
+												padding: '4px 8px',
+												backgroundColor:
+													trade.direction.toUpperCase() === 'BUY' ? 'rgba(58, 165, 108, 1)' : 'rgba(244, 0, 0, 1)',
+												color: 'rgba(255, 255, 255, 1)',
+												borderRadius: '4px',
+												fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+												fontWeight: '500',
+												fontStyle: 'normal',
+												fontSize: '13px',
+												lineHeight: '100%',
+												letterSpacing: '0%',
+												display: 'inline-block',
+												textTransform: 'uppercase',
+											}}
+										>
+											{trade.direction}
+										</span>
 									</td>
-									<td style={{ color: trade.instrument_name.includes('-C') ? '#1FA74B' : '#DD3548' }}>
+									<td>
+									<span
+											style={{
+												padding: '4px 8px',
+												backgroundColor:
+													trade.direction.toUpperCase() === 'BUY' ? 'rgba(58, 165, 108, 1)' : 'rgba(244, 0, 0, 1)',
+												color: 'rgba(255, 255, 255, 1)',
+												borderRadius: '4px',
+												fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+												fontWeight: '500',
+												fontStyle: 'normal',
+												fontSize: '13px',
+												lineHeight: '100%',
+												letterSpacing: '0%',
+												display: 'inline-block',
+												textTransform: 'uppercase',
+											}}
+										>
 										{trade.instrument_name.includes('-C') ? 'CALL' : 'PUT'}
+										</span>
 									</td>
 									<td style={{ color: '#4B88E1' }}>{trade.instrument_name.match(/(\d{1,2}[A-Z]{3}\d{2})/)[0]}</td>
 									<td>{trade.instrument_name.match(/(\d+)-[CP]$/)[1]}</td>
-									<td>{trade.amount}</td>
-									<td>{trade.price}</td>
+									<td>{Number(trade.amount).toFixed(2)}</td>
+									<td>{Number(trade.price).toFixed(2)}</td>
 									<td>
 										{new Date(trade.timestamp).toLocaleTimeString([], {
 											hour: '2-digit',

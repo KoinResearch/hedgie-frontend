@@ -191,39 +191,6 @@
 	font-weight: 500;
 }
 
-.block-flow-filters__trade-side {
-	font-weight: 500;
-}
-
-.block-flow-filters__trade-side--buy {
-	color: #00ff88;
-}
-
-.block-flow-filters__trade-side--sell {
-	color: #ff4757;
-}
-
-.block-flow-filters__trade-side--call {
-	color: #00ff88;
-}
-
-.block-flow-filters__trade-side--put {
-	color: #ff4757;
-}
-
-.block-flow-filters__dte-day {
-	font-size: 10px;
-	color: #abafb8;
-}
-
-.block-flow-filters__dte-day--call {
-	color: #00ff88;
-}
-
-.block-flow-filters__dte-day--put {
-	color: #ff4757;
-}
-
 .block-flow-filters__loading {
 	text-align: center;
 	padding: 40px;

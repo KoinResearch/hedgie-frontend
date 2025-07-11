@@ -93,14 +93,6 @@
 	}
 }
 
-.sidebar__link svg path {
-	stroke: white;
-}
-
 .sidebar__link--active svg path {
-	stroke: currentColor;
-}
-
-.sidebar__link:hover svg path {
-	stroke: black;
+	stroke: white;
 }
