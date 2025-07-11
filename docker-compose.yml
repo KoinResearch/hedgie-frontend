@@ -5,4 +5,4 @@ services:
       dockerfile: Dockerfile
     container_name: ${FRONTEND_CONTAINER_NAME}
     ports:
-      - "${FRONTEND_PORT}:5173"
+      - '${VITE_FRONTEND_PORT}:${VITE_FRONTEND_PORT}'

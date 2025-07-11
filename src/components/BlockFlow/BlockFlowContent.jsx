@@ -367,8 +367,8 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 												letterSpacing: '0%',
 												display: 'inline-block',
 											}}
-										>
-											{trade.side ? trade.side.toUpperCase() : 'N/A'}
+									>
+										{trade.side ? trade.side.toUpperCase() : 'N/A'}
 										</span>
 									</td>
 									<td
@@ -399,8 +399,8 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 												letterSpacing: '0%',
 												display: 'inline-block',
 											}}
-										>
-											{trade.k === 'C' ? 'CALL' : trade.k === 'P' ? 'PUT' : 'N/A'}
+									>
+										{trade.k === 'C' ? 'CALL' : trade.k === 'P' ? 'PUT' : 'N/A'}
 										</span>
 									</td>
 									<td
