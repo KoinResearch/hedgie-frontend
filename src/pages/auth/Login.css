@@ -127,8 +127,10 @@
 
 .login__social {
 	margin-top: 16px;
-	display: flex;
-	justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
 }
 
 .login__footer {

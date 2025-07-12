@@ -1,0 +1,32 @@
+.twitter-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 48px;
+    background-color: #000000;
+    color: white;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Paloseco', Arial, sans-serif;
+}
+
+.twitter-login-button:hover:not(:disabled) {
+    background-color: #1a1a1a;
+    border-color: #555555;
+}
+
+.twitter-login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.twitter-login-button svg {
+    width: 20px;
+    height: 20px;
+}

@@ -6,6 +6,7 @@ import FullName from '../../assets/FullName.jsx';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { GoogleLogin } from '@react-oauth/google';
 import Input from '../../components/Input/Input.jsx';
+import TwitterLogin from '../../components/Twitter/TwitterLogin.jsx';
 
 const Login = () => {
 	const [email, setEmail] = useState('');
@@ -119,6 +120,19 @@ const Login = () => {
 							size="large"
 							ux_mode="popup"
 							context="signin"
+						/>
+						<TwitterLogin
+							onSuccess={(data) => {
+								localStorage.setItem('accessToken', data.accessToken);
+								localStorage.setItem('refreshToken', data.refreshToken);
+								localStorage.setItem('user', JSON.stringify(data.user));
+								login(data.user);
+								navigate('/profile');
+							}}
+							onError={(error) => {
+								console.error('Twitter login error:', error);
+								alert(error || 'Twitter login failed');
+							}}
 						/>
 					</div>
 				</form>
