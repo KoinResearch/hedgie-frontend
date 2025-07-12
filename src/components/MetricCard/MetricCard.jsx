@@ -2,6 +2,7 @@ import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import './MetricCard.css';
+import Skeleton from '../Skeleton/Skeleton.jsx';
 
 const MetricCard = ({ config, value, loading, error }) => {
 	const { icon, labelIcon, tooltipId, tooltipContent, desktopLabel, mobileLabel } = config;
@@ -13,9 +14,7 @@ const MetricCard = ({ config, value, loading, error }) => {
 			</div>
 			<div className="metric-card__content">
 				{loading ? (
-					<div className="metric-card__loading">
-						<div className="metric-card__spinner"></div>
-					</div>
+					<Skeleton />
 				) : error ? (
 					<div className="metric-card__error">
 						<p>Error: {error}</p>

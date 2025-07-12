@@ -191,10 +191,6 @@ const BTCETHOptionFlow = () => {
 
 		return (
 			<div className="btceth-option-flow__graph">
-				{loading && (
-					<Skeleton />
-				)}
-
 				{!loading && error && (
 					<div className={`btceth-option-flow__error ${errorClass}`}>
 						<p>Error loading data: {error}</p>
@@ -229,54 +225,61 @@ const BTCETHOptionFlow = () => {
 			downloadId="camera"
 			tooltipId="optionData"
 		>
-			<div className="flow-option__chart-container-mobile">{renderChart(chartRefMobile, true)}</div>
+			<div className="btceth-option-flow__container">
+				{loading ? (
+					<Skeleton />
+				) : (
+					<>
+						<div className="flow-option__chart-container-mobile">{renderChart(chartRefMobile, true)}</div>
+						<div className="flow-option__content">
+							<div className="metrics-option metrics-option--call">
+								<div className="metric-option metric-option--call-buys">
+									<p className="metric-option__label">Call Buys</p>
+									<div className="metric-option__variable">
+										<p className="metric-option__value">
+											{assetSymbol} {metrics.Call_Buys}
+										</p>
+										<p className="metric-option__percentage"> {metrics.Call_Buys_Percent}% </p>
+									</div>
+								</div>
 
-			<div className="flow-option__content">
-				<div className="metrics-option metrics-option--call">
-					<div className="metric-option metric-option--call-buys">
-						<p className="metric-option__label">Call Buys</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
-								{assetSymbol} {metrics.Call_Buys}
-							</p>
-							<p className="metric-option__percentage"> {metrics.Call_Buys_Percent}% </p>
+								<div className="metric-option metric-option--put-buys">
+									<p className="metric-option__label">Put Buys</p>
+									<div className="metric-option__variable">
+										<p className="metric-option__value">
+											{assetSymbol} {metrics.Put_Buys}
+										</p>
+										<p className="metric-option__percentage"> {metrics.Put_Buys_Percent}% </p>
+									</div>
+								</div>
+							</div>
+
+							<div className="flow-option__chart-container-desktop">{renderChart(chartRefDesktop, false)}</div>
+
+							<div className="metrics-option metrics-option--put">
+								<div className="metric-option metric-option--call-sells">
+									<p className="metric-option__label">Call Sells</p>
+									<div className="metric-option__variable">
+										<p className="metric-option__value">
+											{assetSymbol} {metrics.Call_Sells}
+										</p>
+										<p className="metric-option__percentage"> {metrics.Call_Sells_Percent}% </p>
+									</div>
+								</div>
+
+								<div className="metric-option metric-option--put-sells">
+									<p className="metric-option__label">Put Sells</p>
+									<div className="metric-option__variable">
+										<p className="metric-option__value">
+											{assetSymbol} {metrics.Put_Sells}
+										</p>
+										<p className="metric-option__percentage"> {metrics.Put_Sells_Percent}% </p>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
-
-					<div className="metric-option metric-option--put-buys">
-						<p className="metric-option__label">Put Buys</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
-								{assetSymbol} {metrics.Put_Buys}
-							</p>
-							<p className="metric-option__percentage"> {metrics.Put_Buys_Percent}% </p>
-						</div>
-					</div>
-				</div>
-
-				<div className="flow-option__chart-container-desktop">{renderChart(chartRefDesktop, false)}</div>
-
-				<div className="metrics-option metrics-option--put">
-					<div className="metric-option metric-option--call-sells">
-						<p className="metric-option__label">Call Sells</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
-								{assetSymbol} {metrics.Call_Sells}
-							</p>
-							<p className="metric-option__percentage"> {metrics.Call_Sells_Percent}% </p>
-						</div>
-					</div>
-
-					<div className="metric-option metric-option--put-sells">
-						<p className="metric-option__label">Put Sells</p>
-						<div className="metric-option__variable">
-							<p className="metric-option__value">
-								{assetSymbol} {metrics.Put_Sells}
-							</p>
-							<p className="metric-option__percentage"> {metrics.Put_Sells_Percent}% </p>
-						</div>
-					</div>
-				</div>
+					</>
+				)}
 			</div>
 		</FlowOptionBase>
 	);

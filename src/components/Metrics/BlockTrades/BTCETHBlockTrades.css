@@ -6,6 +6,14 @@
 	width: 100%;
 	padding: 20px;
 	padding-top: 0;
+	position: relative;
+	min-height: 490px;
+}
+
+.btceth-block-trades__container {
+	position: relative;
+	min-height: 490px;
+	width: 100%;
 }
 
 .btceth-block-trades__metrics-option {

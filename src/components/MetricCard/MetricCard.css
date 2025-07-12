@@ -11,6 +11,7 @@
 	justify-content: space-between;
 	color: white;
 	height: 164px;
+	position: relative;
 
 	@media (max-width: 768px) {
 		max-height: 64px;
@@ -30,6 +31,11 @@
 	height: 100%;
 	padding: 24px 0px;
 	flex-wrap: wrap;
+
+	@media (max-width: 768px) {
+		height: 100%;
+		min-height: 54px;
+	}
 }
 
 .metric-card__label {
