@@ -8,44 +8,71 @@ const TwitterLogin = ({ onSuccess, onError }) => {
     const handleTwitterLogin = async () => {
         try {
             setLoading(true);
+            console.log('🟦 Starting Twitter login...');
 
             const initResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/twitter/init`);
             const { authUrl, state } = initResponse.data;
 
+            console.log('🟦 Auth URL received:', authUrl);
+            console.log('🟦 State:', state);
+
             const popup = window.open(
                 authUrl,
                 'twitter-login',
-                'width=600,height=600,scrollbars=yes,resizable=yes'
+                'width=600,height=600,scrollbars=yes,resizable=yes,left=' +
+                (window.screen.width / 2 - 300) + ',top=' + (window.screen.height / 2 - 300)
             );
 
+            if (!popup) {
+                throw new Error('Popup blocked. Please allow popups for this site.');
+            }
+
+            let messageReceived = false;
+
             const handleMessage = async (event) => {
-                if (event.origin !== window.location.origin) return;
+                console.log('🟦 Message received:', event.data);
+
+                if (event.origin !== window.location.origin) {
+                    console.log('🟦 Message from wrong origin:', event.origin);
+                    return;
+                }
+
+                if (messageReceived) {
+                    console.log('🟦 Message already processed');
+                    return;
+                }
+
+                messageReceived = true;
+                window.removeEventListener('message', handleMessage);
+                clearInterval(checkClosed);
 
                 if (event.data.type === 'TWITTER_AUTH_SUCCESS') {
-                    popup.close();
-
+                    console.log('🟦 Auth success, processing callback...');
                     try {
                         const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/twitter/callback`, {
                             code: event.data.code,
-                            state: state
+                            state: event.data.state || state
                         });
 
+                        console.log('🟦 Callback successful');
                         onSuccess(response.data);
                     } catch (error) {
+                        console.error('🟦 Callback error:', error);
                         onError(error.response?.data?.message || 'Twitter authentication failed');
                     }
                 } else if (event.data.type === 'TWITTER_AUTH_ERROR') {
-                    popup.close();
-                    onError('Twitter authentication was cancelled or failed');
+                    console.log('🟦 Auth error:', event.data.error);
+                    onError(event.data.error || 'Twitter authentication failed');
                 }
 
-                window.removeEventListener('message', handleMessage);
+                setLoading(false);
             };
 
             window.addEventListener('message', handleMessage);
 
             const checkClosed = setInterval(() => {
-                if (popup.closed) {
+                if (popup.closed && !messageReceived) {
+                    console.log('🟦 Popup closed without message');
                     clearInterval(checkClosed);
                     window.removeEventListener('message', handleMessage);
                     setLoading(false);
@@ -54,10 +81,9 @@ const TwitterLogin = ({ onSuccess, onError }) => {
             }, 1000);
 
         } catch (error) {
-            console.error('Twitter login error:', error);
-            onError(error.response?.data?.message || 'Failed to initiate Twitter login');
-        } finally {
+            console.error('🟦 Twitter login error:', error);
             setLoading(false);
+            onError(error.message || 'Failed to initiate Twitter login');
         }
     };
 
