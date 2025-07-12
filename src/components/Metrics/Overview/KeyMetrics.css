@@ -125,6 +125,7 @@
 }
 
 .key-metrics__modal-text {
+	font-family: 'Open Sans', sans-serif;
 	color: #f2f2f2;
 	line-height: 1.6;
 	white-space: pre-wrap;
