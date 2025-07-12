@@ -18,9 +18,16 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import ForgotPassword from './pages/auth/ForgotPassword.jsx';
 import ResetPassword from './pages/auth/ResetPassword.jsx';
 import { isAuthPage } from './utils/authUtils';
-import TwitterCallback from './components/Twitter/TwitterCallback.jsx';
 
 const ProtectedRoute = ({ children }) => {
+	const location = useLocation();
+	const urlParams = new URLSearchParams(location.search);
+	const twitterAuthToken = urlParams.get('twitter_auth');
+
+	if (twitterAuthToken) {
+		return children;
+	}
+
 	const token = localStorage.getItem('accessToken');
 	if (!token) {
 		return <Navigate to="/login" />;
@@ -85,14 +92,9 @@ const AppContent = () => {
 						path="/blockflow"
 						element={<BlockFlow />}
 					/>
-					<Route
-						path="/auth/twitter/callback"
-						element={<TwitterCallback />}
-					/>
 				</Routes>
 				<MobileNavigation />
 			</div>
-			{/* <Footer /> */}
 		</>
 	);
 };
