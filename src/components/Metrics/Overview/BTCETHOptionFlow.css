@@ -8,6 +8,12 @@
 	padding-top: 0;
 }
 
+.btceth-option-flow__container {
+	position: relative;
+	min-height: 490px;
+	width: 100%;
+}
+
 .metrics-option {
 	display: flex;
 	flex-direction: column;
