@@ -126,7 +126,7 @@ const KeyMetrics = () => {
 								className="key-metrics__modal-close"
 								onClick={() => setShowAnalysis(false)}
 							>
-								<CloseIcon />
+								<Close />
 							</button>
 							{loadingAI ? (
 								<div className="key-metrics__modal-loading">Loading...</div>
