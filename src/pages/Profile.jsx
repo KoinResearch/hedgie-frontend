@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './Profile.css';
 import Pen from '../assets/Pen';
@@ -11,70 +10,34 @@ import Arrow from '../assets/Arrow';
 const Profile = () => {
 	const [userData, setUserData] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const [authProcessing, setAuthProcessing] = useState(false);
-	const location = useLocation();
 	const navigate = useNavigate();
-	const { login, user } = useAuth();
+	const { user } = useAuth();
 
 	useEffect(() => {
-		const handleTwitterAuth = async () => {
-			const urlParams = new URLSearchParams(location.search);
-			const twitterAuthToken = urlParams.get('twitter_auth');
+		if (user) {
+			setUserData(user);
+			setLoading(false);
+		} else {
+			// Проверяем localStorage
+			const storedUser = localStorage.getItem('user');
+			const storedToken = localStorage.getItem('accessToken');
 
-			if (twitterAuthToken) {
-				console.log('🟦 Processing Twitter auth token...');
-				setAuthProcessing(true);
-
+			if (storedUser && storedToken) {
 				try {
-					const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/twitter/exchange`, {
-						tempToken: twitterAuthToken
-					});
-
-					console.log('🟦 Twitter auth successful');
-
-					localStorage.setItem('accessToken', response.data.accessToken);
-					localStorage.setItem('refreshToken', response.data.refreshToken);
-					localStorage.setItem('user', JSON.stringify(response.data.user));
-
-					login(response.data.user);
-					setUserData(response.data.user);
-
-					navigate('/profile', { replace: true });
-
+					const parsedUser = JSON.parse(storedUser);
+					setUserData(parsedUser);
 				} catch (error) {
-					console.error('Twitter auth exchange error:', error);
-					navigate('/login?error=twitter_exchange_failed');
-				} finally {
-					setAuthProcessing(false);
-					setLoading(false);
-				}
-			} else if (user) {
-				setUserData(user);
-				setLoading(false);
-			} else {
-				const storedUser = localStorage.getItem('user');
-				const storedToken = localStorage.getItem('accessToken');
-
-				if (storedUser && storedToken) {
-					try {
-						const parsedUser = JSON.parse(storedUser);
-						setUserData(parsedUser);
-						login(parsedUser);
-					} catch (error) {
-						console.error('Error parsing stored user:', error);
-						navigate('/login');
-					}
-				} else {
+					console.error('Error parsing stored user:', error);
 					navigate('/login');
 				}
-				setLoading(false);
+			} else {
+				navigate('/login');
 			}
-		};
+			setLoading(false);
+		}
+	}, [user, navigate]);
 
-		handleTwitterAuth();
-	}, [location, navigate, login, user]);
-
-	if (loading || authProcessing) {
+	if (loading) {
 		return (
 			<div className="profile">
 				<div className="profile__content">
@@ -86,7 +49,7 @@ const Profile = () => {
 						color: 'white',
 						fontSize: '16px'
 					}}>
-						{authProcessing ? 'Completing authentication...' : 'Loading profile...'}
+						Loading profile...
 					</div>
 				</div>
 			</div>
@@ -95,7 +58,6 @@ const Profile = () => {
 
 	const handleLogout = () => {
 		localStorage.clear();
-		login(null);
 		window.location.href = '/login';
 	};
 

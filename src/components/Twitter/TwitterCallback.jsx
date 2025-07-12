@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const TwitterCallback = () => {
     const location = useLocation();
-    const navigate = useNavigate();
 
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
@@ -11,10 +10,10 @@ const TwitterCallback = () => {
         const state = urlParams.get('state');
         const error = urlParams.get('error');
 
-        console.log('Twitter callback received:', { code: !!code, state, error });
+        console.log('🟦 Twitter callback received:', { code: !!code, state, error });
 
         if (error) {
-            console.error('Twitter auth error:', error);
+            console.error('🟦 Twitter auth error:', error);
             window.opener?.postMessage({
                 type: 'TWITTER_AUTH_ERROR',
                 error: error
@@ -24,7 +23,7 @@ const TwitterCallback = () => {
         }
 
         if (code && state) {
-            console.log('Sending success message to parent');
+            console.log('🟦 Sending success message to parent window');
             window.opener?.postMessage({
                 type: 'TWITTER_AUTH_SUCCESS',
                 code: code,
@@ -32,7 +31,7 @@ const TwitterCallback = () => {
             }, window.location.origin);
             window.close();
         } else {
-            console.error('Missing code or state');
+            console.error('🟦 Missing code or state');
             window.opener?.postMessage({
                 type: 'TWITTER_AUTH_ERROR',
                 error: 'Missing authorization code or state'

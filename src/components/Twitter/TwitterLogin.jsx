@@ -13,8 +13,7 @@ const TwitterLogin = ({ onSuccess, onError }) => {
             const initResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/twitter/init`);
             const { authUrl, state } = initResponse.data;
 
-            console.log('🟦 Auth URL received:', authUrl);
-            console.log('🟦 State:', state);
+            console.log('🟦 Opening popup for Twitter auth...');
 
             const popup = window.open(
                 authUrl,
@@ -30,7 +29,7 @@ const TwitterLogin = ({ onSuccess, onError }) => {
             let messageReceived = false;
 
             const handleMessage = async (event) => {
-                console.log('🟦 Message received:', event.data);
+                console.log('🟦 Message received from popup:', event.data);
 
                 if (event.origin !== window.location.origin) {
                     console.log('🟦 Message from wrong origin:', event.origin);
