@@ -142,6 +142,8 @@
 	overflow: hidden;
 	border: 1px solid #393e47;
 	margin-bottom: 20px;
+	position: relative;
+	min-height: 160px;
 }
 
 .block-flow-filters__table table {

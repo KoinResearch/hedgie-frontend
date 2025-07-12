@@ -4,6 +4,7 @@ import { CACHE_TTL, optionsCache, useCachedApiCall } from '../../utils/cacheServ
 import Arrow from '../../assets/Arrow';
 import FlowMetrics from './FlowMetrics';
 import FlowFilter from './FlowFilter.jsx';
+import Skeleton from '../Skeleton/Skeleton.jsx';
 
 const FlowContent = () => {
 	const [asset, setAsset] = useState('BTC');
@@ -95,7 +96,7 @@ const FlowContent = () => {
 
 			<div className="flow__table">
 				{isLoading ? (
-					<p>Loading...</p>
+					<Skeleton />
 				) : (
 					<table>
 						<thead>

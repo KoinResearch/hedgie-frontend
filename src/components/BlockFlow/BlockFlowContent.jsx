@@ -18,6 +18,7 @@ import 'react-tooltip/dist/react-tooltip.css';
 import Filter from '../../assets/Filter.jsx';
 import Arrow from '../../assets/Arrow.jsx';
 import Close from '../../assets/Close.jsx';
+import Skeleton from '../Skeleton/Skeleton.jsx';
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
 
@@ -304,7 +305,7 @@ const BlockFlowContent = ({ asset = 'BTC', tradeType = 'ALL', optionType = 'ALL'
 
 			<div className="block-flow-filters__table">
 				{isLoading ? (
-					<p className="block-flow-filters__loading">Loading...</p>
+					<Skeleton />
 				) : (
 					<table>
 						<thead>

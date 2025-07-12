@@ -49,6 +49,8 @@
 	overflow: hidden;
 	border: 1px solid #393e47;
 	margin-bottom: 20px;
+	min-height: 160px;
+	position: relative;
 }
 
 .flow__table table {
