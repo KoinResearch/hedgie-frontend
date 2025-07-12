@@ -18,6 +18,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import ForgotPassword from './pages/auth/ForgotPassword.jsx';
 import ResetPassword from './pages/auth/ResetPassword.jsx';
 import { isAuthPage } from './utils/authUtils';
+import TwitterCallback from './components/Twitter/TwitterCallback.jsx';
 
 const ProtectedRoute = ({ children }) => {
 	const token = localStorage.getItem('accessToken');
