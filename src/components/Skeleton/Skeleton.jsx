@@ -1,18 +1,9 @@
 import React from 'react';
 import './Skeleton.css';
 
-const SkeletonLoader = ({ height = '100%', width = '100%', margin, ...props }) => {
+const SkeletonLoader = () => {
 	return (
-		<div
-			className="skeleton-loader"
-			style={{
-				height,
-				width,
-				margin,
-				...props.style,
-			}}
-			{...props}
-		/>
+		<div className="skeleton"></div>
 	);
 };
 

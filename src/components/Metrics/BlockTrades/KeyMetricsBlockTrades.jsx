@@ -7,6 +7,7 @@ import MetricCard from '../../MetricCard/MetricCard.jsx';
 import SelectControl from '../../SelectControl/SelectControl.jsx';
 import { TIME_RANGE_OPTIONS, ASSET_OPTIONS, EXCHANGE_OPTIONS } from '../../../utils/constants.js';
 import { metricsConfigBlockTrades } from '../../../config/metricsConfigBlockTrades.js';
+import Skeleton from '../../Skeleton/Skeleton.jsx';
 
 const KeyMetricsBlockTrades = () => {
 	const { isAuthenticated } = useAuth();
@@ -113,7 +114,7 @@ const KeyMetricsBlockTrades = () => {
 								×
 							</button>
 							{loadingAI ? (
-								<div className="key-metrics__modal-loading">Loading...</div>
+								<Skeleton />
 							) : errorAI ? (
 								<div className="key-metrics__modal-error">{errorAI}</div>
 							) : (

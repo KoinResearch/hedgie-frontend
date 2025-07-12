@@ -7,6 +7,7 @@ import SelectControl from '../../SelectControl/SelectControl.jsx';
 import { metricsConfig } from '../../../config/metricsConfig.js';
 import './KeyMetrics.css';
 import Close from '../../../assets/Close.jsx';
+import Skeleton from '../../Skeleton/Skeleton.jsx';
 
 const KeyMetrics = () => {
 	const { isAuthenticated } = useAuth();
@@ -129,7 +130,7 @@ const KeyMetrics = () => {
 								<Close />
 							</button>
 							{loadingAI ? (
-								<div className="key-metrics__modal-loading">Loading...</div>
+								<Skeleton />
 							) : errorAI ? (
 								<div className="key-metrics__modal-error">{errorAI}</div>
 							) : (

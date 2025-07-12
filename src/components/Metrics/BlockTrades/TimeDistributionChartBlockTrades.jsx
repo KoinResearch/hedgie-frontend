@@ -159,7 +159,7 @@ const TimeDistributionChartBlockTrades = () => {
 
 	return (
 		<FlowOptionBase
-			title="Historical Volume - Past 24h"
+			title="Historical Volume"
 			icon="📦"
 			tooltipContent={tooltipContent}
 			controls={controls}

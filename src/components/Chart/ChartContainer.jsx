@@ -1,5 +1,6 @@
 import React from 'react';
 import './ChartContainer.css';
+import Skeleton from '../Skeleton/Skeleton';
 
 const ChartContainer = ({
 	loading,
@@ -19,9 +20,7 @@ const ChartContainer = ({
 			style={{ height: containerHeight }}
 		>
 			{loading && (
-				<div className="loading">
-					<div className="loading__spinner"></div>
-				</div>
+				<Skeleton />
 			)}
 
 			{!loading && error && (

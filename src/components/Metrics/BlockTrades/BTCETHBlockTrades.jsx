@@ -7,6 +7,7 @@ import FlowOptionBase from '../../Chart/FlowOptionBase.jsx';
 import SelectControl from '../../SelectControl/SelectControl.jsx';
 import { TIME_RANGE_OPTIONS, ASSET_OPTIONS, EXCHANGE_OPTIONS } from '../../../constants/chartOptions.js';
 import './BTCETHBlockTrades.css';
+import Skeleton from '../../Skeleton/Skeleton.jsx';
 
 const BTCETHBlockTrades = () => {
 	const [asset, setAsset] = useState('BTC');
@@ -187,9 +188,7 @@ const BTCETHBlockTrades = () => {
 		return (
 			<div className="btceth-block-trades__graph">
 				{loading && (
-					<div className={`btceth-block-trades__loading ${loadingClass}`}>
-						<div className="btceth-block-trades__spinner"></div>
-					</div>
+					<Skeleton />
 				)}
 
 				{!loading && error && (
